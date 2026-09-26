@@ -1,0 +1,67 @@
+/* The campaign site is a dark variant of the same Modernist tokens the
+   crossword uses — it just swaps which token plays background vs ink
+   (--color-text as ground, --color-bg as text), scoped to this page via
+   .campaign-site rather than redefining :root. */
+.campaign-site {
+  --panel: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));
+  background: var(--color-text);
+  color: var(--color-bg);
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+.campaign-site a {
+  color: var(--color-accent-400);
+  text-decoration: none;
+}
+.campaign-site a:hover {
+  color: var(--color-accent);
+}
+
+.campaign-outline-btn {
+  all: unset;
+  cursor: pointer;
+  height: 48px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 2px solid var(--color-bg);
+  box-sizing: border-box;
+  color: var(--color-bg);
+}
+.campaign-outline-btn:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.campaign-diamond {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-accent);
+  transform: rotate(45deg);
+  flex: none;
+}
+
+.campaign-moon {
+  width: 44px;
+  height: 44px;
+  background: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+  flex: none;
+}
+.campaign-moon::after {
+  content: '';
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  left: 12px;
+  top: -6px;
+  background: var(--panel);
+  border-radius: 50%;
+}

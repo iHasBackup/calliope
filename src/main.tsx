@@ -8,12 +8,14 @@ import './styles/tokens.css';
 import './styles/app.css';
 import { CAMPAIGNS } from './campaigns';
 import NotFound from './NotFound';
+import CampaignSite from './campaign/CampaignSite';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to={CAMPAIGNS[0].path} replace />} />
+        <Route path="/thecrookedmoon" element={<CampaignSite />} />
         {CAMPAIGNS.map((c) => (
           <Route key={c.slug} path={c.path} element={c.element} />
         ))}

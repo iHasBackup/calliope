@@ -1,204 +1,205 @@
-# Handoff: The Crooked Moon — Crossword + Leaderboard
+# Handoff: The Crooked Moon — Campaign Site
 
 ## Overview
 
-A single-page crossword game for a D&D campaign (themed on the folk-horror adventure book *The Crooked Moon*). No authentication: a player types a name or Discord tag, solves an 11×11 grid, and submits once. Their result is ranked on a leaderboard by **words solved first, then by elapsed time**. Three views in one page: name gate → grid → leaderboard.
+A small public site for a weekly D&D campaign based on *The Crooked Moon*. There are no accounts. It has three tabs: **Campaign** (home), **Recaps** and **Activities**. Activities links to the crossword game, which is specified separately in `CROSSWORD.md`.
 
-## About the Design Files
+## About the design files
 
-The files in `reference/` are **design references created in HTML** — a working prototype that shows the intended look and behavior. They are **not production code to copy directly**.
+The files in `reference/` are **HTML design prototypes**. They show the intended look and behaviour; they are not production code. Recreate them in the target codebase's framework and conventions. If no codebase exists yet, a React + TypeScript SPA (Vite) is a good fit, with one route per tab (`/`, `/recaps`, `/activities`, `/activities/crossword`).
 
-- `reference/Crossword.dc.html` — the full prototype (markup + game logic in one file).
-- `reference/modernist-styles.css` — the "Modernist" design-system stylesheet the prototype consumes. All tokens (`--color-*`, `--font-*`, `--space-*`, `--radius-*`, `--shadow-*`) and component classes (`.btn`, `.tag`, `.input`, `.table`, `.nav`, `.card`, `.hr`) live here.
+- `reference/CampaignHome.dc.html`: the campaign site (all three tabs, data and logic).
+- `reference/Crossword.dc.html`: the crossword game and its leaderboard.
+- `reference/modernist-styles.css`: design tokens and component classes (`.btn`, `.btn-primary`, `.grayscale`, and so on).
+- `reference/image-slot.js`: the prototype's drag-and-drop image placeholder. **Do not ship it.** Replace it with real `<img>` elements fed from content.
 
-The task is to **recreate these designs in the target codebase's existing environment** (React, Vue, Svelte, SwiftUI, etc.) using its established patterns, component library, and state conventions. If no environment exists yet, pick the most appropriate framework for the project and implement there. A React + TypeScript SPA with a small serverless API is the natural fit.
+The prototype uses its own template dialect:
+- `{{ x }}` is a value hole.
+- `<sc-for list as>` is a loop; `<sc-if value>` is a conditional.
+- `class Component extends DCLogic` is a controller whose `renderVals()` supplies the template's values.
 
-The prototype's HTML is written in a streaming-template dialect: `{{ name }}` are value holes, `<sc-for list as>` is a list loop, `<sc-if value>` is a conditional, and the `class Component extends DCLogic` block at the bottom is a React-class-like controller whose `renderVals()` returns the values the markup reads. Translate those to idiomatic components/hooks — do not try to run the dialect.
+Translate these into components and hooks; don't try to run the dialect.
 
 ## Fidelity
 
-**High-fidelity.** Final colors, typography, spacing, rules and interaction states. Recreate the UI closely, but source every value from the design-system tokens in `modernist-styles.css` (or its equivalent in the target codebase) rather than hard-coding hexes.
+**High fidelity.** Match colors, type, spacing and states closely, and take every value from the tokens in `modernist-styles.css`.
 
-## Design Tokens
+## Visual system
 
-From `modernist-styles.css` (`:root`). Use the variables, not the literals.
+This is a **dark variant** of the Modernist system.
 
-| Token | Value | Use |
+**Colors**
+- Page ground: `--color-text` (#201e1d). Ink: `--color-bg` (#f3f2f2).
+- Raised panels: `color-mix(in srgb, var(--color-bg) 7%, var(--color-text))`. This document calls it **panel**.
+- Muted text: `--color-bg` at 60–85% (`color-mix(... N%, transparent)`).
+- Accent: `--color-accent` (#ec3013). Accent text on dark uses `--color-accent-400`.
+- Hairlines: `--color-bg` at 10–18%.
+
+**Type**
+- Everything is set in Archivo (`--font-heading`, `--font-body`).
+- Headings: weight 800, uppercase, negative letter-spacing (-0.02 to -0.035em), line-height about 0.9.
+- Kickers: 11px, weight 700, uppercase, letter-spacing 0.14–0.16em.
+
+**Shapes and marks**
+- **Zero border radius everywhere.** The only exception is the moon glyph described below.
+- Diamond marks are 10–14px squares rotated 45°: used for the brand, quest bullets and timeline nodes.
+- Images always sit inside the `.grayscale` wrapper.
+
+**Page padding**
+- Horizontal: `clamp(16px, 4vw, 48px)`.
+- Section spacing: `clamp(48px, 7vw, 88px)`.
+
+## Global header
+
+Sticky at the top with z-index 20, a 92% `--color-text` background with `backdrop-filter: blur(8px)`, and a 1px hairline bottom border. It is a **single row that never wraps** (`flex-wrap: nowrap`), with padding `6px clamp(10px, 4vw, 48px)`.
+
+- **Left:** a red diamond plus "THE CROOKED MOON". The label is `clamp(12px, 3.4vw, 16px)`, weight 800, letter-spacing 0.08em, and ellipsizes if space runs out. Below 380px viewport width the label is hidden and only the diamond remains.
+- **Right:** three tabs (Campaign, Recaps, Activities).
+  - Size: 44px tall, padding `0 clamp(8px, 2.6vw, 14px)`, `clamp(11px, 3.2vw, 13px)` weight 700, uppercase.
+  - Active tab: accent fill with white text.
+  - Inactive tabs: 75% ink.
+- Tabs set the view and update the URL hash (`#recaps`, `#activities`). The hash is read on load. Switching views scrolls to the top.
+
+## Campaign tab (home)
+
+### 1. Hero
+
+1. **Key-art band.** Full width, height `clamp(200px, 32vw, 400px)`, grayscale. The bottom 45% has a gradient scrim fading to the ground. The key art is supplied by the owner.
+2. **Content row** below the key art: `flex-wrap: wrap`, `justify-content: space-between`, `align-items: flex-end`, gap 32px.
+   - **Text column** (`flex: 1 1 320px`, max-width 720px):
+     - Tags: "CURRENT ARC" (accent fill) and "CHAPTER II" (1px 40% outline).
+     - H1 with the arc title, `clamp(38px, 8vw, 104px)`.
+     - Arc description, `clamp(15px, 1.6vw, 18px)`, 85% ink, max-width 560px.
+     - Two 48px buttons: "Catch up on recaps" (`.btn-primary`, opens Recaps) and "Play activities" (2px ink outline that inverts on hover, opens Activities).
+   - **Next-session card**: `width: min(100%, 320px)`, 24px padding on all sides, gap 14px, accent background with white text, `box-shadow: 0 24px 60px rgba(0,0,0,.45)`.
+     - Kicker: "NEXT SESSION · S08", i.e. the next session number.
+     - A two-column grid with equal `1fr` columns showing the days and hours remaining. Numbers are 64px weight 800 with tabular figures, and the "DAYS" / "HOURS" labels are centered under them.
+     - A 1px white-40% rule, then one line that doesn't wrap: `Wed 30 Sep · 7:00 PM GMT+7`. The day name is abbreviated to three letters.
+
+### 2. Stat strip
+
+A `flex-wrap` row with a 12px gap containing three panels, each padded 18px × 20px.
+
+- **In-game night** (`flex: 1 1 150px`): a 44px moon glyph (a light square with an offset dark circle cut out of it) and the night count, zero-padded, at 34px.
+- **Party level** (`flex: 1 1 150px`): the Lucide **swords** icon, 44px, stroked in the accent, and "Lv. 4". Don't repeat the number inside the icon.
+- **Campaign progress** (`flex: 2 1 300px`): the label, then the percentage at 28px in the accent.
+  - Below that, a **segmented bar**: 20 cells, 14px tall, 3px gap. Filled cells = `round(progress / 5)` in the accent; the rest are 14% ink.
+  - A footer row that wraps: "Chapter II of the adventure" / "7 sessions played".
+
+### 3. The party
+
+- **Header row:** kicker "4 ADVENTURERS · 1 JOINING", H2 "THE PARTY".
+- **Grid:** `repeat(auto-fill, minmax(min(100%, 148px), 1fr))` with gap `clamp(10px, 2vw, 14px)`. That gives two cards per row on phones and wraps naturally; there is no horizontal scroller.
+
+**Card**
+- `aspect-ratio: 3 / 4.2`, panel background, `container-type: inline-size`.
+- A grayscale portrait fills the card. The bottom 62% has a gradient scrim running from transparent to ink.
+- Top-left badge: "LV 4" on an accent fill, 12px weight 800.
+
+**Text block**
+
+The text block sits at the bottom with inset `clamp(10px, 2.4vw, 14px)`. Its grid rows have **fixed heights** (`16px 30px 24px 18px`, gap 6px), so every card lines up regardless of text length. Every line is single-line with an ellipsis.
+
+1. Species: 11px uppercase, `--color-accent-400`.
+2. Name: `clamp(18px, 13cqi, 26px)`, weight 800, uppercase. It is sized relative to the card, not the viewport.
+3. Class: an ink-on-light chip, 12px weight 700.
+4. Subclass: 13px, 75% ink.
+
+**Open-seat card:** shown when `showOpenSeat` is true. Its border is 25% ink, the badge reads "+1" on a muted fill, and the text is "Fifth player / Seat open / Joining soon / Class TBD".
+
+### 4. Story and quest log
+
+A two-column grid, `repeat(auto-fit, minmax(min(100%, 380px), 1fr))`.
+
+- **Left:** kicker "NIGHTS 1–8", H2 "THE STORY SO FAR", and summary paragraphs at 16px / 1.65, 85% ink.
+- **Right:** a panel with a 3px accent top border titled "QUEST LOG", showing "N active". Each open thread is a row: an outlined red diamond, then 15px text, with a hairline above.
+
+## Recaps tab
+
+- Max-width 900px. Kicker "7 SESSIONS · 08 NIGHTS", H1 "SESSION RECAPS".
+- **Vertical timeline**, newest first. Each entry is a two-column grid: a 20px rail column, then the card.
+  - The rail has a 14px diamond node and a 2px hairline running down. The latest entry's node is solid accent; the others are hollow with a 50% ink border.
+  - The card has a 1px hairline border.
+    - **Header** (a full-width button, at least 44px tall): "SESSION 07" in accent-400, a meta line "Wed 16 Sep · Night 8", a "LATEST" chip on the newest entry, the title (`clamp(18px, 2.4vw, 24px)`, uppercase), and a 32px +/− box.
+    - **Expanded:** a panel fill and brighter border, showing the body text (15px / 1.65, max-width 620px) and outlined location/topic tags.
+  - **Accordion behaviour:** one entry is open at a time, the latest is open by default, and clicking the open entry closes it.
+
+## Activities tab
+
+- Kicker "BETWEEN SESSIONS", H1 "ACTIVITIES".
+- Cards sit in `repeat(auto-fill, minmax(min(100%, 340px), 1fr))`. There is currently one card, the crossword:
+  - **Thumbnail:** 16:9, a 7×3 grid of white and ink cells with 3px gaps.
+  - **Tags:** a "LIVE" chip plus the kicker "PUZZLE · CROSSWORD".
+  - **Title and description:** "PUZZLE NO. 01" and a one-line description.
+  - **Stats list:** top score (from the crossword leaderboard: name, words/16) and the entry count.
+  - **Button:** a "Play now" `.btn-primary` that routes to the crossword.
+- Design new activities as more cards in the same grid.
+
+## Data model
+
+All of this is hard-coded in the prototype. Move it into a content source: JSON/MDX in the repo, a headless CMS, or a small database. The campaign owner edits it weekly.
+
+```ts
+Campaign {
+  title: string; arcTitle: string; arcChapter: string; arcBlurb: string;
+  nights: number;          // in-game nights (8)
+  progress: number;        // 0–100 (24)
+  partyLevel: number;      // 4
+  summary: string[];       // paragraphs
+  threads: string[];       // quest log
+  keyArtUrl?: string;
+  schedule: { weekday: 3 /* Wed */; hour: 19; timezone: string /* IANA, e.g. "Asia/Jakarta" */; label: string /* "GMT+7" */ };
+}
+PartyMember { id; name; species; className; subclass; portraitUrl?; }   // 4 today, 5th joining
+Recap { number; title; date /* ISO */; nights: string /* "4–5" */; body: string; tags: string[]; }
+```
+
+Current party data (species not provided yet; the card shows "Species TBD"):
+
+| Name | Class | Subclass |
 | --- | --- | --- |
-| `--color-bg` | `#f3f2f2` | page ground |
-| `--color-surface` | `#eae9e9` | tinted panels (gate right column, results sidebar) |
-| `--color-text` | `#201e1d` | ink; also the fill of **blocked crossword cells** |
-| `--color-accent` | `#ec3013` | primary action, rank 01, active-clue rule, checkmarks |
-| `--color-accent-100` | light accent tint | cells in the active word; active clue row; the submitting player's leaderboard row |
-| `--color-accent-200` | one step deeper | the focused cell |
-| `--color-accent-600 / -700` | deeper steps | button hover / pressed; accent-colored body copy (contrast) |
-| `--color-divider` | `color-mix(in srgb, #201e1d 40%, transparent)` | 1px row rules, 2px section rules |
-| `--font-heading` / `--font-body` | `"Archivo", system-ui, sans-serif` | headings weight 800, body weight 400 |
-| `--radius-md` | `0` | **no rounded corners anywhere** |
+| Oberon | Sorcerer | Wild Magic |
+| Hayden | Death Knight | TBD |
+| Carmen | Druid | TBD |
+| Ambary | Rogue | TBD |
 
-Type sizes actually used: display `clamp(40px, 5.6vw, 78px)` / line-height 0.92 / letter-spacing -0.03em; section kickers 11px uppercase letter-spacing 0.16em; body 15–16px / line-height 1.5; clue text 14px / 1.4; grid letters `clamp(13px, 3.4vw, 20px)` weight 800; cell numbers `clamp(7px, 1.6vw, 9px)` weight 600; timer 20px weight 800 tabular-nums; result time 34px weight 800.
+The story summary, quest threads and the seven recaps in the prototype are **placeholder copy**. Load the real content from the source.
 
-Spacing is fluid: panel padding `clamp(14px, 3.5vw, 32px)`, gate padding `clamp(28px, 5vw, 56px) clamp(20px, 4vw, 48px)`, stack gaps 8–24px.
+## Behaviour
 
-Style rules inherited from the design system, all of them load-bearing here: zero border radius; everything flush left (including button labels); 2px rules between major sections, never softened to hairlines; accent used sparingly; keyboard focus is `outline: 2px solid var(--color-accent); outline-offset: 2px`.
+**Next session**
+- Find the next Wednesday at `schedule.hour`. If today is Wednesday and the session started less than 4 hours ago, it is still today's session.
+- **Compute this in the campaign's timezone, not the viewer's.** The prototype uses the viewer's local time, which is wrong for players in other zones. Use `Intl`/Temporal or date-fns-tz with `schedule.timezone`.
+- Recompute every 60s.
+- Session number = number of recaps + 1.
 
-## Screens / Views
+**Stats and recaps**
+- `sessionsPlayed` = number of recaps.
+- Progress segments = `round(progress / 5)` of 20.
 
-A single `view` value drives which of three screens renders: `'gate' | 'play' | 'board'`.
+**Crossword leaderboard**
+- The prototype reads the top score from `localStorage` (`crooked-moon-crossword-scores-v1`).
+- In production, read it from the same shared scores API specified in `CROSSWORD.md` (`GET /api/scores?puzzle=crooked-moon-01`).
 
-### 1. Gate (`view === 'gate'`)
+## Responsive
 
-**Purpose:** collect the player's name/tag and start a run.
+The layout is fluid everywhere, with no fixed widths. It was verified with no horizontal overflow at 320, 360, 768 and desktop widths.
 
-**Layout:** full-height two-column grid, `minmax(0, 1.1fr) minmax(0, 0.9fr)`, collapsing to one column below 860px. Left column has a 2px right divider (becomes a bottom divider when stacked).
-
-Left column, `space-between` in a vertical flex:
-- Kicker: `Puzzle No. 01 / 16 words` — 11px, uppercase, letter-spacing 0.16em, `--color-accent`.
-- Title: `THE / CROOKED / MOON` on three lines, display scale, weight 800, flush left.
-- Sub-kicker: `A campaign crossword` — 13px uppercase, 60% ink.
-- 2px `.hr`.
-- Body: "No hints, no checking, no account. Type a name, fill the grid, submit once. You are ranked by words solved first, then by time." 16px, max-width 440px, `text-wrap: pretty`.
-- Field group: label `Name or Discord tag` (11px uppercase, 60% ink); a row of `.input` (46px tall, `flex: 1 1 210px`, placeholder `e.g. thornwick#0421`) + `.btn.btn-primary` (46px tall, 22px side padding) labelled **Enter the hollow**; the row wraps.
-- Error line: 12px, `--color-accent-700`, reserved 18px min-height so nothing shifts. Copy: `Give me at least two characters.`
-- `.btn.btn-ghost` with zero padding: `Skip to leaderboard →`.
-
-Right column, `--color-surface` ground, vertically centered:
-- Kicker `Standing at the top` (11px uppercase, 60% ink).
-- Top three rows, each a grid `36px | 1fr | auto` with a 2px top divider: rank number (24px, weight 800, accent), name (17px weight 800, `overflow-wrap: anywhere`) over a 12px "n / 16" sub-line, and time (16px tabular-nums).
-- Footnote: `Scores are kept in this browser.` — 12px, 60% ink.
-
-### 2. Play (`view === 'play'`)
-
-**Purpose:** solve the grid against a running clock.
-
-**Header** — the design system's `.nav` (2px bottom rule), `flex-wrap: wrap`, `row-gap: 8px`: brand = puzzle title (`clamp(15px, 3.4vw, 18px)`, weight 800); a `Player` kicker + name pair; a `Time` kicker + `mm:ss` timer (20px weight 800 tabular-nums); a `.tag.tag-outline` reading `41 / 61 letters`; a `.btn.btn-secondary` `Leaderboard`.
-
-**Body** — two columns, `minmax(0, 548px) minmax(0, 1fr)`, one column below 860px. Left panel has a 2px right divider (bottom when stacked).
-
-Left panel:
-- **The grid.** `display: grid; grid-template-columns: repeat(11, minmax(0, 1fr))`, `width: 100%`, `max-width: 484px`, with a 2px top and left border on the container. Each of the 121 cells: `aspect-ratio: 1`, 2px right and bottom border in `--color-text` (so rules read as a single continuous 2px lattice), and a background of
-  - blocked cell → `--color-text`
-  - focused cell → `--color-accent-200`
-  - cell in the active word → `--color-accent-100`
-  - otherwise → `#ffffff`
-- Open cells contain an absolutely positioned clue number (top 1px, left 2px, `pointer-events: none`) and a full-size transparent `<input maxlength-like single char>`: centered, uppercase, `--font-heading` weight 800, `caret-color: transparent`, `outline: none`, `cursor: pointer`, `autocomplete=off autocapitalize=characters autocorrect=off spellcheck=false`.
-- **Active clue block.** Left 2px accent border, 12px left padding, max-width 520px. First row: clue label (`4 down`, 13px uppercase weight 800 accent) + clue text (15px). Second row: three `.btn.btn-secondary` at 40px — `←` previous clue, `→` next clue, and a direction toggle whose label is the current direction (`Across` / `Down`). These exist so the puzzle is playable by touch, where arrow and space keys aren't available.
-- **Action row**, wrapping: `.btn.btn-primary` 44px **Submit result**; `.btn.btn-ghost` 44px **Clear grid**; a 12px 60%-ink hint `Arrows move · Space flips direction · Enter next clue`.
-
-Right panel — clue lists in `repeat(auto-fit, minmax(min(100%, 230px), 1fr))` so Across and Down sit side by side and stack when narrow. Each list: an 11px uppercase heading over a 2px ink rule, then rows of `26px | 1fr` grid, 1px bottom divider, `cursor: pointer`. The active clue's row is filled `--color-accent-100` with its number in `--color-accent-700`; a fully and correctly filled clue's number drops to 45% ink (this is the only completion feedback — there is deliberately **no** answer checking during play).
-
-### 3. Leaderboard (`view === 'board'`)
-
-**Purpose:** show the ranking and the player's own run.
-
-`.nav` header: brand `Leaderboard`, a `.tag.tag-accent` with the puzzle title, and a `.btn.btn-secondary` reading `Back to the grid` (or `Start a run` if no name has been entered yet).
-
-Body: grid `minmax(0, 2fr) minmax(240px, 1fr)`, one column below 860px.
-
-- **Table** (`.table`, `min-width: 320px` inside an `overflow-x: auto` wrapper): columns `#` (44px), `Player`, `Words` (100px), `Time` (90px). Rank and name are weight 800; rank 01 is accent; numeric cells are tabular-nums. The row just submitted is filled `--color-accent-100`. Footnote below: `Ranked by words solved, then by time. Scores are kept in this browser.`
-- **Results sidebar**: `--color-surface` ground, 2px left accent border, 24px padding. Accent kicker `Your last run`; the time at 34px weight 800 tabular-nums (`--:--` when nothing submitted); a 14px note `13 of 16 words solved as thornwick#0421.`; then, once a run exists, an **Answer key** list — rows of `34px | 1fr | 14px`, 1px dividers, showing `1A` / `1D` style labels, the answer in weight 800 with 0.04em letter-spacing, and a `✓` in accent or a `·` at 40% ink. Then a 2px `.hr`, a 44px `.btn.btn-primary` **Play again**, and a `.btn.btn-ghost` **Change name**.
-
-## The Puzzle
-
-11×11 grid, 16 words, 61 open cells, zero-indexed `(row, col)` for the first letter. Clue numbers follow standard scan order. This layout is verified: every maximal run of two or more adjacent filled cells is exactly one of these words, and all crossings agree.
-
-**Across**
-
-| # | Start (r,c) | Answer | Clue |
-| --- | --- | --- | --- |
-| 1 | 0,0 | CROWS | Black birds that gather where the road bends |
-| 3 | 0,6 | ALTAR | Stone where the offering is left |
-| 4 | 2,2 | HOLLY | Red-berried evergreen of the hedgerow |
-| 5 | 4,0 | EAVES | Where the charm is nailed, above the door |
-| 6 | 4,6 | STAGS | Antlered watchers of the wood |
-| 8 | 6,2 | NIGHT | When the lanterns go out |
-| 11 | 8,0 | ELDER | Both a village authority and a flowering tree |
-| 12 | 8,6 | MASKS | Worn by the whole village on festival night |
-| 13 | 10,2 | OMENS | Signs read in milk, smoke or entrails |
-
-**Down**
-
-| # | Start (r,c) | Answer | Clue |
-| --- | --- | --- | --- |
-| 1 | 0,0 | CRONE | The old woman at the edge of the village |
-| 2 | 0,4 | SALTS | Poured across a threshold to keep things out |
-| 3 | 0,6 | ABYSS | What the well seems to have no bottom for |
-| 4 | 2,2 | HAVEN | Sanctuary, of a sort |
-| 7 | 4,8 | ASHES | All that the pyre leaves behind |
-| 9 | 6,4 | GORSE | Thorny yellow-flowered scrub of the moor |
-| 10 | 6,6 | TOMBS | Where the barrow-folk keep their dead |
-
-A cell is blocked (ink-filled) if no word covers it. Derive the solution grid and the numbering from this list rather than hard-coding 121 cells.
-
-## Interactions & Behavior
-
-**Grid input**
-- Typing a letter writes it into the focused cell (uppercased) and advances to the next open cell in the current direction. Non-letters are rejected.
-- `Backspace`: clears the focused cell if it has a letter; otherwise moves back one open cell and clears that.
-- `Delete`: clears the focused cell, no movement.
-- `Space`: flips direction.
-- `Enter` / `Tab`: jumps to the first cell of the next word (`Shift` for previous), and sets the direction to that word's.
-- Arrow keys: set the direction to match the axis and move to the next open cell on it; movement skips blocked cells and stops at the grid edge.
-- Clicking a cell focuses it; clicking the **already focused** cell flips direction.
-- Clicking a clue focuses that word's first cell and sets its direction.
-
-**Timer**
-- Starts on the first letter entered — not on entering the play view. Ticks once a second while `running`.
-- Stops on submit. `Play again` resets it to 0 and sets `running` false.
-
-**Submit**
-- Always enabled, single press. Computes `words` = number of the 16 words whose cells all match the answer, and `time` = elapsed seconds. Appends `{ name, words, time }` to the scores, persists, and switches to the leaderboard with that run highlighted.
-- No confirmation dialog and no mid-game checking — that was an explicit product decision ("no help at all").
-
-**Validation**
-- The name must be ≥ 2 characters after trimming, else show the error and stay on the gate. `Enter` in the field submits the gate.
-
-**Ranking**
-- `sort((a, b) => (b.words - a.words) || (a.time - b.time))`. Ranks are 1-indexed and zero-padded to two digits (`01`).
-
-**Responsive behavior**
-- One breakpoint at **860px**: below it, the gate, the play body, and the leaderboard body all collapse to a single column, and the panel dividers move from right to bottom.
-- The grid is fluid (`repeat(11, minmax(0, 1fr))`, capped at 484px) so it fits a 320px viewport; letters and clue numbers scale with `clamp()`.
-- All `.nav` headers wrap with an 8px row gap.
-- Touch targets: primary actions are 44px tall, clue-navigation buttons 40px with a 46px min-width. The `←` / `→` / direction toggle trio is the touch substitute for keyboard navigation. Grid cells at a 320px viewport are ~27px — below the 44px guideline, which is inherent to an 11×11 crossword; the on-screen keyboard plus auto-advance is what makes it usable. If the target platform allows, consider a zoom/pan affordance or a larger cell size with horizontal scroll.
-- `<meta name="viewport" content="width=device-width, initial-scale=1">` and `-webkit-text-size-adjust: 100%` are required.
-
-## State Management
-
-```
-view: 'gate' | 'play' | 'board'
-name: string
-gateError: string
-letters: string[]            // 121 entries, '' for empty; only open cells are ever set
-active: number               // focused cell index (row * 11 + col)
-dir: 'across' | 'down'
-elapsed: number              // seconds
-running: boolean
-scores: { name, words, time }[]
-lastRun: { name, words, time } | null
-narrow: boolean              // window.innerWidth < 860, tracked on resize
-```
-
-Derived, not stored: the solution grid and clue numbers (from the word list), the active word (the word in `dir` containing `active`, falling back to the other direction), the set of solved words, and the filled-letter count.
-
-**Transitions:** gate → play on a valid name (focus cell `(0,0)` after the view paints); play → board on submit; board → play on `Play again` (grid, timer and focus all reset) or `Back to the grid` (state preserved); board → gate on `Change name`.
-
-## Data & Persistence
-
-The prototype persists to `localStorage` under `crooked-moon-crossword-scores-v1`, seeded on first load with three demo entries (`thornwick#0421` 16/16 in 604s, `meg.of.the.mire` 14/16 in 513s, `brannoc` 11/16 in 448s).
-
-**This is the one thing that must change in production.** The requirement is a *shared* leaderboard, which `localStorage` cannot provide — every player currently sees only their own board. Implement instead:
-
-- `GET /api/scores?puzzle=crooked-moon-01` → `[{ name, words, time, createdAt }]`, sorted server-side by `words desc, time asc`, limited to the top N.
-- `POST /api/scores` → `{ puzzle, name, words, time }`. Validate server-side: trim and length-cap the name (≥2, ≤32 chars), clamp `words` to 0–16, reject implausible times (e.g. under 20s), and rate-limit per IP. **Do not trust the client's `words` count** — post the submitted grid and score it on the server against the solution, otherwise the board is trivially forgeable.
-- Keep the client optimistic: show the submitted run immediately, reconcile on the next fetch.
-- Any small hosted store works (Postgres, KV, Firestore). Note that shipping the answers in the client bundle also makes cheating easy; if that matters, serve clues only and validate submissions server-side.
+- **Header:** a single row at every width. The brand label is hidden below 380px.
+- **Hero:** the text column and next-session card stack on phones.
+- **Stat strip:** night and level share a row; progress wraps onto its own full-width row.
+- **Party:** two cards per row on phones, 3–5 on wider screens.
+- **Story and quest log:** stack below about 800px.
+- **Minimum sizes:** all tap targets are at least 44px, and body text is at least 15px.
 
 ## Assets
 
-None. No images, no icons, no illustrations — the design is type, rules and the accent. Archivo is loaded by `modernist-styles.css` via a Google Fonts `@import`; in production, self-host it or use the codebase's existing font pipeline.
+- **Images:** the key art and one portrait per party member are provided by the owner. Always render them grayscale.
+- **Icons:** Lucide **swords** is the only icon. The moon glyph and the diamonds are pure CSS.
+- **Font:** Archivo is imported by `modernist-styles.css`. Self-host it in production.
 
 ## Files
 
-- `reference/Crossword.dc.html` — the prototype: all three views, the puzzle data, keyboard handling, timer, ranking, and persistence.
-- `reference/modernist-styles.css` — the design-system tokens and component classes the prototype styles against.
+- `README.md`: this spec (campaign site).
+- `CROSSWORD.md`: the crossword game and shared leaderboard spec.
+- `reference/*`: the prototypes and stylesheet described above.
