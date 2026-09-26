@@ -1,27 +1,30 @@
-import { CAMPAIGN, RECAPS } from './data';
 import type { useCampaignSite } from './useCampaignSite';
 
-type Props = Pick<ReturnType<typeof useCampaignSite>, 'openRecap' | 'setOpenRecap'>;
+type Props = Pick<ReturnType<typeof useCampaignSite>, 'openRecap' | 'setOpenRecap' | 'content'>;
 
 const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export function RecapsTab({ openRecap, setOpenRecap }: Props) {
-  const rows = RECAPS.map((r, i) => {
-    const no = i + 1;
-    const d = new Date(r.date + 'T12:00:00');
-    const open = openRecap === no;
-    const latest = no === RECAPS.length;
-    return { ...r, no, open, latest, d };
-  }).reverse();
+export function RecapsTab({ openRecap, setOpenRecap, content }: Props) {
+  const byDate = content.recaps.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const rows = byDate
+    .map((r, i) => {
+      const no = i + 1;
+      const d = r.date ? new Date(r.date + 'T12:00:00') : null;
+      const open = openRecap === r.id;
+      const latest = no === byDate.length;
+      const tags = r.tags.split(',').map((t) => t.trim()).filter(Boolean);
+      return { ...r, no, open, latest, d, tags };
+    })
+    .reverse();
 
   return (
     <div style={{ padding: 'clamp(36px, 6vw, 72px) clamp(16px, 4vw, 48px)', display: 'flex', flexDirection: 'column', gap: 36, maxWidth: 900 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-accent-400)' }}>
-          {RECAPS.length} sessions &middot; {String(CAMPAIGN.nights).padStart(2, '0')} nights
+          {content.recaps.length} sessions &middot; {String(content.nights).padStart(2, '0')} nights
         </span>
         <h1 style={{ margin: 0, fontSize: 'clamp(40px, 7vw, 88px)', lineHeight: 0.9, letterSpacing: '-0.035em', textTransform: 'uppercase' }}>
           Session recaps
@@ -29,7 +32,7 @@ export function RecapsTab({ openRecap, setOpenRecap }: Props) {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {rows.map((r) => (
-          <div key={r.no} style={{ display: 'grid', gridTemplateColumns: '20px minmax(0, 1fr)', gap: '0 clamp(10px, 2.5vw, 18px)' }}>
+          <div key={r.id} style={{ display: 'grid', gridTemplateColumns: '20px minmax(0, 1fr)', gap: '0 clamp(10px, 2.5vw, 18px)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div
                 style={{
@@ -65,7 +68,7 @@ export function RecapsTab({ openRecap, setOpenRecap }: Props) {
                     padding: '16px clamp(14px, 3vw, 18px)',
                     minHeight: 44,
                   }}
-                  onClick={() => setOpenRecap(r.open ? -1 : r.no)}
+                  onClick={() => setOpenRecap(r.open ? '' : r.id)}
                 >
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
                     <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -73,7 +76,8 @@ export function RecapsTab({ openRecap, setOpenRecap }: Props) {
                         SESSION {String(r.no).padStart(2, '0')}
                       </span>
                       <span style={{ fontSize: 12, color: mutedInk(60) }}>
-                        {DAYS[r.d.getDay()]} {r.d.getDate()} {MONTHS[r.d.getMonth()]} &middot; Night {r.nights}
+                        {r.d ? `${DAYS[r.d.getDay()]} ${r.d.getDate()} ${MONTHS[r.d.getMonth()]}` : 'No date'}
+                        {r.nights ? ` · Night ${r.nights}` : ''}
                       </span>
                       {r.latest && (
                         <span style={{ background: 'var(--color-accent)', color: '#ffffff', padding: '2px 6px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}>
@@ -91,7 +95,7 @@ export function RecapsTab({ openRecap, setOpenRecap }: Props) {
                         textWrap: 'pretty',
                       }}
                     >
-                      {r.title}
+                      {r.title || 'Untitled session'}
                     </span>
                   </span>
                   <span
@@ -113,13 +117,15 @@ export function RecapsTab({ openRecap, setOpenRecap }: Props) {
                 {r.open && (
                   <div style={{ padding: '0 clamp(14px, 3vw, 18px) 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
                     <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: mutedInk(85), maxWidth: 620, textWrap: 'pretty' }}>{r.body}</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      {r.tags.map((tag) => (
-                        <span key={tag} style={{ border: `1px solid ${mutedInk(35)}`, padding: '3px 8px', fontSize: 12 }}>
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                    {r.tags.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {r.tags.map((tag) => (
+                          <span key={tag} style={{ border: `1px solid ${mutedInk(35)}`, padding: '3px 8px', fontSize: 12 }}>
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

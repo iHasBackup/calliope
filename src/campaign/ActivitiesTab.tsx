@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { PUZZLE_NUMBER, WORDS } from '../puzzle';
-import { ACTIVITY_THUMB } from './data';
 import type { useCampaignSite } from './useCampaignSite';
+
+// A 7x3 decorative grid for the crossword activity card's thumbnail.
+const ACTIVITY_THUMB = '.....#.#.#.#.#.....#.#.#.#.#.....';
 
 type Props = Pick<ReturnType<typeof useCampaignSite>, 'leader' | 'entries'>;
 

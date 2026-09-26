@@ -6,15 +6,23 @@ const TABS: { key: CampaignView; label: string }[] = [
   { key: 'activities', label: 'Activities' },
 ];
 
+const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
+
 export function Header({
   view,
   go,
-  narrowBrand,
+  width,
+  menuOpen,
+  setMenuOpen,
 }: {
   view: CampaignView;
   go: (v: CampaignView) => void;
-  narrowBrand: boolean;
+  width: number;
+  menuOpen: boolean;
+  setMenuOpen: (v: boolean) => void;
 }) {
+  const wide = width >= 640;
+
   return (
     <div
       style={{
@@ -27,56 +35,153 @@ export function Header({
         flexWrap: 'nowrap',
         gap: 12,
         padding: '6px clamp(10px, 4vw, 48px)',
+        minHeight: 57,
+        boxSizing: 'border-box',
         background: 'color-mix(in srgb, var(--color-text) 92%, transparent)',
         backdropFilter: 'blur(8px)',
         borderBottom: '1px solid color-mix(in srgb, var(--color-bg) 14%, transparent)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: '0 1 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
         <div style={{ width: 12, height: 12, flex: 'none', background: 'var(--color-accent)', transform: 'rotate(45deg)' }} />
-        {!narrowBrand && (
-          <div
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 800,
-              fontSize: 'clamp(12px, 3.4vw, 16px)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            The Crooked Moon
-          </div>
-        )}
+        <div
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 800,
+            fontSize: 'clamp(12px, 3.9vw, 16px)',
+            letterSpacing: 'clamp(0.02em, 0.5vw, 0.08em)',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          The Crooked Moon
+        </div>
       </div>
-      <div style={{ display: 'flex', gap: 2, flex: 'none' }}>
-        {TABS.map((t) => (
+
+      {wide ? (
+        <div style={{ display: 'flex', gap: 2, flex: 'none' }}>
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              style={{
+                all: 'unset',
+                cursor: 'pointer',
+                height: 44,
+                padding: '0 clamp(8px, 2.6vw, 14px)',
+                display: 'flex',
+                alignItems: 'center',
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 700,
+                fontSize: 'clamp(11px, 3.2vw, 13px)',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: view === t.key ? '#ffffff' : mutedInk(75),
+                background: view === t.key ? 'var(--color-accent)' : 'transparent',
+              }}
+              onClick={() => go(t.key)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <>
           <button
-            key={t.key}
             type="button"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
             style={{
               all: 'unset',
               cursor: 'pointer',
+              width: 44,
               height: 44,
-              padding: '0 clamp(8px, 2.6vw, 14px)',
-              display: 'flex',
-              alignItems: 'center',
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 700,
-              fontSize: 'clamp(11px, 3.2vw, 13px)',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: view === t.key ? '#ffffff' : 'color-mix(in srgb, var(--color-bg) 75%, transparent)',
-              background: view === t.key ? 'var(--color-accent)' : 'transparent',
+              flex: 'none',
+              display: 'grid',
+              placeItems: 'center',
+              background: menuOpen ? 'var(--color-accent)' : 'transparent',
+              boxSizing: 'border-box',
             }}
-            onClick={() => go(t.key)}
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            {t.label}
+            <span style={{ position: 'relative', width: 20, height: 14, display: 'block' }}>
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: i * 6,
+                    width: 20,
+                    height: 2,
+                    background: 'var(--color-bg)',
+                    transition: 'transform 0.2s, opacity 0.2s',
+                    transformOrigin: 'center',
+                    transform: menuOpen
+                      ? i === 0
+                        ? 'translateY(7px) rotate(45deg)'
+                        : i === 2
+                          ? 'translateY(-7px) rotate(-45deg)'
+                          : 'none'
+                      : 'none',
+                    opacity: menuOpen && i === 1 ? 0 : 1,
+                  }}
+                />
+              ))}
+            </span>
           </button>
-        ))}
-      </div>
+
+          {menuOpen && (
+            <>
+              <div
+                style={{ position: 'fixed', top: 57, left: 0, right: 0, bottom: 0, background: mutedInk(60), zIndex: 19 }}
+                onClick={() => setMenuOpen(false)}
+              />
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 57,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 21,
+                  background: 'var(--color-text)',
+                  borderBottom: '2px solid var(--color-accent)',
+                }}
+              >
+                {TABS.map((t) => (
+                  <button
+                    key={t.key}
+                    type="button"
+                    style={{
+                      all: 'unset',
+                      boxSizing: 'border-box',
+                      cursor: 'pointer',
+                      width: '100%',
+                      minHeight: 56,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0 clamp(16px, 4vw, 48px)',
+                      borderBottom: `1px solid ${mutedInk(14)}`,
+                      background: view === t.key ? 'var(--color-accent)' : 'transparent',
+                      color: view === t.key ? '#ffffff' : 'var(--color-bg)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 800,
+                      fontSize: 20,
+                      textTransform: 'uppercase',
+                    }}
+                    onClick={() => go(t.key)}
+                  >
+                    <span>{t.label}</span>
+                    <span>&rarr;</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }

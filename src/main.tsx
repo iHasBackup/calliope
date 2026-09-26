@@ -9,6 +9,7 @@ import './styles/app.css';
 import { CAMPAIGNS } from './campaigns';
 import NotFound from './NotFound';
 import CampaignSite from './campaign/CampaignSite';
+import AdminPage from './campaign/admin/AdminPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<Navigate to={CAMPAIGNS[0].path} replace />} />
         <Route path="/thecrookedmoon" element={<CampaignSite />} />
+        <Route path="/thecrookedmoon/admin" element={<AdminPage />} />
         {CAMPAIGNS.map((c) => (
           <Route key={c.slug} path={c.path} element={c.element} />
         ))}

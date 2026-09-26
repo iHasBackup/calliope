@@ -1,0 +1,16 @@
+.admin-outline-btn:hover {
+  border-color: var(--color-accent) !important;
+}
+.admin-remove-btn:hover {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent-400) !important;
+}
+.admin-text-link:hover {
+  color: var(--color-accent) !important;
+}
+/* iOS/Android dark-mode-aware form control chrome (date pickers etc). */
+.campaign-site input,
+.campaign-site textarea,
+.campaign-site select {
+  color-scheme: dark;
+}

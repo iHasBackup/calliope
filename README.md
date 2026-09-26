@@ -2,13 +2,15 @@
 
 ## Overview
 
-A small public site for a weekly D&D campaign based on *The Crooked Moon*. There are no accounts. It has three tabs: **Campaign** (home), **Recaps** and **Activities**. Activities links to the crossword game, which is specified separately in `CROSSWORD.md`.
+A small public site for a weekly D&D campaign based on *The Crooked Moon*. Players need no accounts. The public site has three tabs: **Campaign** (home), **Recaps** and **Activities**. Activities links to the crossword game, which is specified separately in `CROSSWORD.md`. A passcode-protected **Admin** page (a simple CMS) is where the DM edits all site content; see `CMS.md`.
 
 ## About the design files
 
 The files in `reference/` are **HTML design prototypes**. They show the intended look and behaviour; they are not production code. Recreate them in the target codebase's framework and conventions. If no codebase exists yet, a React + TypeScript SPA (Vite) is a good fit, with one route per tab (`/`, `/recaps`, `/activities`, `/activities/crossword`).
 
-- `reference/CampaignHome.dc.html`: the campaign site (all three tabs, data and logic).
+- `reference/CampaignHome.dc.html`: the public campaign site (all three tabs). It reads its content from the CMS store.
+- `reference/CampaignAdmin.dc.html`: the admin CMS.
+- `reference/campaign-content.js`: the content schema, sample content, and the load/save helpers both pages share (prototype persistence).
 - `reference/Crossword.dc.html`: the crossword game and its leaderboard.
 - `reference/modernist-styles.css`: design tokens and component classes (`.btn`, `.btn-primary`, `.grayscale`, and so on).
 - `reference/image-slot.js`: the prototype's drag-and-drop image placeholder. **Do not ship it.** Replace it with real `<img>` elements fed from content.
@@ -51,20 +53,25 @@ This is a **dark variant** of the Modernist system.
 
 ## Global header
 
-Sticky at the top with z-index 20, a 92% `--color-text` background with `backdrop-filter: blur(8px)`, and a 1px hairline bottom border. It is a **single row that never wraps** (`flex-wrap: nowrap`), with padding `6px clamp(10px, 4vw, 48px)`.
+Sticky at the top with z-index 20, a 92% `--color-text` background with `backdrop-filter: blur(8px)`, and a 1px hairline bottom border. It is a **single row that never wraps** (`flex-wrap: nowrap`), with padding `6px clamp(10px, 4vw, 48px)` and a min-height of 57px.
 
-- **Left:** a red diamond plus "THE CROOKED MOON". The label is `clamp(12px, 3.4vw, 16px)`, weight 800, letter-spacing 0.08em, and ellipsizes if space runs out. Below 380px viewport width the label is hidden and only the diamond remains.
-- **Right:** three tabs (Campaign, Recaps, Activities).
+- **Left:** a red diamond plus "THE CROOKED MOON" (weight 800, uppercase, nowrap). Font size `clamp(12px, 3.9vw, 16px)`, letter-spacing `clamp(0.02em, 0.5vw, 0.08em)`. The full title always shows; it must never truncate or overlap the menu button, down to 320px.
+- **Right, 640px and wider:** three inline tabs (Campaign, Recaps, Activities).
   - Size: 44px tall, padding `0 clamp(8px, 2.6vw, 14px)`, `clamp(11px, 3.2vw, 13px)` weight 700, uppercase.
-  - Active tab: accent fill with white text.
-  - Inactive tabs: 75% ink.
+  - Active tab: accent fill with white text. Inactive tabs: 75% ink.
+- **Right, below 640px:** a 44×44 **burger button** (three 20×2px ink bars, 5px apart).
+  - When open, the button fills with the accent and the bars animate into an ×: the top bar moves down 7px and rotates 45°, the middle bar fades out, and the bottom bar moves up 7px and rotates −45°, all over 0.2s.
+  - `aria-label` switches between "Open menu" and "Close menu"; `aria-expanded` reflects the state.
+- **Mobile menu panel:** `position: fixed` from `top: 57px` (flush under the header) to the bottom of the viewport, over a backdrop of the ground at 60%.
+  - Inside is an ink panel with a 2px accent bottom border, listing the three tabs as rows at least 56px tall: 20px weight 800 uppercase, a → on the right, and a 1px hairline between rows. The active row has the accent fill.
+  - It closes when you pick a tab, tap the backdrop, press Escape, or resize to 640px or wider.
 - Tabs set the view and update the URL hash (`#recaps`, `#activities`). The hash is read on load. Switching views scrolls to the top.
 
 ## Campaign tab (home)
 
 ### 1. Hero
 
-1. **Key-art band.** Full width, height `clamp(200px, 32vw, 400px)`, grayscale. The bottom 45% has a gradient scrim fading to the ground. The key art is supplied by the owner.
+1. **Key-art band.** Full width, height `clamp(200px, 32vw, 400px)`, grayscale, with a `center / cover` background image taken from `keyArtUrl` in the CMS. The bottom 45% has a gradient scrim fading to the ground.
 2. **Content row** below the key art: `flex-wrap: wrap`, `justify-content: space-between`, `align-items: flex-end`, gap 32px.
    - **Text column** (`flex: 1 1 320px`, max-width 720px):
      - Tags: "CURRENT ARC" (accent fill) and "CHAPTER II" (1px 40% outline).
@@ -89,11 +96,14 @@ A `flex-wrap` row with a 12px gap containing three panels, each padded 18px × 2
 ### 3. The party
 
 - **Header row:** kicker "4 ADVENTURERS · 1 JOINING", H2 "THE PARTY".
-- **Grid:** `repeat(auto-fill, minmax(min(100%, 148px), 1fr))` with gap `clamp(10px, 2vw, 14px)`. That gives two cards per row on phones and wraps naturally; there is no horizontal scroller.
+- **Grid:** `repeat(N, minmax(0, 1fr))` with gap `clamp(10px, 1.6vw, 20px)` and no horizontal scroller. N depends on the viewport width:
+  - Below 600px: N = 2.
+  - 600–1099px: N = 3.
+  - 1100px and up: N = the number of cards, capped at 5. All cards share one row on desktop; never leave a lone card on a second row.
 
 **Card**
 - `aspect-ratio: 3 / 4.2`, panel background, `container-type: inline-size`.
-- A grayscale portrait fills the card. The bottom 62% has a gradient scrim running from transparent to ink.
+- A grayscale portrait fills the card, set as a `background-image` with `center / cover`. If there is no portrait URL, show an empty panel. The bottom 62% has a gradient scrim running from transparent to ink.
 - Top-left badge: "LV 4" on an accent fill, 12px weight 800.
 
 **Text block**
@@ -101,7 +111,7 @@ A `flex-wrap` row with a 12px gap containing three panels, each padded 18px × 2
 The text block sits at the bottom with inset `clamp(10px, 2.4vw, 14px)`. Its grid rows have **fixed heights** (`16px 30px 24px 18px`, gap 6px), so every card lines up regardless of text length. Every line is single-line with an ellipsis.
 
 1. Species: 11px uppercase, `--color-accent-400`.
-2. Name: `clamp(18px, 13cqi, 26px)`, weight 800, uppercase. It is sized relative to the card, not the viewport.
+2. Name: `clamp(18px, 12cqi, 30px)`, weight 800, uppercase. It is sized relative to the card, not the viewport.
 3. Class: an ink-on-light chip, 12px weight 700.
 4. Subclass: 13px, 75% ink.
 
@@ -112,7 +122,8 @@ The text block sits at the bottom with inset `clamp(10px, 2.4vw, 14px)`. Its gri
 A two-column grid, `repeat(auto-fit, minmax(min(100%, 380px), 1fr))`.
 
 - **Left:** kicker "NIGHTS 1–8", H2 "THE STORY SO FAR", and summary paragraphs at 16px / 1.65, 85% ink.
-- **Right:** a panel with a 3px accent top border titled "QUEST LOG", showing "N active". Each open thread is a row: an outlined red diamond, then 15px text, with a hairline above.
+- **Right:** a panel with a 3px accent top border titled "QUEST LOG", showing "N active". Each open thread is a row: an outlined red diamond, then 15px text, with a hairline above. Blank threads are ignored; the panel is hidden when there are none.
+- The kicker reads "NIGHTS 1–{nights}". `summary` is split into paragraphs on blank lines.
 
 ## Recaps tab
 
@@ -137,33 +148,26 @@ A two-column grid, `repeat(auto-fit, minmax(min(100%, 380px), 1fr))`.
 
 ## Data model
 
-All of this is hard-coded in the prototype. Move it into a content source: JSON/MDX in the repo, a headless CMS, or a small database. The campaign owner edits it weekly.
+All site content is a single document edited in the CMS. `reference/campaign-content.js` contains the schema and the sample content.
 
 ```ts
-Campaign {
-  title: string; arcTitle: string; arcChapter: string; arcBlurb: string;
-  nights: number;          // in-game nights (8)
-  progress: number;        // 0–100 (24)
-  partyLevel: number;      // 4
-  summary: string[];       // paragraphs
+Content {
+  arcTitle: string; arcChapter: string; arcBlurb: string; keyArtUrl: string;
+  nights: number;          // in-game nights
+  progress: number;        // 0–100
+  partyLevel: number;      // 1–20
+  summary: string;         // paragraphs separated by a blank line
   threads: string[];       // quest log
-  keyArtUrl?: string;
-  schedule: { weekday: 3 /* Wed */; hour: 19; timezone: string /* IANA, e.g. "Asia/Jakarta" */; label: string /* "GMT+7" */ };
+  schedule: { weekday: 0–6; hour: 0–23; timezone: string /* display label, e.g. "GMT+7" */ };
+  showOpenSeat: boolean;   // show the "Seat open" card
+  party: { id; name; species; klass; sub; portraitUrl }[];
+  recaps: { id; title; date /* YYYY-MM-DD */; nights: string /* "4–5" */; body: string; tags: string /* comma separated */ }[];
 }
-PartyMember { id; name; species; className; subclass; portraitUrl?; }   // 4 today, 5th joining
-Recap { number; title; date /* ISO */; nights: string /* "4–5" */; body: string; tags: string[]; }
 ```
 
-Current party data (species not provided yet; the card shows "Species TBD"):
-
-| Name | Class | Subclass |
-| --- | --- | --- |
-| Oberon | Sorcerer | Wild Magic |
-| Hayden | Death Knight | TBD |
-| Carmen | Druid | TBD |
-| Ambary | Rogue | TBD |
-
-The story summary, quest threads and the seven recaps in the prototype are **placeholder copy**. Load the real content from the source.
+- **Recaps** are stored unordered. Sort them by `date`: session numbers come from that order (1 = earliest), and they are displayed newest first.
+- **Empty party fields** fall back to "Species TBD", "Class TBD", "Subclass TBD" and "Unnamed".
+- **Real content:** the story, threads and recaps in the sample are placeholder text. The DM replaces them through the CMS.
 
 ## Behaviour
 
@@ -171,7 +175,8 @@ The story summary, quest threads and the seven recaps in the prototype are **pla
 - Find the next Wednesday at `schedule.hour`. If today is Wednesday and the session started less than 4 hours ago, it is still today's session.
 - **Compute this in the campaign's timezone, not the viewer's.** The prototype uses the viewer's local time, which is wrong for players in other zones. Use `Intl`/Temporal or date-fns-tz with `schedule.timezone`.
 - Recompute every 60s.
-- Session number = number of recaps + 1.
+- Next session number = number of recaps + 1.
+- **Also store an IANA zone** (e.g. `Asia/Jakarta`) in `schedule`. The prototype only has a display label.
 
 **Stats and recaps**
 - `sessionsPlayed` = number of recaps.
@@ -200,6 +205,7 @@ The layout is fluid everywhere, with no fixed widths. It was verified with no ho
 
 ## Files
 
-- `README.md`: this spec (campaign site).
+- `README.md`: this spec (the public campaign site).
+- `CMS.md`: the admin CMS and content API spec.
 - `CROSSWORD.md`: the crossword game and shared leaderboard spec.
 - `reference/*`: the prototypes and stylesheet described above.

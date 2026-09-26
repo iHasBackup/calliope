@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
   <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
   <script src="./image-slot.js"></script>
+  <script src="./campaign-content.js"></script>
   <style>
     body { margin: 0; background: #201e1d; -webkit-text-size-adjust: 100%; }
     a { color: var(--color-accent-400); text-decoration: none; }
@@ -21,24 +22,51 @@
 
 <div style="min-height: 100vh; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
 
-  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 57px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
     <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 auto;">
       <div style="width: 12px; height: 12px; flex: none; background: var(--color-accent); transform: rotate(45deg);"></div>
-      <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(12px, 3.4vw, 16px); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: {{ brandDisplay }};">The Crooked Moon</div>
+      <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(12px, 3.9vw, 16px); letter-spacing: clamp(0.02em, 0.5vw, 0.08em); text-transform: uppercase; white-space: nowrap;">The Crooked Moon</div>
     </div>
+    <sc-if value="{{ burger }}" hint-placeholder-val="{{ false }}">
+      <button aria-label="{{ menuLabel }}" aria-expanded="{{ menuOpen }}" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: {{ menuBtnBg }};" onClick="{{ toggleMenu }}">
+        <span style="display: block; width: 20px; height: 2px; background: var(--color-bg); transform: {{ bar1 }}; transition: transform 0.2s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--color-bg); opacity: {{ bar2 }}; transition: opacity 0.2s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--color-bg); transform: {{ bar3 }}; transition: transform 0.2s;"></span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ inlineTabs }}" hint-placeholder-val="{{ true }}">
     <div style="display: flex; gap: 2px; flex: none;">
       <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
         <button style="all: unset; cursor: pointer; height: 44px; padding: 0 clamp(8px, 2.6vw, 14px); display: flex; align-items: center; font-family: var(--font-heading); font-weight: 700; font-size: clamp(11px, 3.2vw, 13px); letter-spacing: 0.06em; text-transform: uppercase; color: {{ t.color }}; background: {{ t.bg }};" onClick="{{ t.onClick }}">{{ t.label }}</button>
       </sc-for>
     </div>
+    </sc-if>
   </div>
+
+  <sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; top: 57px; left: 0; right: 0; bottom: 0; z-index: 19; background: color-mix(in srgb, var(--color-text) 60%, transparent);" onClick="{{ closeMenu }}">
+      <div style="background: var(--color-text); border-bottom: 2px solid var(--color-accent); padding: 8px clamp(10px, 4vw, 48px) 16px; display: flex; flex-direction: column;" onClick="{{ stop }}">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <button style="all: unset; box-sizing: border-box; cursor: pointer; min-height: 56px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); font-family: var(--font-heading); font-weight: 800; font-size: 20px; letter-spacing: 0.02em; text-transform: uppercase; color: {{ t.color }}; background: {{ t.bg }};" onClick="{{ t.onClick }}">
+            <span>{{ t.label }}</span>
+            <span style="font-size: 18px;">&rarr;</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
 
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
     <div>
       <div style="display: flex; flex-direction: column;">
         <div style="position: relative; width: 100%; height: clamp(200px, 32vw, 400px);">
           <div class="grayscale" style="position: absolute; inset: 0;">
-            <image-slot id="hero-keyart" shape="rect" placeholder="Drop campaign key art"></image-slot>
+            <sc-if value="{{ hasKeyArt }}" hint-placeholder-val="{{ false }}">
+              <div role="img" aria-label="Campaign key art" style="width: 100%; height: 100%; background: {{ keyArtBg }} center / cover no-repeat;"></div>
+            </sc-if>
+            <sc-if value="{{ noKeyArt }}" hint-placeholder-val="{{ true }}">
+              <image-slot id="hero-keyart" shape="rect" placeholder="Drop campaign key art"></image-slot>
+            </sc-if>
           </div>
           <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 45%; pointer-events: none; background: linear-gradient(180deg, transparent, var(--color-text));"></div>
         </div>
@@ -48,10 +76,10 @@
           <div style="display: flex; flex-direction: column; gap: 16px; max-width: 720px; flex: 1 1 320px; min-width: 0;">
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span style="background: var(--color-accent); color: #ffffff; padding: 5px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;">Current arc</span>
-              <span style="border: 1px solid color-mix(in srgb, var(--color-bg) 40%, transparent); padding: 4px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;">Chapter II</span>
+              <span style="border: 1px solid color-mix(in srgb, var(--color-bg) 40%, transparent); padding: 4px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;">{{ arcChapter }}</span>
             </div>
-            <h1 style="margin: 0; font-size: clamp(38px, 8vw, 104px); overflow-wrap: break-word; line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; text-wrap: balance;">The Harvest Below the Hill</h1>
-            <p style="margin: 0; font-size: clamp(15px, 1.6vw, 18px); line-height: 1.55; max-width: 560px; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">The party has followed the missing reapers to the barrow under Gallows Hill. The village insists the harvest must be finished before the moon turns full, and nobody will say what happens if it isn't.</p>
+            <h1 style="margin: 0; font-size: clamp(38px, 8vw, 104px); overflow-wrap: break-word; line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; text-wrap: balance;">{{ arcTitle }}</h1>
+            <p style="margin: 0; font-size: clamp(15px, 1.6vw, 18px); line-height: 1.55; max-width: 560px; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">{{ arcBlurb }}</p>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; pointer-events: auto; padding-top: 4px;">
               <button class="btn btn-primary" style="height: 48px; padding: 0 22px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;" onClick="{{ goRecaps }}">Catch up on recaps</button>
               <button style="all: unset; cursor: pointer; height: 48px; padding: 0 22px; display: flex; align-items: center; font-family: var(--font-heading); font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; border: 2px solid var(--color-bg); box-sizing: border-box;" style-hover="background: var(--color-bg); color: var(--color-text);" onClick="{{ goActivities }}">Play activities</button>
@@ -104,7 +132,7 @@
               </sc-for>
             </div>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">
-              <span>Chapter II of the adventure</span>
+              <span>{{ arcChapter }} of the adventure</span>
               <span>{{ sessionsPlayed }} sessions played</span>
             </div>
           </div>
@@ -119,17 +147,22 @@
           </div>
           <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Drop a portrait onto any card</span>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 148px), 1fr)); gap: clamp(10px, 2vw, 14px);">
+        <div style="display: grid; grid-template-columns: repeat({{ partyCols }}, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px);">
           <sc-for list="{{ party }}" as="p" hint-placeholder-count="5">
             <div style="position: relative; container-type: inline-size; aspect-ratio: 3 / 4.2; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 2px solid {{ p.border }}; overflow: hidden;">
               <div class="grayscale" style="position: absolute; inset: 0;">
-                <image-slot id="v2-portrait-{{ p.id }}" shape="rect" placeholder="{{ p.placeholder }}"></image-slot>
+                <sc-if value="{{ p.hasPortrait }}" hint-placeholder-val="{{ false }}">
+                  <div role="img" aria-label="Portrait" style="width: 100%; height: 100%; background: {{ p.portraitBg }} center / cover no-repeat;"></div>
+                </sc-if>
+                <sc-if value="{{ p.noPortrait }}" hint-placeholder-val="{{ true }}">
+                  <image-slot id="v2-portrait-{{ p.id }}" shape="rect" placeholder="{{ p.placeholder }}"></image-slot>
+                </sc-if>
               </div>
               <div style="position: absolute; inset: auto 0 0 0; height: 62%; pointer-events: none; background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-text) 80%, transparent) 45%, var(--color-text) 100%);"></div>
               <div style="position: absolute; top: 10px; left: 10px; pointer-events: none; background: {{ p.badgeBg }}; color: #ffffff; padding: 4px 8px; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">{{ p.badge }}</div>
               <div style="position: absolute; left: clamp(10px, 2.4vw, 14px); right: clamp(10px, 2.4vw, 14px); bottom: clamp(10px, 2.4vw, 14px); pointer-events: none; display: grid; grid-template-rows: 16px 30px 24px 18px; gap: 6px; min-width: 0;">
                 <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.species }}</div>
-                <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px, 13cqi, 26px); line-height: 30px; letter-spacing: -0.01em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px, 12cqi, 30px); line-height: 30px; letter-spacing: -0.01em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
                 <div style="display: flex; min-width: 0;"><span style="background: var(--color-bg); color: var(--color-text); padding: 0 8px; line-height: 24px; font-size: 12px; font-weight: 700; max-width: 100%; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.klass }}</span></div>
                 <div style="font-size: 13px; line-height: 18px; color: color-mix(in srgb, var(--color-bg) 75%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.sub }}</div>
               </div>
@@ -140,12 +173,13 @@
 
       <div style="padding: clamp(48px, 7vw, 88px) clamp(16px, 4vw, 48px) clamp(56px, 8vw, 96px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(28px, 5vw, 56px);">
         <div style="display: flex; flex-direction: column; gap: 16px;">
-          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">Nights 1–8</span>
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">{{ nightsRange }}</span>
           <h2 style="margin: 0; font-size: clamp(30px, 4.5vw, 52px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">The story so far</h2>
-          <p style="margin: 0; font-size: 16px; line-height: 1.65; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">Four strangers arrived in the valley of Hollowmere on the last cart before the roads flooded. They found a village that keeps its lanterns lit all night, a church with no priest, and a hill the children are forbidden to climb.</p>
-          <p style="margin: 0; font-size: 16px; line-height: 1.65; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">They have since broken a witch-bottle, burned a scarecrow that would not stay still, and struck a bargain with the Crone at the edge of the wood that none of them fully understand. The moon has risen crooked every night since.</p>
+          <sc-for list="{{ summary }}" as="para" hint-placeholder-count="2">
+            <p style="margin: 0; font-size: 16px; line-height: 1.65; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">{{ para }}</p>
+          </sc-for>
         </div>
-        <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 14px; align-self: start; border-top: 3px solid var(--color-accent);">
+        <sc-if value="{{ hasThreads }}" hint-placeholder-val="{{ true }}"><div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 14px; align-self: start; border-top: 3px solid var(--color-accent);">
           <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <span style="font-family: var(--font-heading); font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.02em;">Quest log</span>
             <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">{{ threadCount }} active</span>
@@ -156,7 +190,7 @@
               <span style="font-size: 15px; line-height: 1.5; text-wrap: pretty;">{{ th.text }}</span>
             </div>
           </sc-for>
-        </div>
+        </div></sc-if>
       </div>
     </div>
   </sc-if>
@@ -239,33 +273,15 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;nights&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;min&quot;:0,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Campaign&quot;},&quot;progress&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:24,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Campaign&quot;},&quot;partyLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:4,&quot;min&quot;:1,&quot;max&quot;:20,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Campaign&quot;},&quot;showOpenSeat&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Party&quot;},&quot;sessionHour&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:19,&quot;min&quot;:0,&quot;max&quot;:23,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Schedule&quot;},&quot;timezone&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Schedule&quot;}}">
-const PARTY = [
-  { id: 'p1', name: 'Oberon', species: 'Species TBD', klass: 'Sorcerer', sub: 'Wild Magic' },
-  { id: 'p2', name: 'Hayden', species: 'Species TBD', klass: 'Death Knight', sub: 'Subclass TBD' },
-  { id: 'p3', name: 'Carmen', species: 'Species TBD', klass: 'Druid', sub: 'Subclass TBD' },
-  { id: 'p4', name: 'Ambary', species: 'Species TBD', klass: 'Rogue', sub: 'Subclass TBD' }
-];
-const THREADS = [
-  'Who took the reapers into the barrow, and why did they go willingly?',
-  'The Crone\u2019s price is still unpaid. She said she would name it at the full moon.',
-  'A name in the church ledger of the dead belongs to someone the party spoke to yesterday.'
-];
-const RECAPS = [
-  { title: 'The Last Cart to Hollowmere', date: '2026-08-05', nights: '1', body: 'The party met on the flooded road and reached the village at dusk. The innkeeper warned them to keep a lantern burning. Carmen found salt lines under every door.', tags: ['Hollowmere', 'The Lantern Inn'] },
-  { title: 'Straw and Bone', date: '2026-08-12', nights: '2', body: 'A scarecrow in the east field moved between one look and the next. The party burned it, and found a child\u2019s tooth sewn into its chest.', tags: ['East field', 'Scarecrow'] },
-  { title: 'The Witch-Bottle', date: '2026-08-19', nights: '3', body: 'Ambary broke a witch-bottle hidden in the church wall. That night every dog in the village howled until dawn.', tags: ['Church', 'Curse'] },
-  { title: 'A Bargain in the Wood', date: '2026-08-26', nights: '4\u20135', body: 'Lost in the wood, the party accepted the Crone\u2019s help home. Her price will be named at the full moon.', tags: ['The Crone', 'Bargain'] },
-  { title: 'The Ledger of the Dead', date: '2026-09-02', nights: '6', body: 'Hayden read the parish ledger and found names of villagers who are still walking the streets.', tags: ['Church', 'Ledger'] },
-  { title: 'Gallows Hill', date: '2026-09-09', nights: '7', body: 'Following the missing reapers, the party climbed the forbidden hill and found the barrow door already open.', tags: ['Gallows Hill', 'Barrow'] },
-  { title: 'Below the Hill', date: '2026-09-16', nights: '8', body: 'Inside the barrow the reapers were still harvesting, in the dark, a field that should not exist underground. Session ended mid-combat.', tags: ['Barrow', 'Cliffhanger'] }
-];
+<script type="text/x-dc" data-dc-script>
 const THUMB = '.....#.#.#.#.#.....#.#.#.#.#.....';
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const CM = () => window.CrookedMoonContent;
+const EMPTY = { arcTitle: '', arcChapter: '', arcBlurb: '', keyArtUrl: '', nights: 0, progress: 0, partyLevel: 1, summary: '', threads: [], schedule: { weekday: 3, hour: 19, timezone: '' }, showOpenSeat: false, party: [], recaps: [] };
 
 class Component extends DCLogic {
-  state = { view: 'home', openNo: RECAPS.length, now: Date.now(), leader: null, entries: 0, w: typeof window !== 'undefined' ? window.innerWidth : 1200 };
+  state = { menu: false, view: 'home', openId: 'latest', now: Date.now(), leader: null, entries: 0, w: typeof window !== 'undefined' ? window.innerWidth : 1200, content: CM() ? CM().load() : null };
 
   componentDidMount() {
     const h = (location.hash || '').replace('#', '');
@@ -278,23 +294,35 @@ class Component extends DCLogic {
       }
     } catch (e) {}
     this.tick = setInterval(() => this.setState({ now: Date.now() }), 60000);
-    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onResize = () => this.setState(st => ({ w: window.innerWidth, menu: window.innerWidth < 640 ? st.menu : false }));
+    this.onEsc = e => { if (e.key === 'Escape' && this.state.menu) this.setState({ menu: false }); };
+    window.addEventListener('keydown', this.onEsc);
+    this.onStore = () => { if (CM()) this.setState({ content: CM().load() }); };
+    this.onVis = () => { if (!document.hidden) this.onStore(); };
     window.addEventListener('resize', this.onResize);
+    window.addEventListener('storage', this.onStore);
+    document.addEventListener('visibilitychange', this.onVis);
+    if (!this.state.content) this.wait = setInterval(() => { if (CM()) { clearInterval(this.wait); this.onStore(); } }, 50);
   }
-  componentWillUnmount() { clearInterval(this.tick); window.removeEventListener('resize', this.onResize); }
+  componentWillUnmount() {
+    clearInterval(this.tick); clearInterval(this.wait);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('keydown', this.onEsc);
+    window.removeEventListener('storage', this.onStore);
+    document.removeEventListener('visibilitychange', this.onVis);
+  }
 
   go(view) {
-    this.setState({ view });
+    this.setState({ view, menu: false });
     try { history.replaceState(null, '', view === 'home' ? location.pathname : '#' + view); } catch (e) {}
     window.scrollTo(0, 0);
   }
 
-  nextSession() {
-    const hour = this.props.sessionHour ?? 19;
+  nextSession(sch) {
     const d = new Date(this.state.now);
     const t = new Date(d);
-    t.setHours(hour, 0, 0, 0);
-    let add = (3 - d.getDay() + 7) % 7;
+    t.setHours(sch.hour, 0, 0, 0);
+    let add = (sch.weekday - d.getDay() + 7) % 7;
     if (add === 0 && d.getTime() > t.getTime() + 4 * 3600000) add = 7;
     t.setDate(t.getDate() + add);
     return t;
@@ -302,17 +330,18 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state;
-    const t = this.nextSession();
+    const c = s.content || EMPTY;
+    const t = this.nextSession(c.schedule);
     const diff = Math.max(0, t.getTime() - s.now);
     const hh = t.getHours();
-    const progress = Math.min(100, Math.max(0, this.props.progress ?? 24));
+    const progress = Math.min(100, Math.max(0, Number(c.progress) || 0));
     const filled = Math.round(progress / 5);
-    const showOpen = this.props.showOpenSeat ?? true;
-    const level = this.props.partyLevel ?? 4;
-    const nights = this.props.nights ?? 8;
+    const showOpen = c.showOpenSeat !== false;
+    const level = c.partyLevel;
+    const nights = Number(c.nights) || 0;
 
-    const party = PARTY.map(p => ({ ...p, border: 'transparent', badge: 'LV ' + level, badgeBg: 'var(--color-accent)', placeholder: 'Portrait of ' + p.name }));
-    if (showOpen) party.push({ id: 'p5', name: 'Seat open', species: 'Fifth player', klass: 'Joining soon', sub: 'Class TBD', border: 'color-mix(in srgb, var(--color-bg) 25%, transparent)', badge: '+1', badgeBg: 'color-mix(in srgb, var(--color-bg) 25%, var(--color-text))', placeholder: 'Portrait' });
+    const party = c.party.map(p => ({ ...p, name: p.name || 'Unnamed', species: p.species || 'Species TBD', klass: p.klass || 'Class TBD', sub: p.sub || 'Subclass TBD', hasPortrait: !!p.portraitUrl, noPortrait: !p.portraitUrl, portraitBg: p.portraitUrl ? 'url(' + JSON.stringify(p.portraitUrl) + ')' : 'none', border: 'transparent', badge: 'LV ' + level, badgeBg: 'var(--color-accent)', placeholder: 'Portrait of ' + (p.name || 'member') }));
+    if (showOpen) party.push({ id: 'open', name: 'Seat open', species: 'Fifth player', klass: 'Joining soon', sub: 'Class TBD', hasPortrait: false, noPortrait: true, border: 'color-mix(in srgb, var(--color-bg) 25%, transparent)', badge: '+1', badgeBg: 'color-mix(in srgb, var(--color-bg) 25%, var(--color-text))', placeholder: 'Portrait' });
 
     const tabs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['activities', 'Activities']].map(([k, label]) => ({
       label,
@@ -321,43 +350,58 @@ class Component extends DCLogic {
       onClick: () => this.go(k)
     }));
 
-    const recaps = RECAPS.map((r, i) => {
+    const sorted = c.recaps.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const recaps = sorted.map((r, i) => {
       const no = i + 1;
-      const d = new Date(r.date + 'T12:00:00');
-      const open = s.openNo === no;
-      const latest = no === RECAPS.length;
+      const d = r.date ? new Date(r.date + 'T12:00:00') : null;
+      const latest = no === sorted.length;
+      const open = s.openId === 'latest' ? latest : s.openId === r.id;
       return {
-        no: String(no).padStart(2, '0'), title: r.title, body: r.body, tags: r.tags, open, latest,
-        meta: DAYS[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + '  ·  Night ' + r.nights,
+        no: String(no).padStart(2, '0'), title: r.title || 'Untitled session', body: r.body, open, latest,
+        tags: String(r.tags || '').split(',').map(x => x.trim()).filter(Boolean),
+        meta: (d ? DAYS[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] : '') + (r.nights ? '  ·  Night ' + r.nights : ''),
         sign: open ? '\u2212' : '+',
         bg: open ? 'color-mix(in srgb, var(--color-bg) 7%, var(--color-text))' : 'transparent',
         border: open ? 'color-mix(in srgb, var(--color-bg) 20%, transparent)' : 'color-mix(in srgb, var(--color-bg) 10%, transparent)',
         node: latest ? 'var(--color-accent)' : 'var(--color-text)',
         nodeBorder: latest ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 50%, transparent)',
-        onToggle: () => this.setState({ openNo: open ? null : no })
+        onToggle: () => this.setState({ openId: open ? null : r.id })
       };
     }).reverse();
+    const threads = c.threads.filter(x => String(x).trim());
 
     return {
       tabs,
-      brandDisplay: s.w < 380 ? 'none' : 'block',
+      burger: s.w < 640, inlineTabs: s.w >= 640, showMenu: s.w < 640 && s.menu,
+      menuOpen: s.menu ? 'true' : 'false', menuLabel: s.menu ? 'Close menu' : 'Open menu',
+      menuBtnBg: s.menu ? 'var(--color-accent)' : 'transparent',
+      bar1: s.menu ? 'translateY(7px) rotate(45deg)' : 'none', bar2: s.menu ? 0 : 1, bar3: s.menu ? 'translateY(-7px) rotate(-45deg)' : 'none',
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
+      closeMenu: () => this.setState({ menu: false }),
+      stop: e => e.stopPropagation(),
       isHome: s.view === 'home', isRecaps: s.view === 'recaps', isActivities: s.view === 'activities',
       goRecaps: () => this.go('recaps'),
       goActivities: () => this.go('activities'),
-      nextSessionLabel: 'S' + String(RECAPS.length + 1).padStart(2, '0'),
+      arcTitle: c.arcTitle, arcChapter: c.arcChapter, arcBlurb: c.arcBlurb,
+      hasKeyArt: !!c.keyArtUrl, noKeyArt: !c.keyArtUrl, keyArtBg: c.keyArtUrl ? 'url(' + JSON.stringify(c.keyArtUrl) + ')' : 'none',
+      summary: String(c.summary || '').split(/\n\s*\n/).map(x => x.trim()).filter(Boolean),
+      nightsRange: 'Nights 1\u2013' + nights,
+      nextSessionLabel: 'S' + String(sorted.length + 1).padStart(2, '0'),
       cdDays: String(Math.floor(diff / 86400000)).padStart(2, '0'),
       cdHours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0'),
       nextDate: DAYS[t.getDay()].slice(0, 3) + ' ' + t.getDate() + ' ' + MONTHS[t.getMonth()],
-      nextTime: (hh % 12 || 12) + ':00 ' + (hh < 12 ? 'AM' : 'PM') + ((this.props.timezone ?? '') ? ' ' + this.props.timezone : ''),
+      nextTime: (hh % 12 || 12) + ':00 ' + (hh < 12 ? 'AM' : 'PM') + (c.schedule.timezone ? ' ' + c.schedule.timezone : ''),
       nightsText: String(nights).padStart(2, '0'),
       level,
       progressText: progress + '%',
       segments: Array.from({ length: 20 }, (_, i) => ({ bg: i < filled ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 14%, transparent)' })),
-      sessionsPlayed: RECAPS.length,
+      sessionsPlayed: sorted.length,
       party,
-      partyCount: PARTY.length + ' adventurers' + (showOpen ? ' · 1 joining' : ''),
-      threads: THREADS.map(text => ({ text })),
-      threadCount: THREADS.length,
+      partyCols: s.w < 600 ? 2 : s.w < 1100 ? 3 : Math.max(1, Math.min(5, party.length)),
+      partyCount: c.party.length + ' adventurers' + (showOpen ? ' · 1 joining' : ''),
+      threads: threads.map(text => ({ text })),
+      threadCount: threads.length,
+      hasThreads: threads.length > 0,
       recaps,
       thumbCells: THUMB.slice(0, 21).split('').map(ch => ({ ch: '', bg: ch === '#' ? 'var(--color-text)' : '#ffffff' })),
       leaderName: s.leader ? s.leader.name + ' — ' + s.leader.words + '/16' : 'No entries yet',

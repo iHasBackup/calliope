@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchScores } from '../api';
 import type { Score } from '../types';
-import { CAMPAIGN, RECAPS } from './data';
+import { useContent } from './useContent';
 import { nextSession } from './time';
 
 export type CampaignView = 'home' | 'recaps' | 'activities';
@@ -12,20 +12,36 @@ function viewFromHash(hash: string): CampaignView {
   return h === 'recaps' || h === 'activities' ? h : 'home';
 }
 
+function partyColumns(width: number, cardCount: number): number {
+  if (width < 600) return 2;
+  if (width < 1100) return 3;
+  return Math.min(cardCount, 5);
+}
+
 export function useCampaignSite() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { content, loading } = useContent();
 
   const [view, setViewState] = useState<CampaignView>(() => viewFromHash(location.hash));
-  const [openRecap, setOpenRecap] = useState<number>(RECAPS.length); // 1-indexed, newest open by default
+  const [openRecap, setOpenRecap] = useState<string>('');
   const [now, setNow] = useState(() => Date.now());
   const [width, setWidth] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1200));
+  const [menuOpen, setMenuOpen] = useState(false);
   const [leader, setLeader] = useState<Score | null>(null);
   const [entries, setEntries] = useState(0);
 
   useEffect(() => {
     setViewState(viewFromHash(location.hash));
   }, [location.hash]);
+
+  // Latest recap opens by default once content has loaded.
+  useEffect(() => {
+    if (content.recaps.length && !openRecap) {
+      const latest = content.recaps.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
+      if (latest) setOpenRecap(latest.id);
+    }
+  }, [content.recaps, openRecap]);
 
   useEffect(() => {
     let cancelled = false;
@@ -53,17 +69,31 @@ export function useCampaignSite() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  // Mobile menu: close on Escape or resize to desktop width.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+  useEffect(() => {
+    if (width >= 640 && menuOpen) setMenuOpen(false);
+  }, [width, menuOpen]);
+
   const go = useCallback(
     (v: CampaignView) => {
       navigate({ hash: v === 'home' ? '' : v }, { replace: true });
+      setMenuOpen(false);
       window.scrollTo(0, 0);
     },
     [navigate],
   );
 
   const session = useMemo(
-    () => nextSession(new Date(now), CAMPAIGN.schedule.weekday, CAMPAIGN.schedule.hour, CAMPAIGN.schedule.timezone),
-    [now],
+    () => nextSession(new Date(now), content.schedule.weekday, content.schedule.hour, content.schedule.timezone),
+    [now, content.schedule],
   );
   const countdown = useMemo(() => {
     const diff = Math.max(0, session.date.getTime() - now);
@@ -73,12 +103,19 @@ export function useCampaignSite() {
     };
   }, [session, now]);
 
+  const cardCount = content.party.length + (content.showOpenSeat ? 1 : 0);
+
   return {
+    content,
+    contentLoading: loading,
     view,
     go,
     openRecap,
     setOpenRecap,
-    narrowBrand: width < 380,
+    width,
+    menuOpen,
+    setMenuOpen,
+    partyColumns: partyColumns(width, cardCount),
     session,
     countdown,
     leader,
