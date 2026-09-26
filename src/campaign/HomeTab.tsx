@@ -1,11 +1,11 @@
 import { SwordsIcon } from './SwordsIcon';
 import type { useCampaignSite } from './useCampaignSite';
 
-type Props = Pick<ReturnType<typeof useCampaignSite>, 'go' | 'session' | 'countdown' | 'content' | 'partyColumns'>;
+type Props = Pick<ReturnType<typeof useCampaignSite>, 'go' | 'session' | 'countdown' | 'content' | 'partyColumns' | 'width'>;
 
 const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
 
-export function HomeTab({ go, session, countdown, content, partyColumns }: Props) {
+export function HomeTab({ go, session, countdown, content, partyColumns, width }: Props) {
   const progress = Math.min(100, Math.max(0, content.progress));
   const filled = Math.round(progress / 5);
   const segments = Array.from({ length: 20 }, (_, i) => i < filled);
@@ -77,32 +77,22 @@ export function HomeTab({ go, session, countdown, content, partyColumns }: Props
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 720, flex: '1 1 320px', minWidth: 0 }}>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <span
-                style={{
-                  background: 'var(--color-accent)',
-                  color: '#ffffff',
-                  padding: '5px 10px',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Current arc
-              </span>
-              <span
-                style={{
-                  border: `1px solid ${mutedInk(40)}`,
-                  padding: '4px 10px',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {content.arcChapter}
-              </span>
+            <div
+              style={{
+                display: 'flex',
+                gap: 10,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+              }}
+            >
+              <span style={{ width: 8, height: 8, flex: 'none', background: 'var(--color-accent)', transform: 'rotate(45deg)' }} />
+              <span style={{ color: 'var(--color-accent-400)' }}>Current arc</span>
+              <span style={{ color: mutedInk(45) }}>/</span>
+              <span style={{ color: mutedInk(80) }}>{content.arcChapter}</span>
             </div>
             <h1
               style={{
@@ -161,7 +151,7 @@ export function HomeTab({ go, session, countdown, content, partyColumns }: Props
               background: 'var(--color-accent)',
               color: '#ffffff',
               padding: 'clamp(16px, 4vw, 24px)',
-              width: 'min(100%, 320px)',
+              width: width < 640 ? '100%' : 'min(100%, 320px)',
               boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',

@@ -74,11 +74,11 @@ Sticky at the top with z-index 20, a 92% `--color-text` background with `backdro
 1. **Key-art band.** Full width, height `clamp(200px, 32vw, 400px)`, grayscale, with a `center / cover` background image taken from `keyArtUrl` in the CMS. The bottom 45% has a gradient scrim fading to the ground.
 2. **Content row** below the key art: `flex-wrap: wrap`, `justify-content: space-between`, `align-items: flex-end`, gap 32px.
    - **Text column** (`flex: 1 1 320px`, max-width 720px):
-     - Tags: "CURRENT ARC" (accent fill) and "CHAPTER II" (1px 40% outline).
+     - Kicker line (plain text, **not** chips — nothing boxed should look clickable unless it is): 8px red diamond, "CURRENT ARC" in accent-400, a 45% "/", then the chapter at 80% ink. 12px, weight 700, uppercase, letter-spacing 0.16em.
      - H1 with the arc title, `clamp(38px, 8vw, 104px)`.
      - Arc description, `clamp(15px, 1.6vw, 18px)`, 85% ink, max-width 560px.
      - Two 48px buttons: "Catch up on recaps" (`.btn-primary`, opens Recaps) and "Play activities" (2px ink outline that inverts on hover, opens Activities). The two buttons stay on one line at every width (nowrap; font `clamp(11px, 3.3vw, 14px)`, padding `0 clamp(12px, 3.4vw, 22px)`).
-   - **Next-session card**: `width: min(100%, 320px)`, padding `clamp(16px, 4vw, 24px)` on all sides, gap `clamp(10px, 2.5vw, 14px)`, accent background with white text, `box-shadow: 0 24px 60px rgba(0,0,0,.45)`.
+   - **Next-session card**: `width: min(100%, 320px)` on desktop, **full width below 640px**, padding `clamp(16px, 4vw, 24px)` on all sides, gap `clamp(10px, 2.5vw, 14px)`, accent background with white text, `box-shadow: 0 24px 60px rgba(0,0,0,.45)`.
      - Kicker: "NEXT SESSION · S08", i.e. the next session number.
      - A two-column grid with equal `1fr` columns showing the days and hours remaining. Numbers are `clamp(40px, 11vw, 64px)` weight 800 with tabular figures, and the "DAYS" / "HOURS" labels are centered under them.
      - A 1px white-40% rule, then one line that doesn't wrap: `Wed 30 Sep · 7:00 PM GMT+7`. The day name is abbreviated to three letters.
