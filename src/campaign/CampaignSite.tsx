@@ -4,9 +4,11 @@ import { HomeTab } from './HomeTab';
 import { RecapsTab } from './RecapsTab';
 import { ActivitiesTab } from './ActivitiesTab';
 import { useCampaignSite } from './useCampaignSite';
+import { useDarkBody } from './useDarkBody';
 
 export default function CampaignSite() {
   const site = useCampaignSite();
+  useDarkBody();
 
   return (
     <div className="campaign-site">

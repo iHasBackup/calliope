@@ -9,6 +9,7 @@ import { PartySection } from './sections/PartySection';
 import { RecapsSection } from './sections/RecapsSection';
 import { QuestsSection } from './sections/QuestsSection';
 import { useAdmin, type Section } from './useAdmin';
+import { useDarkBody } from '../useDarkBody';
 
 const SECTIONS: { key: Section; label: string }[] = [
   { key: 'campaign', label: 'Campaign' },
@@ -20,6 +21,7 @@ const SECTIONS: { key: Section; label: string }[] = [
 
 export default function AdminPage() {
   const admin = useAdmin();
+  useDarkBody();
   const narrow = admin.width < 820;
   const brandHidden = admin.width < 520;
 

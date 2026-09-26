@@ -63,6 +63,25 @@ export function HomeTab({ go, session, countdown, content, partyColumns, width }
               background: 'linear-gradient(180deg, transparent, var(--color-text))',
             }}
           />
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              background: 'linear-gradient(90deg, var(--color-text) 0%, transparent 18%, transparent 82%, var(--color-text) 100%)',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              height: '30%',
+              pointerEvents: 'none',
+              background: 'linear-gradient(0deg, transparent, var(--color-text))',
+            }}
+          />
         </div>
 
         <div

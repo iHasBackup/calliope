@@ -47,6 +47,9 @@ This is a **dark variant** of the Modernist system.
 - Diamond marks are 10–14px squares rotated 45°: used for the brand, quest bullets and timeline nodes.
 - Images always sit inside the `.grayscale` wrapper.
 
+**Max width**
+- The whole page (header included) is capped at **1440px** and centered (`max-width: 1440px; margin: 0 auto`). The body background is the same ground color, so wider screens just show more ground at the sides. Layout breakpoints never go beyond 1440px.
+
 **Page padding**
 - Horizontal: `clamp(16px, 4vw, 48px)`.
 - Section spacing: `clamp(48px, 7vw, 88px)`.
@@ -71,7 +74,7 @@ Sticky at the top with z-index 20, a 92% `--color-text` background with `backdro
 
 ### 1. Hero
 
-1. **Key-art band.** Full width, height `clamp(200px, 32vw, 400px)`, grayscale, with a `center / cover` background image taken from `keyArtUrl` in the CMS. The bottom 45% has a gradient scrim fading to the ground.
+1. **Key-art band.** Full width, height `clamp(200px, 32vw, 400px)`, grayscale, with a `center / cover` background image taken from `keyArtUrl` in the CMS. The bottom 45% has a gradient scrim fading to the ground, and a second horizontal scrim fades the left and right edges to the ground (`linear-gradient(90deg, ground 0%, transparent 18%, transparent 82%, ground 100%)`) so the art blends into the page at the 1440px cap. A top scrim (top 30%, ground fading to transparent) blends it into the header.
 2. **Content row** below the key art: `flex-wrap: wrap`, `justify-content: space-between`, `align-items: flex-end`, gap 32px.
    - **Text column** (`flex: 1 1 320px`, max-width 720px):
      - Kicker line (plain text, **not** chips — nothing boxed should look clickable unless it is): 8px red diamond, "CURRENT ARC" in accent-400, a 45% "/", then the chapter at 80% ink. 12px, weight 700, uppercase, letter-spacing 0.16em.

@@ -20,7 +20,7 @@
   </style>
 </helmet>
 
-<div style="min-height: 100vh; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
+<div style="min-height: 100vh; max-width: 1440px; margin: 0 auto; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
 
   <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 57px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
     <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 auto;">
@@ -69,6 +69,8 @@
             </sc-if>
           </div>
           <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 45%; pointer-events: none; background: linear-gradient(180deg, transparent, var(--color-text));"></div>
+          <div style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--color-text) 0%, transparent 18%, transparent 82%, var(--color-text) 100%);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 0; height: 30%; pointer-events: none; background: linear-gradient(0deg, transparent, var(--color-text));"></div>
         </div>
         
 
