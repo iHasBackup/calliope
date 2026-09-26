@@ -17,7 +17,7 @@ export default function NotFound() {
         404
       </div>
       <h1 style={{ margin: 0, fontSize: 'clamp(28px, 4vw, 44px)' }}>Nothing at this address.</h1>
-      <Link to="/crookedmoon/crossword" className="btn btn-primary" style={{ height: 44, padding: '0 20px' }}>
+      <Link to="/thecrookedmoon" className="btn btn-primary" style={{ height: 44, padding: '0 20px' }}>
         Go to The Crooked Moon
       </Link>
     </div>

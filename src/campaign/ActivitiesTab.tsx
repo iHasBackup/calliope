@@ -73,7 +73,7 @@ export function ActivitiesTab({ leader, entries }: Props) {
               <span style={{ fontWeight: 700 }}>{entries}</span>
             </div>
             <Link
-              to="/crookedmoon/crossword"
+              to="/thecrookedmoon/activities/crossword"
               className="btn btn-primary"
               style={{ height: 48, padding: '0 22px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start', fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}
             >

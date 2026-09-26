@@ -15,12 +15,14 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to={CAMPAIGNS[0].path} replace />} />
+        <Route path="/" element={<Navigate to="/thecrookedmoon" replace />} />
         <Route path="/thecrookedmoon" element={<CampaignSite />} />
         <Route path="/thecrookedmoon/admin" element={<AdminPage />} />
         {CAMPAIGNS.map((c) => (
           <Route key={c.slug} path={c.path} element={c.element} />
         ))}
+        {/* Old crossword URL — redirect so existing links/bookmarks keep working. */}
+        <Route path="/crookedmoon/crossword" element={<Navigate to="/thecrookedmoon/activities/crossword" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
