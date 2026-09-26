@@ -22,9 +22,9 @@
 
 <div style="min-height: 100vh; max-width: 1440px; margin: 0 auto; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
 
-  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 57px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 57px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px);">
     <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 auto;">
-      <div style="width: 12px; height: 12px; flex: none; background: var(--color-accent); transform: rotate(45deg);"></div>
+      <div style="width: 28px; height: 28px; flex: none; display: grid; place-items: center; background: var(--color-accent); color: #ffffff; border-radius: 6px; font-family: var(--font-heading); font-weight: 800; font-size: 17px; line-height: 1;">C</div>
       <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(12px, 3.9vw, 16px); letter-spacing: clamp(0.02em, 0.5vw, 0.08em); text-transform: uppercase; white-space: nowrap;">The Crooked Moon</div>
     </div>
     <sc-if value="{{ burger }}" hint-placeholder-val="{{ false }}">
@@ -110,9 +110,7 @@
       <div style="padding: 0 clamp(16px, 4vw, 48px);">
         <div style="display: flex; flex-wrap: wrap; gap: 12px;">
           <div style="flex: 1 1 150px; min-width: 0; box-sizing: border-box; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: 18px 20px; display: flex; align-items: center; gap: 16px;">
-            <div style="width: 44px; height: 44px; border-radius: 0; background: var(--color-bg); position: relative; overflow: hidden; flex: none;">
-              <div style="position: absolute; width: 44px; height: 44px; left: 12px; top: -6px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border-radius: 50%;"></div>
-            </div>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none;" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
             <div style="display: flex; flex-direction: column; gap: 2px;">
               <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">In-game night</span>
               <span style="font-family: var(--font-heading); font-weight: 800; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums;">{{ nightsText }}</span>

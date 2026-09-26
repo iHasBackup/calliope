@@ -40,11 +40,27 @@ export function Header({
         boxSizing: 'border-box',
         background: 'color-mix(in srgb, var(--color-text) 92%, transparent)',
         backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid color-mix(in srgb, var(--color-bg) 14%, transparent)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-        <div style={{ width: 12, height: 12, flex: 'none', background: 'var(--color-accent)', transform: 'rotate(45deg)' }} />
+        <div
+          style={{
+            width: 28,
+            height: 28,
+            flex: 'none',
+            display: 'grid',
+            placeItems: 'center',
+            background: 'var(--color-accent)',
+            color: '#ffffff',
+            borderRadius: 6,
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 800,
+            fontSize: 17,
+            lineHeight: 1,
+          }}
+        >
+          C
+        </div>
         <div
           style={{
             fontFamily: 'var(--font-heading)',

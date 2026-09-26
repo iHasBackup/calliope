@@ -43,8 +43,8 @@ This is a **dark variant** of the Modernist system.
 - Kickers: 11px, weight 700, uppercase, letter-spacing 0.14–0.16em.
 
 **Shapes and marks**
-- **Zero border radius everywhere.** The only exception is the moon glyph described below.
-- Diamond marks are 10–14px squares rotated 45°: used for the brand, quest bullets and timeline nodes.
+- **Zero border radius everywhere.** The one exception is the 6px-rounded "C" brand mark in the header.
+- Diamond marks are 8–14px squares rotated 45°: used for the arc kicker, quest bullets and timeline nodes.
 - Images always sit inside the `.grayscale` wrapper.
 
 **Max width**
@@ -56,9 +56,9 @@ This is a **dark variant** of the Modernist system.
 
 ## Global header
 
-Sticky at the top with z-index 20, a 92% `--color-text` background with `backdrop-filter: blur(8px)`, and a 1px hairline bottom border. It is a **single row that never wraps** (`flex-wrap: nowrap`), with padding `6px clamp(10px, 4vw, 48px)` and a min-height of 57px.
+Sticky at the top with z-index 20, a 92% `--color-text` background with `backdrop-filter: blur(8px)`, and **no bottom border**. It is a **single row that never wraps** (`flex-wrap: nowrap`), with padding `6px clamp(10px, 4vw, 48px)` and a min-height of 57px.
 
-- **Left:** a red diamond plus "THE CROOKED MOON" (weight 800, uppercase, nowrap). Font size `clamp(12px, 3.9vw, 16px)`, letter-spacing `clamp(0.02em, 0.5vw, 0.08em)`. The full title always shows; it must never truncate or overlap the menu button, down to 320px.
+- **Left:** a brand mark plus "THE CROOKED MOON". The mark is a 28×28 accent square with a **6px corner radius** (the one deliberate exception to the zero-radius rule) holding a white "C" (17px, weight 800, centered). The label is weight 800, uppercase, nowrap. Font size `clamp(12px, 3.9vw, 16px)`, letter-spacing `clamp(0.02em, 0.5vw, 0.08em)`. The full title always shows; it must never truncate or overlap the menu button, down to 320px.
 - **Right, 640px and wider:** three inline tabs (Campaign, Recaps, Activities).
   - Size: 44px tall, padding `0 clamp(8px, 2.6vw, 14px)`, `clamp(11px, 3.2vw, 13px)` weight 700, uppercase.
   - Active tab: accent fill with white text. Inactive tabs: 75% ink.
@@ -90,7 +90,7 @@ Sticky at the top with z-index 20, a 92% `--color-text` background with `backdro
 
 A `flex-wrap` row with a 12px gap containing three panels, each padded 18px × 20px.
 
-- **In-game night** (`flex: 1 1 150px`): a 44px moon glyph (a light square with an offset dark circle cut out of it) and the night count, zero-padded, at 34px.
+- **In-game night** (`flex: 1 1 150px`): the Lucide **moon** (crescent) icon, 44px, stroked in the accent and the night count, zero-padded, at 34px.
 - **Party level** (`flex: 1 1 150px`): the Lucide **swords** icon, 44px, stroked in the accent, and "Lv. 4". Don't repeat the number inside the icon.
 - **Campaign progress** (`flex: 2 1 300px`): the label, then the percentage at 28px in the accent.
   - Below that, a **segmented bar**: 20 cells, 14px tall, 3px gap. Filled cells = `round(progress / 5)` in the accent; the rest are 14% ink.
@@ -203,7 +203,7 @@ The layout is fluid everywhere, with no fixed widths. It was verified with no ho
 ## Assets
 
 - **Images:** the key art and one portrait per party member are provided by the owner. Always render them grayscale.
-- **Icons:** Lucide **swords** is the only icon. The moon glyph and the diamonds are pure CSS.
+- **Icons:** Lucide **moon** (in-game night) and **swords** (party level). The diamonds are pure CSS.
 - **Font:** Archivo is imported by `modernist-styles.css`. Self-host it in production.
 
 ## Files

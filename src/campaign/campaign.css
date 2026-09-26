@@ -48,22 +48,3 @@
   transform: rotate(45deg);
   flex: none;
 }
-
-.campaign-moon {
-  width: 44px;
-  height: 44px;
-  background: var(--color-bg);
-  position: relative;
-  overflow: hidden;
-  flex: none;
-}
-.campaign-moon::after {
-  content: '';
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  left: 12px;
-  top: -6px;
-  background: var(--panel);
-  border-radius: 50%;
-}

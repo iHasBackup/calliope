@@ -1,3 +1,4 @@
+import { MoonIcon } from './MoonIcon';
 import { SwordsIcon } from './SwordsIcon';
 import type { useCampaignSite } from './useCampaignSite';
 
@@ -206,7 +207,7 @@ export function HomeTab({ go, session, countdown, content, partyColumns, width }
       <div style={{ padding: '0 clamp(16px, 4vw, 48px)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
           <div style={{ flex: '1 1 150px', minWidth: 0, boxSizing: 'border-box', background: 'var(--panel)', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div className="campaign-moon" />
+            <MoonIcon />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: mutedInk(65) }}>
                 In-game night
