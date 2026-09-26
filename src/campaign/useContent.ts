@@ -7,7 +7,7 @@ export function useContent() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/content')
+    fetch('/api/content', { cache: 'no-store' })
       .then((res) => {
         if (!res.ok) throw new Error(`GET /api/content failed: ${res.status}`);
         return res.json();

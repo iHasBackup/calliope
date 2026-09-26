@@ -10,8 +10,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const redis = getRedis();
 
     if (req.method === 'GET') {
+      // No caching: a cached response here can outlive a save, so the
+      // admin's next load (and thus its updatedAt) goes stale and every
+      // subsequent save spuriously 409s against the real current value.
+      res.setHeader('Cache-Control', 'no-store');
       const stored = await redis.get<Content>(CONTENT_KEY);
-      res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=30');
       res.status(200).json(stored ?? { ...DEFAULT_CONTENT, updatedAt: 0 });
       return;
     }

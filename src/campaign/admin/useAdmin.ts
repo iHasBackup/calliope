@@ -10,7 +10,7 @@ function clone<T>(v: T): T {
 }
 
 async function jsonFetch<T>(url: string, init?: RequestInit): Promise<{ status: number; body: T }> {
-  const res = await fetch(url, init);
+  const res = await fetch(url, { cache: 'no-store', ...init });
   const body = (await res.json().catch(() => null)) as T;
   return { status: res.status, body };
 }
