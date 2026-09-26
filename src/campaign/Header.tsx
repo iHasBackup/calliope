@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import type { CampaignView } from './useCampaignSite';
 
 const TABS: { key: CampaignView; label: string }[] = [
@@ -131,55 +132,57 @@ export function Header({
             </span>
           </button>
 
-          {menuOpen && (
-            <>
-              <div
-                style={{ position: 'fixed', top: 57, left: 0, right: 0, bottom: 0, background: mutedInk(60), zIndex: 19 }}
-                onClick={() => setMenuOpen(false)}
-              />
-              <div
-                style={{
-                  position: 'fixed',
-                  top: 57,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 21,
-                  background: 'var(--color-text)',
-                  borderBottom: '2px solid var(--color-accent)',
-                }}
-              >
-                {TABS.map((t) => (
-                  <button
-                    key={t.key}
-                    type="button"
-                    style={{
-                      all: 'unset',
-                      boxSizing: 'border-box',
-                      cursor: 'pointer',
-                      width: '100%',
-                      minHeight: 56,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0 clamp(16px, 4vw, 48px)',
-                      borderBottom: `1px solid ${mutedInk(14)}`,
-                      background: view === t.key ? 'var(--color-accent)' : 'transparent',
-                      color: view === t.key ? '#ffffff' : 'var(--color-bg)',
-                      fontFamily: 'var(--font-heading)',
-                      fontWeight: 800,
-                      fontSize: 20,
-                      textTransform: 'uppercase',
-                    }}
-                    onClick={() => go(t.key)}
-                  >
-                    <span>{t.label}</span>
-                    <span>&rarr;</span>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
+          {menuOpen &&
+            createPortal(
+              <>
+                <div
+                  style={{ position: 'fixed', top: 57, left: 0, right: 0, bottom: 0, background: '#000000', zIndex: 19 }}
+                  onClick={() => setMenuOpen(false)}
+                />
+                <div
+                  style={{
+                    position: 'fixed',
+                    top: 57,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 21,
+                    background: '#000000',
+                    borderBottom: '2px solid var(--color-accent)',
+                  }}
+                >
+                  {TABS.map((t) => (
+                    <button
+                      key={t.key}
+                      type="button"
+                      style={{
+                        all: 'unset',
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                        width: '100%',
+                        minHeight: 56,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0 clamp(16px, 4vw, 48px)',
+                        borderBottom: `1px solid ${mutedInk(14)}`,
+                        background: view === t.key ? 'var(--color-accent)' : 'transparent',
+                        color: view === t.key ? '#ffffff' : 'var(--color-bg)',
+                        fontFamily: 'var(--font-heading)',
+                        fontWeight: 800,
+                        fontSize: 20,
+                        textTransform: 'uppercase',
+                      }}
+                      onClick={() => go(t.key)}
+                    >
+                      <span>{t.label}</span>
+                      <span>&rarr;</span>
+                    </button>
+                  ))}
+                </div>
+              </>,
+              document.body,
+            )}
         </>
       )}
     </div>

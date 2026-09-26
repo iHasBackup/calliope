@@ -62,8 +62,8 @@ Sticky at the top with z-index 20, a 92% `--color-text` background with `backdro
 - **Right, below 640px:** a 44×44 **burger button** (three 20×2px ink bars, 5px apart).
   - When open, the button fills with the accent and the bars animate into an ×: the top bar moves down 7px and rotates 45°, the middle bar fades out, and the bottom bar moves up 7px and rotates −45°, all over 0.2s.
   - `aria-label` switches between "Open menu" and "Close menu"; `aria-expanded` reflects the state.
-- **Mobile menu panel:** `position: fixed` from `top: 57px` (flush under the header) to the bottom of the viewport, over a backdrop of the ground at 60%.
-  - Inside is an ink panel with a 2px accent bottom border, listing the three tabs as rows at least 56px tall: 20px weight 800 uppercase, a → on the right, and a 1px hairline between rows. The active row has the accent fill.
+- **Mobile menu panel:** `position: fixed` from `top: 57px` (flush under the header) to the bottom of the viewport, over a solid black (#000) backdrop so nothing behind it shows through.
+  - Inside is a black panel with a 2px accent bottom border, listing the three tabs as rows at least 56px tall: 20px weight 800 uppercase, a → on the right, and a 1px hairline between rows. The active row has the accent fill.
   - It closes when you pick a tab, tap the backdrop, press Escape, or resize to 640px or wider.
 - Tabs set the view and update the URL hash (`#recaps`, `#activities`). The hash is read on load. Switching views scrolls to the top.
 
@@ -77,10 +77,10 @@ Sticky at the top with z-index 20, a 92% `--color-text` background with `backdro
      - Tags: "CURRENT ARC" (accent fill) and "CHAPTER II" (1px 40% outline).
      - H1 with the arc title, `clamp(38px, 8vw, 104px)`.
      - Arc description, `clamp(15px, 1.6vw, 18px)`, 85% ink, max-width 560px.
-     - Two 48px buttons: "Catch up on recaps" (`.btn-primary`, opens Recaps) and "Play activities" (2px ink outline that inverts on hover, opens Activities).
-   - **Next-session card**: `width: min(100%, 320px)`, 24px padding on all sides, gap 14px, accent background with white text, `box-shadow: 0 24px 60px rgba(0,0,0,.45)`.
+     - Two 48px buttons: "Catch up on recaps" (`.btn-primary`, opens Recaps) and "Play activities" (2px ink outline that inverts on hover, opens Activities). The two buttons stay on one line at every width (nowrap; font `clamp(11px, 3.3vw, 14px)`, padding `0 clamp(12px, 3.4vw, 22px)`).
+   - **Next-session card**: `width: min(100%, 320px)`, padding `clamp(16px, 4vw, 24px)` on all sides, gap `clamp(10px, 2.5vw, 14px)`, accent background with white text, `box-shadow: 0 24px 60px rgba(0,0,0,.45)`.
      - Kicker: "NEXT SESSION · S08", i.e. the next session number.
-     - A two-column grid with equal `1fr` columns showing the days and hours remaining. Numbers are 64px weight 800 with tabular figures, and the "DAYS" / "HOURS" labels are centered under them.
+     - A two-column grid with equal `1fr` columns showing the days and hours remaining. Numbers are `clamp(40px, 11vw, 64px)` weight 800 with tabular figures, and the "DAYS" / "HOURS" labels are centered under them.
      - A 1px white-40% rule, then one line that doesn't wrap: `Wed 30 Sep · 7:00 PM GMT+7`. The day name is abbreviated to three letters.
 
 ### 2. Stat strip

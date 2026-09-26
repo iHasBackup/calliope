@@ -120,16 +120,37 @@ export function HomeTab({ go, session, countdown, content, partyColumns }: Props
             <p style={{ margin: 0, fontSize: 'clamp(15px, 1.6vw, 18px)', lineHeight: 1.55, maxWidth: 560, color: mutedInk(85), textWrap: 'pretty' }}>
               {content.arcBlurb}
             </p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', paddingTop: 4 }}>
+            <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 10px)', flexWrap: 'nowrap', paddingTop: 4 }}>
               <button
                 type="button"
                 className="btn btn-primary"
-                style={{ height: 48, padding: '0 22px', fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}
+                style={{
+                  height: 48,
+                  padding: '0 clamp(12px, 3.4vw, 22px)',
+                  fontSize: 'clamp(11px, 3.3vw, 14px)',
+                  letterSpacing: 'clamp(0.02em, 0.4vw, 0.06em)',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                  flex: '0 1 auto',
+                  minWidth: 0,
+                }}
                 onClick={() => go('recaps')}
               >
                 Catch up on recaps
               </button>
-              <button type="button" className="campaign-outline-btn" onClick={() => go('activities')}>
+              <button
+                type="button"
+                className="campaign-outline-btn"
+                style={{
+                  padding: '0 clamp(12px, 3.4vw, 22px)',
+                  fontSize: 'clamp(11px, 3.3vw, 14px)',
+                  letterSpacing: 'clamp(0.02em, 0.4vw, 0.06em)',
+                  whiteSpace: 'nowrap',
+                  flex: '0 1 auto',
+                  minWidth: 0,
+                }}
+                onClick={() => go('activities')}
+              >
                 Play activities
               </button>
             </div>
@@ -139,33 +160,33 @@ export function HomeTab({ go, session, countdown, content, partyColumns }: Props
             style={{
               background: 'var(--color-accent)',
               color: '#ffffff',
-              padding: 24,
+              padding: 'clamp(16px, 4vw, 24px)',
               width: 'min(100%, 320px)',
               boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',
-              gap: 14,
-              boxShadow: '0 24px 60px rgba(0,0,0,0.45)',
+              gap: 'clamp(10px, 2.5vw, 14px)',
+              boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
             }}
           >
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
               Next session &middot; {nextSessionNo}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(10px, 3vw, 14px)' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 64, lineHeight: 0.9, fontVariantNumeric: 'tabular-nums' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'clamp(40px, 11vw, 64px)', lineHeight: 0.9, fontVariantNumeric: 'tabular-nums' }}>
                   {countdown.days}
                 </span>
                 <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Days</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 64, lineHeight: 0.9, fontVariantNumeric: 'tabular-nums' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'clamp(40px, 11vw, 64px)', lineHeight: 0.9, fontVariantNumeric: 'tabular-nums' }}>
                   {countdown.hours}
                 </span>
                 <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Hours</span>
               </div>
             </div>
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.4)', paddingTop: 10, fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.4)', paddingTop: 'clamp(8px, 2vw, 10px)', fontSize: 'clamp(13px, 3.6vw, 14px)', fontWeight: 600, whiteSpace: 'nowrap' }}>
               {session.dateLabel} &middot; {session.timeLabel} {content.schedule.label}
             </div>
           </div>
