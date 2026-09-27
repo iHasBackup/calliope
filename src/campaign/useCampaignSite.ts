@@ -35,13 +35,18 @@ export function useCampaignSite() {
     setViewState(viewFromHash(location.hash));
   }, [location.hash]);
 
-  // Latest recap opens by default once content has loaded.
+  // Latest recap opens by default, once the real content fetch has settled.
+  // useContent() renders hardcoded sample content (7 seed recaps, ids
+  // r1-r7) synchronously before that — picking a default from it is unsafe
+  // whenever real recaps reuse those same ids (edited in place via the CMS
+  // rather than recreated), since the guard below then blocks the real
+  // latest recap from ever overriding the stale pick.
   useEffect(() => {
-    if (content.recaps.length && !openRecap) {
+    if (!loading && content.recaps.length && !openRecap) {
       const latest = content.recaps.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
       if (latest) setOpenRecap(latest.id);
     }
-  }, [content.recaps, openRecap]);
+  }, [loading, content.recaps, openRecap]);
 
   useEffect(() => {
     let cancelled = false;
