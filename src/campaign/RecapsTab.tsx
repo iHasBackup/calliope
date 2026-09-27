@@ -1,13 +1,17 @@
 import type { useCampaignSite } from './useCampaignSite';
 
-type Props = Pick<ReturnType<typeof useCampaignSite>, 'openRecap' | 'setOpenRecap' | 'content'>;
+type Props = Pick<ReturnType<typeof useCampaignSite>, 'openRecap' | 'setOpenRecap' | 'content' | 'width'>;
+
+const MOBILE_BREAKPOINT = 640;
+const HEADER_HEIGHT = 57;
+const SCROLL_GAP = 16;
 
 const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-export function RecapsTab({ openRecap, setOpenRecap, content }: Props) {
+export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
   const byDate = content.recaps.slice().sort((a, b) => a.date.localeCompare(b.date));
   const rows = byDate
     .map((r, i) => {
@@ -67,8 +71,25 @@ export function RecapsTab({ openRecap, setOpenRecap, content }: Props) {
                     alignItems: 'center',
                     padding: '16px clamp(14px, 3vw, 18px)',
                     minHeight: 44,
+                    scrollMarginTop: HEADER_HEIGHT + SCROLL_GAP,
                   }}
-                  onClick={() => setOpenRecap(r.open ? '' : r.id)}
+                  onClick={(e) => {
+                    const opening = !r.open;
+                    const target = e.currentTarget;
+                    setOpenRecap(r.open ? '' : r.id);
+                    if (opening && width < MOBILE_BREAKPOINT) {
+                      // Opening this one also collapses whichever was open,
+                      // which changes page layout — wait for React to
+                      // commit and the browser to paint that new layout
+                      // before measuring where to scroll, or this lands in
+                      // the pre-reflow position instead of the real one.
+                      requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        });
+                      });
+                    }
+                  }}
                 >
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
                     <span style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>

@@ -16,7 +16,9 @@ export default function CampaignSite() {
       {site.view === 'home' && (
         <HomeTab go={site.go} session={site.session} countdown={site.countdown} content={site.content} partyColumns={site.partyColumns} width={site.width} />
       )}
-      {site.view === 'recaps' && <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} />}
+      {site.view === 'recaps' && (
+        <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} width={site.width} />
+      )}
       {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} />}
     </div>
   );
