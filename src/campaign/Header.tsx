@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { CampaignView } from './useCampaignSite';
 
@@ -23,6 +24,33 @@ export function Header({
   setMenuOpen: (v: boolean) => void;
 }) {
   const wide = width >= 640;
+  const scrollYRef = useRef(0);
+
+  // Lock background scroll while the mobile menu overlay is open. Plain
+  // overflow:hidden on body doesn't reliably stop touch-scroll/rubber-band
+  // on iOS Safari, so pin body in place with position:fixed at the saved
+  // scroll offset and restore it on close.
+  useEffect(() => {
+    if (!menuOpen) return;
+    scrollYRef.current = window.scrollY;
+    const { style } = document.body;
+    const prev = { position: style.position, top: style.top, left: style.left, right: style.right, width: style.width, overflow: style.overflow };
+    style.position = 'fixed';
+    style.top = `-${scrollYRef.current}px`;
+    style.left = '0';
+    style.right = '0';
+    style.width = '100%';
+    style.overflow = 'hidden';
+    return () => {
+      style.position = prev.position;
+      style.top = prev.top;
+      style.left = prev.left;
+      style.right = prev.right;
+      style.width = prev.width;
+      style.overflow = prev.overflow;
+      window.scrollTo(0, scrollYRef.current);
+    };
+  }, [menuOpen]);
 
   return (
     <div
