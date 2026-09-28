@@ -48,3 +48,26 @@
   transform: rotate(45deg);
   flex: none;
 }
+
+/* Loading skeleton — shown while the real /api/content fetch is in
+   flight, instead of the fallback content (which is real-looking sample
+   copy, not an empty state) briefly flashing on screen. */
+.campaign-skel {
+  background: var(--panel);
+  position: relative;
+  overflow: hidden;
+}
+.campaign-skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-bg) 8%, transparent), transparent);
+  animation: campaign-shimmer 1.6s ease-in-out infinite;
+}
+@keyframes campaign-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .campaign-skel::after { animation: none; }
+}
