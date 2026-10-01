@@ -63,6 +63,27 @@ Current modules and their abbreviations: PHB (PHB 2024), DMG (DMG 2024), ExE (Ex
 - **Right side of the header:** "Draft saved on this device" (12px, 55% ink, only while in the form at 900px and wider), then a "Back to campaign" link ("Exit" below 560px).
 - Page cap 1440px, page padding `clamp(16px, 4vw, 48px)`.
 
+### Loading skeleton
+Shown until the content document (and the module lists) have loaded. It replaces whichever view would render (intro, form, review or done), so the page never flashes an "open" or "closed" state before the real data arrives.
+
+- **Layout:** it mirrors the open intro using the same two-column grid and padding, so nothing jumps when content arrives.
+- **Left column, top to bottom:**
+  - A kicker bar, 220px wide and 12px tall.
+  - Two H1 bars (90% and 60% wide), each `clamp(40px, 7vw, 92px)` tall.
+  - Three 14px paragraph lines, the last one 70% wide.
+  - The apply-by panel: a 3px left border at 18% ink. Inside it, two text bars on the left and a 96×62 box on the right.
+  - Two 66px tiles.
+  - A 220×52 button block.
+- **Right column:** a panel with a 3px top border at 18% ink and a title bar, then 4 rows. Each row is a 28×22 number block plus two lines (55% and 85% wide), with hairlines between rows.
+- **Colors:**
+  - Bars: `color-mix(in srgb, var(--color-bg) 12%, var(--color-text))`.
+  - Panels: the standard panel fill (7%).
+  - Zero radius, like everything else in the system.
+- **Motion:** the whole block pulses opacity 1 → 0.45 → 1 over 1.4s, ease-in-out, infinitely. With `prefers-reduced-motion: reduce` it stays static.
+- **Accessibility:** `aria-busy="true"` and `aria-label="Loading registration"` on the container.
+- **Errors:** if the content request fails, show the closed intro with a retry link. Don't leave the skeleton up forever.
+- **Prototype only:** a `showSkeleton` preview prop forces the skeleton on. Don't ship it.
+
 ### Intro (open)
 Two-column grid, `repeat(auto-fit, minmax(min(100%, 420px), 1fr))`.
 
