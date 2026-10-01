@@ -9,6 +9,7 @@ export interface PartyMember {
   klass: string;
   sub: string;
   portraitUrl: string;
+  appId?: string; // set when this member was added by accepting an application — links back to it
 }
 
 export interface Recap {
@@ -27,6 +28,26 @@ export interface Schedule {
   label: string; // display label, e.g. "GMT+7"
 }
 
+export interface FitQuestion {
+  id: string;
+  type: 'choice' | 'text';
+  required: boolean;
+  prompt: string;
+  options: string[];
+}
+
+export interface Registration {
+  open: boolean;
+  seats: number; // 1-8
+  deadline: string; // YYYY-MM-DD, closes end of day in the campaign timezone — '' means no deadline
+  modules: string[]; // active sourcebook ids from classModules.ts; [] means "nothing set" (defaults apply)
+  allowHomebrew: boolean;
+  intro: string;
+  fitTitle: string;
+  fitIntro: string;
+  fitQuestions: FitQuestion[];
+}
+
 export interface Content {
   arcTitle: string;
   arcChapter: string;
@@ -39,6 +60,7 @@ export interface Content {
   threads: string[];
   schedule: Schedule;
   showOpenSeat: boolean;
+  registration: Registration;
   party: PartyMember[];
   recaps: Recap[];
   updatedAt: number; // ms epoch — used for optimistic concurrency on save
@@ -62,6 +84,42 @@ export const DEFAULT_CONTENT: Content = {
   ],
   schedule: { weekday: 3, hour: 19, timezone: 'Asia/Jakarta', label: 'GMT+7' },
   showOpenSeat: true,
+  registration: {
+    open: true,
+    seats: 1,
+    deadline: '2026-10-31',
+    modules: ['phb', 'dmg', 'tcm'],
+    allowHomebrew: true,
+    intro:
+      'One seat is open at the table. Tell us about yourself as a player and the character you want to bring to Hollowmere. The DM reads every application and will reply on Discord.',
+    fitTitle: 'Campaign fit',
+    fitIntro:
+      'The Crooked Moon is a long campaign with dark subject matter. Answer honestly. A no here is not a mark against you, just a sign this table is not the right one.',
+    fitQuestions: [
+      {
+        id: 'f1',
+        type: 'choice',
+        required: true,
+        prompt: 'This is a long campaign. We expect to play weekly for about a year. Can you commit to that?',
+        options: ['Yes, I can commit for a year or more', 'Mostly, with the occasional missed session', 'I am not sure yet'],
+      },
+      {
+        id: 'f2',
+        type: 'choice',
+        required: true,
+        prompt: 'The setting is folk horror: occultism, gore, and physical and mental violence. Are you comfortable with these themes?',
+        options: ['Yes, all of it', 'Yes, within the lines and veils I listed', 'No, this is not for me'],
+      },
+      {
+        id: 'f3',
+        type: 'choice',
+        required: true,
+        prompt: 'Are you okay with your character being mutilated, losing a limb, or even dying?',
+        options: ['Yes, any of it', 'Injury and mutilation, but not death', 'I would rather not'],
+      },
+      { id: 'f4', type: 'text', required: false, prompt: 'Anything else about these themes the DM should know?', options: [] },
+    ],
+  },
   party: [
     { id: 'p1', name: 'Oberon', species: 'Species TBD', klass: 'Sorcerer', sub: 'Wild Magic', portraitUrl: '' },
     { id: 'p2', name: 'Hayden', species: 'Species TBD', klass: 'Death Knight', sub: 'Subclass TBD', portraitUrl: '' },
@@ -92,6 +150,9 @@ export const LIMITS = {
   maxParty: 20,
   maxRecaps: 500,
   maxThreads: 50,
+  maxFitQuestions: 20,
+  maxFitOptions: 12,
+  maxModules: 20,
 };
 
 function clampInt(n: unknown, min: number, max: number, fallback: number): number {
@@ -116,6 +177,10 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
   const party = Array.isArray(c.party) ? c.party : [];
   const recaps = Array.isArray(c.recaps) ? c.recaps : [];
   const threads = Array.isArray(c.threads) ? c.threads : [];
+  const reg = (c.registration && typeof c.registration === 'object' ? c.registration : {}) as Record<string, unknown>;
+  const fitQuestions = Array.isArray(reg.fitQuestions) ? reg.fitQuestions : [];
+  const regModules = Array.isArray(reg.modules) ? reg.modules : [];
+  const deadline = str(reg.deadline, 10);
 
   let timezone = str(sched.timezone, 100, DEFAULT_CONTENT.schedule.timezone);
   try {
@@ -141,8 +206,30 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
       label: str(sched.label, 40, DEFAULT_CONTENT.schedule.label),
     },
     showOpenSeat: c.showOpenSeat !== false,
+    registration: {
+      open: reg.open !== false,
+      seats: clampInt(reg.seats, 1, 8, DEFAULT_CONTENT.registration.seats),
+      deadline: /^\d{4}-\d{2}-\d{2}$/.test(deadline) ? deadline : '',
+      modules: regModules.slice(0, LIMITS.maxModules).map((m) => str(m, 20)).filter(Boolean),
+      allowHomebrew: reg.allowHomebrew !== false,
+      intro: str(reg.intro, LIMITS.longText),
+      fitTitle: str(reg.fitTitle, LIMITS.shortText),
+      fitIntro: str(reg.fitIntro, LIMITS.longText),
+      fitQuestions: fitQuestions.slice(0, LIMITS.maxFitQuestions).map((raw, i) => {
+        const q = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+        const options = Array.isArray(q.options) ? q.options : [];
+        return {
+          id: str(q.id, 40) || `f${i}`,
+          type: q.type === 'text' ? 'text' : 'choice',
+          required: q.required !== false,
+          prompt: str(q.prompt, LIMITS.longText),
+          options: options.slice(0, LIMITS.maxFitOptions).map((o) => str(o, LIMITS.shortText)).filter(Boolean),
+        } as FitQuestion;
+      }),
+    },
     party: party.slice(0, LIMITS.maxParty).map((raw, i) => {
       const m = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+      const appId = str(m.appId, 40);
       return {
         id: str(m.id, 40) || `p${i}`,
         name: str(m.name, LIMITS.shortText),
@@ -150,6 +237,7 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
         klass: str(m.klass, LIMITS.shortText),
         sub: str(m.sub, LIMITS.shortText),
         portraitUrl: str(m.portraitUrl, LIMITS.url),
+        ...(appId ? { appId } : {}),
       };
     }),
     recaps: recaps.slice(0, LIMITS.maxRecaps).map((raw, i) => {

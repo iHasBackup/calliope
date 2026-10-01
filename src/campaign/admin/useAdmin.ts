@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DEFAULT_CONTENT, type Content, type PartyMember, type Recap } from '../content';
+import type { Application, ApplicationStatus } from '../application';
 
-export type Section = 'campaign' | 'schedule' | 'party' | 'recaps' | 'quests';
+export type Section = 'campaign' | 'schedule' | 'party' | 'recaps' | 'quests' | 'registration' | 'applications';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -25,6 +26,8 @@ export function useAdmin() {
   const [saved, setSaved] = useState<Content | null>(null);
   const [section, setSection] = useState<Section>('campaign');
   const [openRecap, setOpenRecap] = useState('');
+  const [openApp, setOpenApp] = useState('');
+  const [apps, setApps] = useState<Application[]>([]);
   const [width, setWidth] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1200));
   const [saving, setSaving] = useState(false);
   const [flash, setFlash] = useState('');
@@ -37,6 +40,11 @@ export function useAdmin() {
     setSaved(body);
   }, []);
 
+  const loadApps = useCallback(async () => {
+    const { body } = await jsonFetch<Application[]>('/api/applications');
+    setApps(Array.isArray(body) ? body : []);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     jsonFetch<{ ok: boolean }>('/api/admin/session')
@@ -44,7 +52,7 @@ export function useAdmin() {
         if (cancelled) return;
         if (body?.ok) {
           setUnlocked(true);
-          return loadContent();
+          return Promise.all([loadContent(), loadApps()]);
         }
       })
       .finally(() => {
@@ -53,7 +61,19 @@ export function useAdmin() {
     return () => {
       cancelled = true;
     };
-  }, [loadContent]);
+  }, [loadContent, loadApps]);
+
+  // Applications are edited elsewhere (e.g. the DM reviewing on another
+  // device) more often than campaign content is, so refresh the list
+  // whenever the tab regains focus.
+  useEffect(() => {
+    if (!unlocked) return;
+    const onVis = () => {
+      if (!document.hidden) loadApps();
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [unlocked, loadApps]);
 
   useEffect(() => {
     const onResize = () => setWidth(window.innerWidth);
@@ -130,13 +150,13 @@ export function useAdmin() {
       setUnlocked(true);
       setCode('');
       setCodeErr('');
-      await loadContent();
+      await Promise.all([loadContent(), loadApps()]);
     } else if (status === 429) {
       setCodeErr('Too many attempts. Try again in a few minutes.');
     } else {
       setCodeErr('That passcode is not right.');
     }
-  }, [code, loadContent]);
+  }, [code, loadContent, loadApps]);
 
   const revertToSaved = useCallback(() => {
     if (!saved) return;
@@ -207,6 +227,38 @@ export function useAdmin() {
     [update],
   );
 
+  // Status changes (and the party sync that accepting triggers) save
+  // immediately on the server — there's no draft/Save step for applications.
+  const changeStatus = useCallback(
+    async (app: Application, status: ApplicationStatus) => {
+      setApps((prev) => prev.map((a) => (a.id === app.id ? { ...a, status } : a)));
+      const { status: resStatus, body } = await jsonFetch<{ application: Application; content?: Content }>(
+        `/api/applications?id=${app.id}`,
+        { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) },
+      );
+      if (resStatus !== 200 || !body?.application) return;
+      setApps((prev) => prev.map((a) => (a.id === body.application.id ? body.application : a)));
+      // The party member this status change added/removed is folded into
+      // our local draft/saved only if there were no other unsaved edits —
+      // otherwise the next explicit Save surfaces the usual 409 conflict.
+      if (body.content) {
+        const wasClean = !!draft && !!saved && JSON.stringify(draft) === JSON.stringify(saved);
+        if (wasClean) {
+          setDraft(body.content);
+          setSaved(body.content);
+        }
+      }
+    },
+    [draft, saved],
+  );
+
+  const deleteApplication = useCallback(async (app: Application) => {
+    if (!window.confirm(`Delete the application from ${app.discord || app.name || 'this player'}?`)) return;
+    await jsonFetch(`/api/applications?id=${app.id}`, { method: 'DELETE' });
+    setApps((prev) => prev.filter((a) => a.id !== app.id));
+    setOpenApp((prev) => (prev === app.id ? '' : prev));
+  }, []);
+
   return {
     checkingSession,
     unlocked,
@@ -226,6 +278,9 @@ export function useAdmin() {
     setSection,
     openRecap,
     setOpenRecap,
+    openApp,
+    setOpenApp,
+    apps,
     width,
     update,
     save,
@@ -236,5 +291,7 @@ export function useAdmin() {
     removeRecap,
     addThread,
     removeThread,
+    changeStatus,
+    deleteApplication,
   };
 }

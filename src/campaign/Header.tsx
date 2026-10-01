@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
 import type { CampaignView } from './useCampaignSite';
 
 const TABS: { key: CampaignView; label: string }[] = [
@@ -16,12 +17,14 @@ export function Header({
   width,
   menuOpen,
   setMenuOpen,
+  showApply,
 }: {
   view: CampaignView;
   go: (v: CampaignView) => void;
   width: number;
   menuOpen: boolean;
   setMenuOpen: (v: boolean) => void;
+  showApply: boolean;
 }) {
   const wide = width >= 640;
   const scrollYRef = useRef(0);
@@ -129,6 +132,26 @@ export function Header({
               {t.label}
             </button>
           ))}
+          {showApply && (
+            <Link
+              to="/thecrookedmoon/apply"
+              style={{
+                height: 44,
+                padding: '0 clamp(8px, 2.6vw, 14px)',
+                display: 'flex',
+                alignItems: 'center',
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 700,
+                fontSize: 'clamp(11px, 3.2vw, 13px)',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                color: mutedInk(75),
+                background: 'transparent',
+              }}
+            >
+              Apply
+            </Link>
+          )}
         </div>
       ) : (
         <>
@@ -223,6 +246,33 @@ export function Header({
                       <span>&rarr;</span>
                     </button>
                   ))}
+                  {showApply && (
+                    <Link
+                      to="/thecrookedmoon/apply"
+                      style={{
+                        all: 'unset',
+                        boxSizing: 'border-box',
+                        cursor: 'pointer',
+                        width: '100%',
+                        minHeight: 56,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0 clamp(16px, 4vw, 48px)',
+                        borderBottom: `1px solid ${mutedInk(14)}`,
+                        background: 'transparent',
+                        color: 'var(--color-bg)',
+                        fontFamily: 'var(--font-heading)',
+                        fontWeight: 800,
+                        fontSize: 20,
+                        textTransform: 'uppercase',
+                      }}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <span>Apply</span>
+                      <span>&rarr;</span>
+                    </Link>
+                  )}
                 </div>
               </>,
               document.body,

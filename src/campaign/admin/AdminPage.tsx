@@ -8,6 +8,8 @@ import { ScheduleSection } from './sections/ScheduleSection';
 import { PartySection } from './sections/PartySection';
 import { RecapsSection } from './sections/RecapsSection';
 import { QuestsSection } from './sections/QuestsSection';
+import { RegistrationSection } from './sections/RegistrationSection';
+import { ApplicationsSection } from './sections/ApplicationsSection';
 import { useAdmin, type Section } from './useAdmin';
 import { useDarkBody } from '../useDarkBody';
 
@@ -17,6 +19,8 @@ const SECTIONS: { key: Section; label: string }[] = [
   { key: 'party', label: 'Party' },
   { key: 'recaps', label: 'Recaps' },
   { key: 'quests', label: 'Quest log' },
+  { key: 'registration', label: 'Registration' },
+  { key: 'applications', label: 'Applications' },
 ];
 
 export default function AdminPage() {
@@ -25,12 +29,15 @@ export default function AdminPage() {
   const narrow = admin.width < 820;
   const brandHidden = admin.width < 520;
 
+  const regOpen = admin.hasDraft && admin.draft.registration.open !== false;
   const counts: Record<Section, string> = {
     campaign: '',
     schedule: '',
     party: admin.hasDraft ? String(admin.draft.party.length) : '',
     recaps: admin.hasDraft ? String(admin.draft.recaps.length) : '',
     quests: admin.hasDraft ? String(admin.draft.threads.length) : '',
+    registration: admin.hasDraft ? (regOpen ? 'Open' : 'Closed') : '',
+    applications: String(admin.apps.length),
   };
 
   const status = admin.flash || (admin.isDirty ? 'Unsaved changes' : 'All changes saved');
@@ -201,6 +208,17 @@ export default function AdminPage() {
             )}
             {admin.section === 'quests' && (
               <QuestsSection draft={admin.draft} update={admin.update} addThread={admin.addThread} removeThread={admin.removeThread} />
+            )}
+            {admin.section === 'registration' && <RegistrationSection draft={admin.draft} update={admin.update} />}
+            {admin.section === 'applications' && (
+              <ApplicationsSection
+                draft={admin.draft}
+                apps={admin.apps}
+                openApp={admin.openApp}
+                setOpenApp={admin.setOpenApp}
+                changeStatus={admin.changeStatus}
+                deleteApplication={admin.deleteApplication}
+              />
             )}
 
             {narrow && (

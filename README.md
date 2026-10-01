@@ -2,7 +2,7 @@
 
 ## Overview
 
-A small public site for a weekly D&D campaign based on *The Crooked Moon*. Players need no accounts. The public site has three tabs: **Campaign** (home), **Recaps** and **Activities**. Activities links to the crossword game, which is specified separately in `CROSSWORD.md`. A passcode-protected **Admin** page (a simple CMS) is where the DM edits all site content; see `CMS.md`.
+A small public site for a weekly D&D campaign based on *The Crooked Moon*. Players need no accounts. The public site has three tabs: **Campaign** (home), **Recaps** and **Activities**. Activities links to the crossword game, which is specified separately in `CROSSWORD.md`. A passcode-protected **Admin** page (a simple CMS) is where the DM edits all site content; see `CMS.md`. Player applications (the public registration flow plus the admin Registration and Applications sections) are specified in `REGISTRATION.md`.
 
 ## About the design files
 
@@ -12,6 +12,7 @@ The files in `reference/` are **HTML design prototypes**. They show the intended
 - `reference/CampaignAdmin.dc.html`: the admin CMS.
 - `reference/campaign-content.js`: the content schema, sample content, and the load/save helpers both pages share (prototype persistence).
 - `reference/Crossword.dc.html`: the crossword game and its leaderboard.
+- `reference/Registration.dc.html`, `reference/registration-sections.js`, `reference/class-modules.js`: the registration flow, its question sets, and the source-book species/class/subclass lists.
 - `reference/modernist-styles.css`: design tokens and component classes (`.btn`, `.btn-primary`, `.grayscale`, and so on).
 - `reference/image-slot.js`: the prototype's drag-and-drop image placeholder. **Do not ship it.** Replace it with real `<img>` elements fed from content.
 
@@ -211,4 +212,5 @@ The layout is fluid everywhere, with no fixed widths. It was verified with no ho
 - `README.md`: this spec (the public campaign site).
 - `CMS.md`: the admin CMS and content API spec.
 - `CROSSWORD.md`: the crossword game and shared leaderboard spec.
+- `REGISTRATION.md`: player registration, admin registration settings and application review.
 - `reference/*`: the prototypes and stylesheet described above.

@@ -16,6 +16,22 @@
     ],
     schedule: { weekday: 3, hour: 19, timezone: 'GMT+7' },
     showOpenSeat: true,
+    registration: {
+      open: true,
+      seats: 1,
+      deadline: '2026-10-31',
+      modules: ['phb', 'dmg', 'tcm'],
+      allowHomebrew: true,
+      intro: 'One seat is open at the table. Tell us about yourself as a player and the character you want to bring to Hollowmere. The DM reads every application and will reply on Discord.',
+      fitTitle: 'Campaign fit',
+      fitIntro: 'The Crooked Moon is a long campaign with dark subject matter. Answer honestly. A no here is not a mark against you, just a sign this table is not the right one.',
+      fitQuestions: [
+        { id: 'f1', type: 'choice', required: true, prompt: 'This is a long campaign. We expect to play weekly for about a year. Can you commit to that?', options: ['Yes, I can commit for a year or more', 'Mostly, with the occasional missed session', 'I am not sure yet'] },
+        { id: 'f2', type: 'choice', required: true, prompt: 'The setting is folk horror: occultism, gore, and physical and mental violence. Are you comfortable with these themes?', options: ['Yes, all of it', 'Yes, within the lines and veils I listed', 'No, this is not for me'] },
+        { id: 'f3', type: 'choice', required: true, prompt: 'Are you okay with your character being mutilated, losing a limb, or even dying?', options: ['Yes, any of it', 'Injury and mutilation, but not death', 'I would rather not'] },
+        { id: 'f4', type: 'text', required: false, prompt: 'Anything else about these themes the DM should know?', options: [] }
+      ]
+    },
     party: [
       { id: 'p1', name: 'Oberon', species: 'Species TBD', klass: 'Sorcerer', sub: 'Wild Magic', portraitUrl: '' },
       { id: 'p2', name: 'Hayden', species: 'Species TBD', klass: 'Death Knight', sub: 'Subclass TBD', portraitUrl: '' },

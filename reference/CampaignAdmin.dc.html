@@ -9,9 +9,11 @@
 <x-dc>
 <helmet>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
-  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
+  <link rel="stylesheet" href="./modernist-styles.css">
+  
   <script src="./campaign-content.js"></script>
+  <script src="./class-modules.js"></script>
+  <script src="./registration-sections.js"></script>
   <style>
     body { margin: 0; background: #201e1d; -webkit-text-size-adjust: 100%; }
     a { color: var(--color-accent-400); text-decoration: none; }
@@ -31,7 +33,7 @@
     <sc-if value="{{ showToolbar }}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; align-items: center; gap: clamp(8px, 2vw, 16px); flex: none;">
         <span style="font-size: 13px; color: {{ statusColor }}; display: {{ statusDisplay }}; white-space: nowrap;">{{ status }}</span>
-        <a href="Campaign Home v2.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 4px; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);">View site</a>
+        <a href="CampaignHome.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 4px; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);">View site</a>
         <button class="btn btn-primary" style="height: 44px; padding: 0 18px; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; opacity: {{ saveOpacity }};" onClick="{{ save }}">{{ saveLabel }}</button>
       </div>
     </sc-if>
@@ -312,6 +314,176 @@
           </div>
         </sc-if>
 
+        <sc-if value="{{ isRegistration }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+              <div style="display: flex; flex-direction: column; gap: 6px; max-width: 520px;">
+                <h2 style="margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Registration</h2>
+                <span style="font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Sections 01, 03 and 04 are the same for every campaign. Campaign fit is written per campaign.</span>
+              </div>
+              <a href="Registration.dc.html" style="height: 44px; padding: 0 18px; display: inline-flex; align-items: center; border: 2px solid color-mix(in srgb, var(--color-bg) 35%, transparent); box-sizing: border-box; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);" style-hover="border-color: var(--color-accent);">Preview page</a>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px;">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;">Status</span>
+              <button style="all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 12px; min-height: 44px;" onClick="{{ toggleReg }}">
+                <span style="width: 42px; height: 24px; box-sizing: border-box; border: 2px solid {{ regSw.border }}; background: {{ regSw.track }}; position: relative; flex: none;">
+                  <span style="position: absolute; top: 3px; left: {{ regSw.left }}; width: 14px; height: 14px; background: {{ regSw.knob }};"></span>
+                </span>
+                <span style="font-size: 15px;">{{ regSw.label }}</span>
+              </button>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 16px;">
+              <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Seats open</span>
+                <input type="number" inputmode="numeric" min="1" max="8" value="{{ reg.seats }}" onChange="{{ onSeats }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none;" style-focus="border-color: var(--color-accent);">
+              </label>
+              <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Deadline · closes end of day</span>
+                <input type="date" value="{{ reg.deadline }}" onChange="{{ onDeadline }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none;" style-focus="border-color: var(--color-accent);">
+              </label>
+              </div>
+              <span style="font-size: 13px; color: {{ dlNoteColor }};">{{ dlNote }}</span>
+              <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Intro on the registration page</span>
+                <textarea rows="3" value="{{ reg.intro }}" onChange="{{ onRegIntro }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.55; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+              </label>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); display: flex; flex-direction: column;">
+              <span style="padding: clamp(16px, 3vw, 24px) clamp(16px, 3vw, 24px) 12px; font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;">Standard sections</span>
+              <sc-for list="{{ stdSections }}" as="ss" hint-placeholder-count="3">
+                <div style="display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 14px clamp(16px, 3vw, 24px); border-top: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);">
+                  <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--color-accent-400);">{{ ss.n }}</span>
+                  <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; text-transform: uppercase;">{{ ss.title }}</span>
+                    <span style="font-size: 13px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ ss.desc }}</span>
+                  </span>
+                  <span style="border: 1px solid color-mix(in srgb, var(--color-bg) 35%, transparent); padding: 2px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;">Standard</span>
+                </div>
+              </sc-for>
+            </div>
+
+<div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); display: flex; flex-direction: column;">
+              <div style="padding: clamp(16px, 3vw, 24px) clamp(16px, 3vw, 24px) 12px; display: flex; flex-direction: column; gap: 6px;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;">Character sources</span>
+                <span style="font-size: 13px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Applicants only see species, classes and subclasses from the sources turned on here. {{ modNote }}</span>
+              </div>
+              <button aria-pressed="{{ hbRow.pressed }}" style="all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 18px 48px minmax(0, 1fr); gap: 12px; align-items: center; min-height: 52px; padding: 10px clamp(16px, 3vw, 24px); border-top: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);" style-hover="background: color-mix(in srgb, var(--color-accent) 10%, transparent);" onClick="{{ hbRow.onClick }}">
+                <span style="width: 18px; height: 18px; box-sizing: border-box; border: 2px solid {{ hbRow.border }}; background: {{ hbRow.bg }}; display: grid; place-items: center; color: #ffffff; font-size: 12px; font-weight: 800; line-height: 1;">{{ hbRow.mark }}</span>
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.06em; color: var(--color-accent-400);">HB</span>
+                <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                  <span style="font-size: 15px; font-weight: 600;">Allow homebrew</span>
+                  <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Adds an Other tile to species and class so applicants can name their own</span>
+                </span>
+              </button>
+              <sc-for list="{{ modRows }}" as="md" hint-placeholder-count="9">
+                <button aria-pressed="{{ md.pressed }}" style="all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 18px 48px minmax(0, 1fr); gap: 12px; align-items: center; min-height: 52px; padding: 10px clamp(16px, 3vw, 24px); border-top: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);" style-hover="background: color-mix(in srgb, var(--color-accent) 10%, transparent);" onClick="{{ md.onClick }}">
+                  <span style="width: 18px; height: 18px; box-sizing: border-box; border: 2px solid {{ md.border }}; background: {{ md.bg }}; display: grid; place-items: center; color: #ffffff; font-size: 12px; font-weight: 800; line-height: 1;">{{ md.mark }}</span>
+                  <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.06em; color: var(--color-accent-400);">{{ md.abbr }}</span>
+                  <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                    <span style="font-size: 15px; font-weight: 600;">{{ md.name }}</span>
+                    <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">{{ md.count }}</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px; border-top: 3px solid var(--color-accent);">
+              <div style="display: flex; gap: 12px; align-items: baseline;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--color-accent-400);">02</span>
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;">Campaign fit · this campaign only</span>
+              </div>
+              <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Section title</span>
+                <input type="text" value="{{ reg.fitTitle }}" onChange="{{ onFitTitle }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none;" style-focus="border-color: var(--color-accent);">
+              </label>
+              <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Section intro</span>
+                <textarea rows="3" value="{{ reg.fitIntro }}" onChange="{{ onFitIntro }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.55; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+              </label>
+              <sc-for list="{{ fitQs }}" as="fq" hint-placeholder-count="4">
+                <div style="background: var(--color-text); border: 1px solid color-mix(in srgb, var(--color-bg) 16%, transparent); padding: clamp(12px, 3vw, 18px); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--color-accent-400); min-width: 32px;">Q{{ fq.n }}</span>
+                    <select value="{{ fq.type }}" onChange="{{ fq.onType }}" style="box-sizing: border-box; height: 40px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 15px; outline: none;" style-focus="border-color: var(--color-accent);">
+                      <option value="choice">Pick one answer</option>
+                      <option value="text">Written answer</option>
+                    </select>
+                    <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 40px; padding: 0 10px; display: flex; align-items: center; gap: 8px; font-size: 14px;" onClick="{{ fq.onReq }}">
+                      <span style="width: 14px; height: 14px; box-sizing: border-box; border: 2px solid {{ fq.reqBorder }}; background: {{ fq.reqBg }}; flex: none;"></span>
+                      <span>Required</span>
+                    </button>
+                    <span style="flex: 1;"></span>
+                    <button aria-label="Move up" style="all: unset; box-sizing: border-box; cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); opacity: {{ fq.upOpacity }};" style-hover="border-color: var(--color-accent);" onClick="{{ fq.onUp }}">&uarr;</button>
+                    <button style="all: unset; cursor: pointer; min-height: 40px; padding: 0 4px; font-size: 13px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);" style-hover="color: var(--color-accent-400);" onClick="{{ fq.onRemove }}">Remove</button>
+                  </div>
+                  <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Question</span>
+                    <textarea rows="2" value="{{ fq.prompt }}" onChange="{{ fq.onPrompt }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+                  </label>
+                  <sc-if value="{{ fq.isChoice }}" hint-placeholder-val="{{ true }}">
+                    <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Answers · one per line</span>
+                      <textarea rows="3" value="{{ fq.optsText }}" onChange="{{ fq.onOpts }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+                    </label>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <button style="all: unset; box-sizing: border-box; cursor: pointer; align-self: flex-start; height: 44px; padding: 0 18px; display: inline-flex; align-items: center; border: 2px solid color-mix(in srgb, var(--color-bg) 35%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: var(--color-accent);" onClick="{{ addFitQ }}">+ Add question</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isApplications }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <h2 style="margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Applications</h2>
+              <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ appsNote }}</span>
+            </div>
+            <sc-if value="{{ noApps }}" hint-placeholder-val="{{ false }}">
+              <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); font-size: 15px; line-height: 1.55; color: color-mix(in srgb, var(--color-bg) 70%, transparent);">No applications yet. Share the <a href="Registration.dc.html">registration page</a> link with players.</div>
+            </sc-if>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <sc-for list="{{ apps }}" as="ap" hint-placeholder-count="2">
+                <div style="background: {{ ap.bg }}; border: 1px solid {{ ap.border }};">
+                  <button style="all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto 32px; gap: 12px; align-items: center; padding: 12px clamp(12px, 3vw, 18px); min-height: 64px;" onClick="{{ ap.onToggle }}">
+                    <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                      <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ ap.title }}</span>
+                      <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ ap.meta }}</span>
+                    </span>
+                    <span style="padding: 3px 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; background: {{ ap.stBg }}; color: {{ ap.stColor }}; border: 1px solid {{ ap.stBorder }};">{{ ap.statusLabel }}</span>
+                    <span style="width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 800; font-size: 18px;">{{ ap.sign }}</span>
+                  </button>
+                  <sc-if value="{{ ap.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding: 4px clamp(12px, 3vw, 18px) 18px; display: flex; flex-direction: column; gap: 18px;">
+                      <div style="display: flex; flex-wrap: wrap; gap: 2px;">
+                        <sc-for list="{{ ap.statusOpts }}" as="so" hint-placeholder-count="4">
+                          <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 40px; padding: 0 14px; display: flex; align-items: center; font-family: var(--font-heading); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; background: {{ so.bg }}; color: {{ so.color }};" onClick="{{ so.onClick }}">{{ so.label }}</button>
+                        </sc-for>
+                      </div>
+                      <sc-for list="{{ ap.sections }}" as="sec" hint-placeholder-count="4">
+                        <div style="display: flex; flex-direction: column;">
+                          <div style="display: flex; gap: 10px; align-items: baseline; padding-bottom: 8px; border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: var(--color-accent-400);">{{ sec.n }}</span>
+                            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 14px; text-transform: uppercase;">{{ sec.title }}</span>
+                          </div>
+                          <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="4">
+                            <div style="display: flex; flex-wrap: wrap; gap: 2px 16px; padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 8%, transparent);">
+                              <span style="flex: 1 1 160px; max-width: 220px; font-size: 13px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">{{ it.q }}</span>
+                              <span style="flex: 999 1 260px; min-width: 0; font-size: 15px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere;">{{ it.a }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-for>
+                      <button style="all: unset; cursor: pointer; align-self: flex-start; min-height: 32px; font-size: 13px; color: var(--color-accent-400);" onClick="{{ ap.onDelete }}">Delete this application</button>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
         <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
             <span style="font-size: 12px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 55%, transparent);">Changes go live on the site when you save.</span>
@@ -327,18 +499,22 @@
 <script type="text/x-dc" data-dc-script>
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const SECTIONS = [['campaign', 'Campaign'], ['schedule', 'Schedule'], ['party', 'Party'], ['recaps', 'Recaps'], ['quests', 'Quest log']];
+const SECTIONS = [['campaign', 'Campaign'], ['schedule', 'Schedule'], ['party', 'Party'], ['recaps', 'Recaps'], ['quests', 'Quest log'], ['registration', 'Registration'], ['applications', 'Applications']];
+const REG = () => window.CrookedMoonRegistration;
+const STATUSES = [['new', 'New'], ['shortlisted', 'Shortlisted'], ['accepted', 'Accepted'], ['declined', 'Declined']];
 const CM = () => window.CrookedMoonContent;
 const uid = () => Math.random().toString(36).slice(2, 9);
 const hourLabel = h => (h % 12 || 12) + ':00 ' + (h < 12 ? 'AM' : 'PM');
 
 class Component extends DCLogic {
-  state = { c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
+  state = { c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
 
   componentDidMount() {
     try { if (sessionStorage.getItem('cm-admin-ok') === '1') this.setState({ unlocked: true }); } catch (e) {}
-    const init = () => { const c = CM().load(); this.setState({ c, savedJson: JSON.stringify(c) }); };
-    if (CM()) init(); else this.wait = setInterval(() => { if (CM()) { clearInterval(this.wait); init(); } }, 50);
+    const init = () => { const c = CM().load(); this.setState({ c, savedJson: JSON.stringify(c), apps: REG().loadApps() }); };
+    if (CM() && REG()) init(); else this.wait = setInterval(() => { if (CM() && REG()) { clearInterval(this.wait); init(); } }, 50);
+    this.onVis = () => { if (!document.hidden && REG()) this.setState({ apps: REG().loadApps() }); };
+    document.addEventListener('visibilitychange', this.onVis);
     this.onResize = () => this.setState({ w: window.innerWidth });
     this.onKey = e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && this.state.unlocked) { e.preventDefault(); this.save(); } };
     this.onUnload = e => { if (this.isDirty()) { e.preventDefault(); e.returnValue = ''; } };
@@ -351,7 +527,9 @@ class Component extends DCLogic {
     window.removeEventListener('resize', this.onResize);
     window.removeEventListener('keydown', this.onKey);
     window.removeEventListener('beforeunload', this.onUnload);
+    document.removeEventListener('visibilitychange', this.onVis);
   }
+  setApps(fn) { const list = JSON.parse(JSON.stringify(this.state.apps)); fn(list); REG().saveApps(list); this.setState({ apps: list }); }
 
   isDirty() { return !!this.state.c && JSON.stringify(this.state.c) !== this.state.savedJson; }
   upd(fn) { this.setState(s => { const c = CM().clone(s.c); fn(c); return { c }; }); }
@@ -361,6 +539,22 @@ class Component extends DCLogic {
     this.setState({ savedJson: JSON.stringify(this.state.c), flash: 'Saved' });
     clearTimeout(this.ft);
     this.ft = setTimeout(() => this.setState({ flash: '' }), 2000);
+  }
+  // Accepting an application adds the PC to the party; moving it off Accepted takes them out. Saves immediately, like status.
+  syncParty(ap, on) {
+    const X = REG();
+    const apply = c => {
+      const idx = c.party.findIndex(m => m.appId === ap.id);
+      if (on && idx < 0) c.party.push({ id: uid(), appId: ap.id, name: (ap.name || '').trim() || ap.discord || 'New member', species: X ? X.speciesOf(ap) : '', klass: X ? X.classOf(ap) : '', sub: X ? X.subOf(ap) : '', portraitUrl: ap.faceUrl || '' });
+      if (!on && idx >= 0) c.party.splice(idx, 1);
+    };
+    const stored = CM().load(); apply(stored); CM().save(stored);
+    this.setState(s => {
+      if (!s.c) return null;
+      const wasClean = JSON.stringify(s.c) === s.savedJson;
+      const c = CM().clone(s.c); apply(c);
+      return wasClean ? { c, savedJson: JSON.stringify(c) } : { c };
+    });
   }
   unlock() {
     const want = this.props.adminCode ?? 'crookedmoon';
@@ -415,7 +609,44 @@ class Component extends DCLogic {
       onRemove: () => this.upd(x => { x.threads.splice(i, 1); })
     }));
 
-    const counts = { campaign: '', schedule: '', party: c ? c.party.length : '', recaps: c ? c.recaps.length : '', quests: c ? c.threads.length : '' };
+    const reg = (c && c.registration) || { open: true, seats: 1, intro: '', fitTitle: '', fitIntro: '', fitQuestions: [] };
+    const dl = /^\d{4}-\d{2}-\d{2}$/.test(reg.deadline || '') ? new Date(reg.deadline + 'T23:59:59') : null;
+    const dlPast = !!dl && Date.now() > dl.getTime();
+    const regOn = reg.open !== false && !dlPast;
+    const rg = k => e => { const v = e.target.value; this.upd(x => { x.registration[k] = v; }); };
+    const fq = (i, fn) => this.upd(x => { fn(x.registration.fitQuestions[i], x.registration.fitQuestions); });
+    const fitQs = (reg.fitQuestions || []).map((q, i) => ({
+      n: i + 1, prompt: q.prompt, type: q.type, isChoice: q.type === 'choice', optsText: (q.options || []).join('\n'),
+      reqBorder: q.required ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 45%, transparent)', reqBg: q.required ? 'var(--color-accent)' : 'transparent',
+      upOpacity: i === 0 ? 0.3 : 1,
+      onPrompt: e => { const v = e.target.value; fq(i, o => { o.prompt = v; }); },
+      onType: e => { const v = e.target.value; fq(i, o => { o.type = v; }); },
+      onOpts: e => { const v = e.target.value; fq(i, o => { o.options = v.split('\n'); }); },
+      onReq: () => fq(i, o => { o.required = !o.required; }),
+      onUp: () => { if (i > 0) fq(i, (o, list) => { list.splice(i, 1); list.splice(i - 1, 0, o); }); },
+      onRemove: () => { if (window.confirm('Remove this question?')) fq(i, (o, list) => { list.splice(i, 1); }); }
+    }));
+    const stCol = { new: ['var(--color-accent)', '#ffffff', 'var(--color-accent)'], shortlisted: ['var(--color-bg)', 'var(--color-text)', 'var(--color-bg)'], accepted: ['transparent', 'var(--color-accent-400)', 'var(--color-accent)'], declined: ['transparent', 'color-mix(in srgb, var(--color-bg) 55%, transparent)', 'color-mix(in srgb, var(--color-bg) 30%, transparent)'] };
+    const apps = s.apps.map((ap, i) => ({ ap, i })).sort((x, y) => (y.ap.submittedAt || '').localeCompare(x.ap.submittedAt || '')).map(({ ap, i }) => {
+      const open = s.openApp === ap.id;
+      const st = stCol[ap.status] ? ap.status : 'new';
+      const d = ap.submittedAt ? new Date(ap.submittedAt) : null;
+      const cls = REG() ? REG().classOf(ap) : '';
+      return {
+        title: (ap.name || 'Unnamed') + ' \u00b7 ' + (ap.discord || 'no Discord'),
+        meta: [d ? d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() : '', REG() ? REG().speciesOf(ap) : '', cls].filter(Boolean).join(' \u00b7 '),
+        statusLabel: (STATUSES.find(x => x[0] === st) || [])[1], stBg: stCol[st][0], stColor: stCol[st][1], stBorder: stCol[st][2],
+        open, sign: open ? '\u2212' : '+',
+        bg: open ? 'color-mix(in srgb, var(--color-bg) 7%, var(--color-text))' : 'transparent',
+        border: open ? 'color-mix(in srgb, var(--color-bg) 20%, transparent)' : 'color-mix(in srgb, var(--color-bg) 12%, transparent)',
+        onToggle: () => this.setState({ openApp: open ? null : ap.id }),
+        statusOpts: STATUSES.map(([k, label]) => ({ label, bg: st === k ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 10%, transparent)', color: st === k ? '#ffffff' : 'var(--color-bg)', onClick: () => { this.setApps(l => { l[i].status = k; }); this.syncParty(ap, k === 'accepted'); } })),
+        sections: open && REG() ? REG().summarize(ap, reg) : [],
+        onDelete: () => { if (window.confirm('Delete the application from ' + (ap.discord || ap.name || 'this player') + '?')) this.setApps(l => { l.splice(i, 1); }); }
+      };
+    });
+    const newCount = s.apps.filter(a => !a.status || a.status === 'new').length;
+    const counts = { campaign: '', schedule: '', party: c ? c.party.length : '', recaps: c ? c.recaps.length : '', quests: c ? c.threads.length : '', registration: regOn ? 'Open' : 'Closed', applications: s.apps.length };
     const sections = SECTIONS.map(([k, label]) => ({
       label, count: counts[k],
       bg: s.section === k ? 'var(--color-accent)' : 'transparent',
@@ -455,6 +686,31 @@ class Component extends DCLogic {
       navDir: narrow ? 'row' : 'column',
       asideMax: narrow ? '100%' : '240px',
       asidePos: narrow ? 'static' : 'sticky',
+      isRegistration: s.section === 'registration', isApplications: s.section === 'applications',
+      reg, fitQs, apps,
+      modRows: (window.CrookedMoonClassModules ? window.CrookedMoonClassModules.MODULES : []).map(m => {
+        const act = Array.isArray(reg.modules) ? reg.modules : window.CrookedMoonClassModules.DEFAULT_ACTIVE;
+        const on = act.includes(m.id);
+        const nS = Object.keys(m.classes).reduce((n, k) => n + m.classes[k].length, 0);
+        return { abbr: m.abbr, name: m.name, count: [(m.species || []).length ? m.species.length + ' species' : '', Object.keys(m.classes).length + ' classes', nS + ' subclasses'].filter(Boolean).join(' \u00b7 '), pressed: on ? 'true' : 'false', mark: on ? '\u2713' : '', border: on ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 45%, transparent)', bg: on ? 'var(--color-accent)' : 'transparent',
+          onClick: () => this.upd(x => { const cur = Array.isArray(x.registration.modules) ? x.registration.modules.slice() : window.CrookedMoonClassModules.DEFAULT_ACTIVE.slice(); x.registration.modules = on ? cur.filter(v => v !== m.id) : cur.concat(m.id); }) };
+      }),
+      hbRow: (() => { const on = reg.allowHomebrew !== false; return { pressed: on ? 'true' : 'false', mark: on ? '\u2713' : '', border: on ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 45%, transparent)', bg: on ? 'var(--color-accent)' : 'transparent', onClick: () => this.upd(x => { x.registration.allowHomebrew = !on; }) }; })(),
+      modNote: Array.isArray(reg.modules) && !reg.modules.length ? 'Nothing is on, so applicants see the defaults (PHB, DMG, TCM).' : '', noApps: apps.length === 0,
+      appsNote: s.apps.length + (s.apps.length === 1 ? ' application' : ' applications') + ' \u00b7 ' + newCount + ' new. Status changes save immediately.',
+      toggleReg: () => this.upd(x => { x.registration.open = !(x.registration.open !== false); }),
+      regSw: { border: reg.open !== false ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 40%, transparent)', track: reg.open !== false ? 'var(--color-accent)' : 'transparent', knob: reg.open !== false ? '#ffffff' : 'color-mix(in srgb, var(--color-bg) 60%, transparent)', left: reg.open !== false ? '21px' : '3px', label: reg.open !== false ? 'Accepting applications' : 'Applications closed' },
+      onSeats: e => { const n = parseInt(e.target.value, 10); this.upd(x => { x.registration.seats = isNaN(n) ? 1 : Math.max(1, Math.min(8, n)); }); },
+      onDeadline: rg('deadline'),
+      dlNote: !dl ? 'No deadline. Applications stay open until you switch them off.' : dlPast ? 'Deadline passed. The registration page now shows applications as closed.' : 'Applicants see this date. The page closes automatically after ' + dl.getDate() + ' ' + MONTHS[dl.getMonth()] + ' ' + dl.getFullYear() + '.',
+      dlNoteColor: dlPast ? 'var(--color-accent-400)' : 'color-mix(in srgb, var(--color-bg) 60%, transparent)',
+      onRegIntro: rg('intro'), onFitTitle: rg('fitTitle'), onFitIntro: rg('fitIntro'),
+      addFitQ: () => this.upd(x => { x.registration.fitQuestions.push({ id: uid(), type: 'choice', required: true, prompt: '', options: ['Yes', 'No'] }); }),
+      stdSections: [
+        { n: '01', title: 'General information', desc: 'Discord, D&D experience, favourite aspects (up to 2), playstyle, lines and veils, why them.' },
+        { n: '03', title: 'Vibe check', desc: 'How they bond with other players and how they want to handle conflict.' },
+        { n: '04', title: 'Your character', desc: 'Name, species, class, subclass and backstory, with a live character card.' }
+      ],
       isCampaign: s.section === 'campaign', isSchedule: s.section === 'schedule', isParty: s.section === 'party', isRecaps: s.section === 'recaps', isQuests: s.section === 'quests',
       on: {
         arcTitle: txt('arcTitle'), arcChapter: txt('arcChapter'), arcBlurb: txt('arcBlurb'), keyArtUrl: txt('keyArtUrl'), summary: txt('summary'),

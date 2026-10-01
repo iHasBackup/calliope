@@ -9,8 +9,8 @@
 <x-dc>
 <helmet>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
-  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
+  <link rel="stylesheet" href="./modernist-styles.css">
+  
   <script src="./image-slot.js"></script>
   <script src="./campaign-content.js"></script>
   <style>
@@ -345,11 +345,15 @@ class Component extends DCLogic {
     const party = c.party.map(p => ({ ...p, name: p.name || 'Unnamed', species: p.species || 'Species TBD', klass: p.klass || 'Class TBD', sub: p.sub || 'Subclass TBD', hasPortrait: !!p.portraitUrl, noPortrait: !p.portraitUrl, portraitBg: p.portraitUrl ? 'url(' + JSON.stringify(p.portraitUrl) + ')' : 'none', border: 'transparent', badge: 'LV ' + level, badgeBg: 'var(--color-accent)', placeholder: 'Portrait of ' + (p.name || 'member') }));
     if (showOpen) party.push({ id: 'open', name: 'Seat open', species: 'Fifth player', klass: 'Joining soon', sub: 'Class TBD', hasPortrait: false, noPortrait: true, border: 'color-mix(in srgb, var(--color-bg) 25%, transparent)', badge: '+1', badgeBg: 'color-mix(in srgb, var(--color-bg) 25%, var(--color-text))', placeholder: 'Portrait' });
 
-    const tabs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['activities', 'Activities']].map(([k, label]) => ({
+    const tabDefs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['activities', 'Activities']];
+    const rg = c.registration || {};
+    const rgPast = /^\d{4}-\d{2}-\d{2}$/.test(rg.deadline || '') && Date.now() > new Date(rg.deadline + 'T23:59:59').getTime();
+    if (rg.open !== false && !rgPast) tabDefs.push(['apply', 'Apply']);
+    const tabs = tabDefs.map(([k, label]) => ({
       label,
       bg: s.view === k ? 'var(--color-accent)' : 'transparent',
       color: s.view === k ? '#ffffff' : 'color-mix(in srgb, var(--color-bg) 75%, transparent)',
-      onClick: () => this.go(k)
+      onClick: () => { if (k === 'apply') location.href = 'Registration.dc.html'; else this.go(k); }
     }));
 
     const sorted = c.recaps.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));

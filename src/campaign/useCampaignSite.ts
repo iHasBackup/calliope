@@ -110,6 +110,14 @@ export function useCampaignSite() {
 
   const cardCount = content.party.length + (content.showOpenSeat ? 1 : 0);
 
+  const showApply = useMemo(() => {
+    const reg = content.registration;
+    if (reg.open === false) return false;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.deadline)) return true;
+    const todayInTz = new Intl.DateTimeFormat('en-CA', { timeZone: content.schedule.timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now));
+    return todayInTz <= reg.deadline;
+  }, [content.registration, content.schedule.timezone, now]);
+
   return {
     content,
     contentLoading: loading,
@@ -120,6 +128,7 @@ export function useCampaignSite() {
     width,
     menuOpen,
     setMenuOpen,
+    showApply,
     partyColumns: partyColumns(width, cardCount),
     session,
     countdown,

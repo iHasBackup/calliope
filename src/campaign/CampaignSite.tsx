@@ -14,7 +14,7 @@ export default function CampaignSite() {
 
   return (
     <div className="campaign-site">
-      <Header view={site.view} go={site.go} width={site.width} menuOpen={site.menuOpen} setMenuOpen={site.setMenuOpen} />
+      <Header view={site.view} go={site.go} width={site.width} menuOpen={site.menuOpen} setMenuOpen={site.setMenuOpen} showApply={site.showApply} />
       {site.view === 'home' &&
         (site.contentLoading ? (
           <HomeSkeleton />
