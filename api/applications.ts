@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRedis } from './_redis.js';
 import { requireSession } from './_session.js';
-import { DEFAULT_CONTENT, type Content, type PartyMember } from '../src/campaign/content.js';
+import { DEFAULT_CONTENT, sanitizeContent, type Content, type PartyMember } from '../src/campaign/content.js';
 import { sanitizeApplication, type Application, type ApplicationStatus } from '../src/campaign/application.js';
 import { EXPERIENCE, ASPECTS, PLAYSTYLES, BOND, CONFLICT, VIBE_QS, speciesOf, classOf, subOf } from '../src/campaign/registrationData.js';
 import { build as buildClasses, buildSpecies } from '../src/campaign/classModules.js';
@@ -91,11 +91,19 @@ async function loadApps(redis: ReturnType<typeof getRedis>): Promise<Application
   return map ? Object.values(map) : [];
 }
 
+/** Reads content and runs it through sanitizeContent, same as api/content.ts
+ * does on GET — a document saved before a schema change (e.g. this feature's
+ * own `registration` field) is otherwise missing it entirely. */
+async function loadContent(redis: ReturnType<typeof getRedis>): Promise<Content> {
+  const stored = await redis.get<Content>(CONTENT_KEY);
+  return stored ? { ...sanitizeContent(stored), updatedAt: stored.updatedAt } : { ...DEFAULT_CONTENT, updatedAt: 0 };
+}
+
 /** Adds/removes the party member tied to this application, mirroring the
  * admin's accept/un-accept behaviour. Always wins (no optimistic-concurrency
  * check) since this is a narrow, additive side effect of a status change. */
 async function syncParty(redis: ReturnType<typeof getRedis>, app: Application, onParty: boolean): Promise<Content | null> {
-  const stored = (await redis.get<Content>(CONTENT_KEY)) ?? { ...DEFAULT_CONTENT, updatedAt: 0 };
+  const stored = await loadContent(redis);
   const idx = stored.party.findIndex((m) => m.appId === app.id);
   if (onParty && idx < 0) {
     const member: PartyMember = {
@@ -141,7 +149,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return;
       }
 
-      const content = (await redis.get<Content>(CONTENT_KEY)) ?? { ...DEFAULT_CONTENT, updatedAt: 0 };
+      const content = await loadContent(redis);
       const reg = content.registration;
       if (reg.open === false || isPastDeadline(reg.deadline, content.schedule.timezone)) {
         res.status(403).json({ error: 'Applications are closed.' });
