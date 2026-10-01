@@ -3,7 +3,7 @@
 // Dependency-free (no React) so it works from both the public registration
 // page and the admin "Applications" review UI.
 
-import { BASE, allSpecies } from './classModules';
+import { BASE, allSpecies } from './classModules.js';
 import type { ApplicationDraft, ClassEntry } from './application';
 import type { Registration } from './content';
 
