@@ -112,16 +112,16 @@ export default function RegistrationPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 12, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-accent-400)' }}>
               <span style={{ width: 8, height: 8, flex: 'none', background: 'var(--color-accent)', transform: 'rotate(45deg)' }} />
-              <span>{open ? `Applications open · ${seats} ${seats === 1 ? 'seat' : 'seats'}` : 'Applications closed'}</span>
+              <span>{open ? `Applications open · ${seats} ${seats === 1 ? 'seat' : 'seats'}` : failed ? 'Connection problem' : 'Applications closed'}</span>
             </div>
             <h1 style={{ margin: 0, fontSize: 'clamp(44px, 8vw, 104px)', lineHeight: 0.9, letterSpacing: '-0.035em', textTransform: 'uppercase', textWrap: 'balance' }}>
-              {open ? 'Apply for a seat' : 'The table is full'}
+              {open ? 'Apply for a seat' : failed ? "Can't load right now" : 'The table is full'}
             </h1>
             <p style={{ margin: 0, fontSize: 'clamp(15px, 1.6vw, 18px)', lineHeight: 1.6, maxWidth: 560, color: muted(85), textWrap: 'pretty' }}>
               {open
                 ? r.intro
                 : failed
-                  ? 'We could not load the application details.'
+                  ? 'We could not load the application details. Check your connection.'
                   : past
                   ? `Applications closed on ${dl!.getDate()} ${MONTHS[dl!.getMonth()]} ${dl!.getFullYear()}. Thanks to everyone who applied. Keep an eye on the campaign page for the next opening.`
                   : 'The DM is not taking new players right now. Check back after the current arc.'}
