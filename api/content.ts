@@ -15,7 +15,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // subsequent save spuriously 409s against the real current value.
       res.setHeader('Cache-Control', 'no-store');
       const stored = await redis.get<Content>(CONTENT_KEY);
-      res.status(200).json(stored ?? { ...DEFAULT_CONTENT, updatedAt: 0 });
+      // Sanitize on read too, not just on write: a document saved before a
+      // schema change (new fields added to Content) is missing them, and
+      // the client assumes every field is always present.
+      res.status(200).json(stored ? { ...sanitizeContent(stored), updatedAt: stored.updatedAt } : { ...DEFAULT_CONTENT, updatedAt: 0 });
       return;
     }
 
