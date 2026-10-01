@@ -71,3 +71,15 @@
 @media (prefers-reduced-motion: reduce) {
   .campaign-skel::after { animation: none; }
 }
+
+/* Registration skeleton pulses as one block (see design/REGISTRATION.md). */
+.reg-skel {
+  animation: reg-skel-pulse 1.4s ease-in-out infinite;
+}
+@keyframes reg-skel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reg-skel { animation: none; }
+}

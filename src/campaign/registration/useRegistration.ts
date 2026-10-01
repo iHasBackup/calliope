@@ -92,7 +92,7 @@ export function computeErrors(step: number, a: ApplicationDraft, reg: Registrati
 }
 
 export function useRegistration() {
-  const { content, loading: contentLoading } = useContent();
+  const { content, loading: contentLoading, error: contentError, retry: retryContent } = useContent();
   const [view, setView] = useState<RegView>('intro');
   const [step, setStep] = useState(0);
   const [maxStep, setMaxStep] = useState(0);
@@ -222,6 +222,8 @@ export function useRegistration() {
   return {
     content,
     contentLoading,
+    contentError,
+    retryContent,
     reg: content.registration,
     view,
     step,

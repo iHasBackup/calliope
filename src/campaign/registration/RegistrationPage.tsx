@@ -4,6 +4,7 @@ import { useDarkBody } from '../useDarkBody';
 import { useRegistration, computeErrors, activeFitQuestions } from './useRegistration';
 import { FormStep } from './FormStep';
 import { CharacterStep } from './CharacterStep';
+import { RegistrationSkeleton } from './RegistrationSkeleton';
 import { summarize } from '../registrationData';
 
 const muted = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
@@ -51,7 +52,8 @@ export default function RegistrationPage() {
   const c = reg.content;
   const dl = /^\d{4}-\d{2}-\d{2}$/.test(r.deadline) ? new Date(`${r.deadline}T23:59:59`) : null;
   const past = !!dl && Date.now() > dl.getTime();
-  const open = r.open !== false && !past;
+  const failed = reg.contentError;
+  const open = !failed && r.open !== false && !past;
   const daysLeft = dl ? Math.ceil((dl.getTime() - Date.now()) / 86400000) : 0;
   const seats = Math.max(1, Number(r.seats) || 1);
 
@@ -96,6 +98,7 @@ export default function RegistrationPage() {
     return (
       <div className="campaign-site">
         <PageHeader hasDraft={false} showDraftNote={false} width={reg.width} />
+        <RegistrationSkeleton />
       </div>
     );
   }
@@ -117,9 +120,19 @@ export default function RegistrationPage() {
             <p style={{ margin: 0, fontSize: 'clamp(15px, 1.6vw, 18px)', lineHeight: 1.6, maxWidth: 560, color: muted(85), textWrap: 'pretty' }}>
               {open
                 ? r.intro
-                : past
+                : failed
+                  ? 'We could not load the application details.'
+                  : past
                   ? `Applications closed on ${dl!.getDate()} ${MONTHS[dl!.getMonth()]} ${dl!.getFullYear()}. Thanks to everyone who applied. Keep an eye on the campaign page for the next opening.`
                   : 'The DM is not taking new players right now. Check back after the current arc.'}
+              {failed && (
+                <>
+                  {' '}
+                  <button type="button" onClick={reg.retryContent} style={{ all: 'unset', cursor: 'pointer', color: 'var(--color-accent-400)', textDecoration: 'underline' }}>
+                    Try again
+                  </button>
+                </>
+              )}
             </p>
 
             {open && (
