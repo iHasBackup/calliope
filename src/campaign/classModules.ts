@@ -73,18 +73,17 @@ export const MODULES: ModuleDef[] = [
       wizard: ['Abjurer', 'Diviner', 'Evoker', 'Illusionist'],
     },
   },
-  { id: 'dmg', abbr: 'DMG', name: 'DMG 2024', classes: { cleric: ['Death Domain'], paladin: ['Oathbreaker'] } },
   {
     id: 'exe',
     abbr: 'ExE',
     name: 'Exploring Eberron',
-    species: ['Hobgoblin', 'Merfolk', 'Aasimar variant'],
+    species: ['Aasimar', "Dhakaani Ghaal'dar (Hobgoblin)", "Dhakaani Golin'dar (Goblin)", "Dhakaani Guul'dar (Bugbear)", 'Gnoll', "Jhorgun'taal (Half-orc)", 'Kalamer Landwalker (Merfolk)', 'Ruinbound', 'Sahuagin'],
     classes: {
       artificer: ['Forge Adept', 'Maverick'],
       bard: ['College of the Dirge Singer'],
       cleric: ['Mind Domain'],
       druid: ['Circle of the Forged'],
-      monk: ['Way of the Living Weapon'],
+      monk: ['Warrior of the Living Weapon'],
     },
   },
   {
@@ -110,6 +109,7 @@ export const MODULES: ModuleDef[] = [
     id: 'feq',
     abbr: 'FEQ',
     name: 'Frontiers of Eberron: Quickstone',
+    species: ['Gargoyle', 'Gnoll', 'Harpy', 'Medusa', 'Tiefling', 'Worg'],
     classes: {
       barbarian: ['Path of the Demonshard'],
       bard: ['College of Wands'],
@@ -164,6 +164,7 @@ export const MODULES: ModuleDef[] = [
       cleric: ['Eldritch', 'Inquisition', 'Purification'],
       druid: ['Blood', 'Entropy', 'Mutation'],
       fighter: ['Bulwark Warrior', 'Living Crucible', 'Nightwatcher'],
+      monk: ['Warrior of the Leaden Crown', 'Warrior of Pride', 'Warrior of Regret'],
       'monster-hunter': ['Carver', 'Devourer', 'Occultist', 'Trapper'],
       paladin: ['Pestilence', 'Slaughter', 'Zeal'],
       ranger: ['Green Reaper', 'Primordial Archer', 'Vermin Lord'],
@@ -175,15 +176,21 @@ export const MODULES: ModuleDef[] = [
   },
 ];
 
-export const DEFAULT_ACTIVE = ['phb', 'dmg', 'tcm'];
+export const DEFAULT_ACTIVE = ['phb', 'tcm'];
 
 function mod(id: string): ModuleDef | undefined {
   return MODULES.find((m) => m.id === id);
 }
 
+// Known module ids from the saved list; defaults when none are set (or none still exist, e.g. a removed book).
+function activeIds(active: unknown): string[] {
+  const ids = (Array.isArray(active) ? (active as string[]) : []).filter((id) => mod(id));
+  return ids.length ? ids : DEFAULT_ACTIVE;
+}
+
 // Classes available for the given module ids, each with tagged subclasses. 'Other' is always last.
 export function build(active: unknown): ActiveClass[] {
-  const ids = (Array.isArray(active) && active.length ? (active as string[]) : DEFAULT_ACTIVE).filter((id) => mod(id));
+  const ids = activeIds(active);
   const out: ActiveClass[] = [];
   BASE.forEach((b) => {
     const subs: { v: string; label: string; src: string }[] = [];
@@ -208,12 +215,15 @@ export function spKey(s: string): string {
 }
 
 // Species from the given module ids, tagged with their source. 'Other' (homebrew) is appended by the caller.
+// A species several books share (e.g. Gnoll, Tiefling) is listed once, under the first active book.
 export function buildSpecies(active: unknown): SpeciesOption[] {
-  const ids = (Array.isArray(active) && active.length ? (active as string[]) : DEFAULT_ACTIVE).filter((id) => mod(id));
+  const ids = activeIds(active);
   const out: SpeciesOption[] = [];
   ids.forEach((id) => {
     const md = mod(id);
-    (md?.species || []).forEach((s) => out.push({ v: spKey(s), label: s, src: md!.abbr }));
+    (md?.species || []).forEach((s) => {
+      if (!out.some((o) => o.v === spKey(s))) out.push({ v: spKey(s), label: s, src: md!.abbr });
+    });
   });
   return out;
 }

@@ -122,7 +122,7 @@ export function RegistrationSection({ draft, update }: { draft: Content; update:
       <Panel title="Character sources">
         <span style={{ fontSize: 13, lineHeight: 1.5, color: mutedInk(65), marginTop: -10 }}>
           Applicants only see species, classes and subclasses from the sources turned on here.{' '}
-          {modulesUnset ? 'Nothing is on, so applicants see the defaults (PHB, DMG, TCM).' : ''}
+          {modulesUnset ? 'Nothing is on, so applicants see the defaults (PHB, TCM).' : ''}
         </span>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <button

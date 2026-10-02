@@ -88,7 +88,7 @@ export const DEFAULT_CONTENT: Content = {
     open: true,
     seats: 1,
     deadline: '2026-10-31',
-    modules: ['phb', 'dmg', 'tcm'],
+    modules: ['phb', 'tcm'],
     allowHomebrew: true,
     intro:
       'One seat is open at the table. Tell us about yourself as a player and the character you want to bring to Hollowmere. The DM reads every application and will reply on Discord.',
