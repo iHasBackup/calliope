@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Content, FitQuestion } from '../../content';
-import { MODULES, DEFAULT_ACTIVE } from '../../classModules';
+import { MODULES, DEFAULT_ACTIVE, BASE } from '../../classModules';
 import { NumberField, OutlineAddButton, Panel, SectionHeader, TextAreaField, TextField, mutedInk } from '../fields';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -141,7 +141,9 @@ export function RegistrationSection({ draft, update }: { draft: Content; update:
           {MODULES.map((m) => {
             const on = (activeModules.length ? activeModules : DEFAULT_ACTIVE).includes(m.id);
             const nSub = Object.values(m.classes).reduce((n, list) => n + list.length, 0);
-            const count = [m.species?.length ? `${m.species.length} species` : '', `${Object.keys(m.classes).length} classes`, `${nSub} subclasses`].filter(Boolean).join(' · ');
+            // Only classes this book introduces; PHB classes it adds subclasses to don't count.
+            const nClass = BASE.filter((b) => b.src === m.id).length;
+            const count = [m.species?.length ? `${m.species.length} species` : '', nClass ? `${nClass} ${nClass === 1 ? 'class' : 'classes'}` : '', `${nSub} subclasses`].filter(Boolean).join(' · ');
             return (
               <button
                 key={m.id}
