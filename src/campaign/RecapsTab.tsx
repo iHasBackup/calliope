@@ -137,7 +137,7 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
                 </button>
                 {r.open && (
                   <div style={{ padding: '0 clamp(14px, 3vw, 18px) 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: mutedInk(85), maxWidth: 620, textWrap: 'pretty' }}>{r.body}</p>
+                    <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: mutedInk(85), maxWidth: 620, textWrap: 'pretty', whiteSpace: 'pre-line' }}>{r.body}</p>
                     {r.tags.length > 0 && (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                         {r.tags.map((tag) => (
