@@ -7,6 +7,25 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Paint dark pages dark from the first frame. The stylesheet's default
+         ground is the crossword's light one, and the app only switches it once
+         its script has loaded, which showed as a light flash on refresh.
+         useDarkBody keeps the class in sync on in-app navigation. -->
+    <style>
+      html.dark-ground,
+      html.dark-ground body {
+        background: #201e1d;
+        color-scheme: dark;
+      }
+    </style>
+    <script>
+      (function () {
+        var p = location.pathname;
+        var light = p.indexOf('/thecrookedmoon/activities/') === 0 || p.indexOf('/crookedmoon/') === 0;
+        var dark = p === '/' || p.indexOf('/thecrookedmoon') === 0 || p.indexOf('/calendar') === 0;
+        if (dark && !light) document.documentElement.classList.add('dark-ground');
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

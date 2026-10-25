@@ -6,9 +6,11 @@ import { useEffect } from 'react';
  * dark-variant pages need it switched to the dark ground while mounted. */
 export function useDarkBody() {
   useEffect(() => {
-    document.body.style.background = 'var(--color-text)';
+    // index.html sets this class before first paint on a fresh load; keep it
+    // in sync when moving between dark and light pages inside the app.
+    document.documentElement.classList.add('dark-ground');
     return () => {
-      document.body.style.background = '';
+      document.documentElement.classList.remove('dark-ground');
     };
   }, []);
 }
