@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendar · Chocobie</title>
+  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
+  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
+  <script src="./campaign-content.js"></script>
+  <script src="./calendar-data.js"></script>
+  <style>
+    body { margin: 0; background: #201e1d; -webkit-text-size-adjust: 100%; }
+    a { color: var(--color-accent-400); text-decoration: none; }
+    a:hover { color: var(--color-accent); }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+    @keyframes cm-skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+    @media (prefers-reduced-motion: reduce) { [data-skel] { animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; max-width: 1440px; margin: 0 auto; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
+
+  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 57px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+      <div style="width: 28px; height: 28px; flex: none; display: grid; place-items: center; background: var(--color-accent); color: #ffffff; font-family: var(--font-heading); font-weight: 800; font-size: 17px; line-height: 1;">C</div>
+      <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(13px, 3.9vw, 16px); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;">Chocobie</div>
+    </div>
+    <a href="Campaign Home v2.dc.html" style="height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 4px; font-family: var(--font-heading); font-weight: 600; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;">The Crooked Moon <span>&rarr;</span></a>
+  </div>
+
+  <div style="padding: clamp(20px, 4vw, 40px) clamp(10px, 4vw, 48px) 8px; display: flex; flex-direction: column; gap: 8px;">
+    <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(40px, 8vw, 88px); line-height: 0.9; letter-spacing: -0.03em; text-transform: uppercase;">Calendar</h1>
+  </div>
+
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+    <div data-skel="" aria-busy="true" aria-label="Loading calendar" style="animation: cm-skel 1.4s ease-in-out infinite; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 24px; padding: 24px clamp(10px, 4vw, 48px) 48px;">
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 280px;">
+        <div style="height: 120px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 56px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 56px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 56px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+      </div>
+      <div style="grid-column: span 3; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+        <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 520px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+    <div style="display: grid; grid-template-columns: {{ cols }}; gap: clamp(16px, 3vw, 32px); padding: 16px clamp(10px, 4vw, 48px) 64px; align-items: start;">
+
+      <aside style="display: flex; min-width: 0;">
+        <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ true }}">
+          <button style="all: unset; box-sizing: border-box; cursor: pointer; width: 100%; min-height: 52px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 12px clamp(14px, 2vw, 20px); text-align: left; background: var(--color-accent); color: #ffffff;" style-hover="background: var(--color-accent-600);" onClick="{{ next.onClick }}">
+            <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;">{{ next.kicker }}</span>
+            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 17px; line-height: 1.1; text-transform: uppercase;">{{ next.camp }}</span>
+            <span style="font-size: 14px; font-weight: 500;">{{ next.title }}</span>
+            <span style="font-size: 14px;">{{ next.day }}, {{ next.time }}</span>
+            <span style="margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500;"><span>{{ next.rel }}</span><span style="font-size: 18px;">&rarr;</span></span>
+          </button>
+        </sc-if>
+      </aside>
+
+      <main style="min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <h2 style="order: {{ titleOrder }}; flex: {{ titleFlex }}; margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(20px, 3vw, 28px); letter-spacing: -0.01em; text-transform: uppercase; white-space: nowrap;">{{ title }}</h2>
+          <div style="order: 0; display: flex; align-items: center; gap: 8px; min-width: 0;">
+            <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 14px; display: flex; align-items: center; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 600; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: var(--color-accent-400);" onClick="{{ goToday }}">Today</button>
+            <button aria-label="Previous" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; font-size: 20px;" style-hover="background: color-mix(in srgb, var(--color-bg) 10%, transparent);" onClick="{{ prev }}">&larr;</button>
+            <button aria-label="Next" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; font-size: 20px;" style-hover="background: color-mix(in srgb, var(--color-bg) 10%, transparent);" onClick="{{ nextPeriod }}">&rarr;</button>
+          </div>
+          <div role="tablist" style="order: 2; margin-left: auto; display: flex; gap: 0; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent);">
+            <sc-for list="{{ views }}" as="v" hint-placeholder-count="4">
+              <button role="tab" aria-selected="{{ v.on }}" style="all: unset; box-sizing: border-box; cursor: pointer; height: 40px; padding: 0 clamp(10px, 2vw, 16px); display: flex; align-items: center; font-family: var(--font-heading); font-weight: 600; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; background: {{ v.bg }}; color: {{ v.fg }};" style-hover="background: {{ v.hover }};" onClick="{{ v.onClick }}">{{ v.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ isWeekGrid }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top: 2px solid var(--color-bg);">
+            <div style="display: grid; grid-template-columns: 56px repeat(7, minmax(0, 1fr)); border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+              <div></div>
+              <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                <div style="padding: 10px 8px; display: flex; flex-direction: column; gap: 4px; border-left: 1px solid color-mix(in srgb, var(--color-bg) 10%, transparent);">
+                  <span style="font-size: 11px; font-weight: 400; letter-spacing: 0.14em; color: {{ d.wdFg }};">{{ d.wd }}</span>
+                  <span style="align-self: flex-start; min-width: 34px; height: 34px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 500; font-size: 22px; background: {{ d.numBg }}; color: {{ d.numFg }};">{{ d.num }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display: grid; grid-template-columns: 56px repeat(7, minmax(0, 1fr));">
+              <div style="display: flex; flex-direction: column;">
+                <sc-for list="{{ hours }}" as="h" hint-placeholder-count="10">
+                  <div style="height: 52px; box-sizing: border-box; padding: 4px 8px 0 0; text-align: right; font-size: 11px; font-weight: 400; color: color-mix(in srgb, var(--color-bg) 55%, transparent);">{{ h.label }}</div>
+                </sc-for>
+              </div>
+              <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                <div style="position: relative; height: {{ gridH }}px; border-left: 1px solid color-mix(in srgb, var(--color-bg) 10%, transparent); background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 51px, color-mix(in srgb, var(--color-bg) 8%, transparent) 51px, color-mix(in srgb, var(--color-bg) 8%, transparent) 52px); background-color: {{ d.colBg }};">
+                  <sc-for list="{{ d.events }}" as="e" hint-placeholder-count="0">
+                    <button style="all: unset; box-sizing: border-box; cursor: pointer; position: absolute; top: {{ e.top }}px; height: {{ e.height }}px; left: calc({{ e.left }}% + 3px); width: calc({{ e.width }}% - 6px); padding: 6px 8px; overflow: hidden; display: flex; flex-direction: column; gap: 2px; background: {{ e.bg }}; color: {{ e.fg }}; border: {{ e.border }};" style-hover="outline: 2px solid var(--color-bg); outline-offset: -2px;" onClick="{{ e.onClick }}">
+                      <span style="font-size: 11px; font-weight: 400; letter-spacing: 0.04em;">{{ e.range }}</span>
+                      <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; line-height: 1.15; text-transform: uppercase; text-decoration: {{ e.deco }}; overflow-wrap: anywhere;">{{ e.camp }}</span>
+                      <span style="font-size: 12px; line-height: 1.25; text-decoration: {{ e.deco }};">{{ e.title }}</span>
+                    </button>
+                  </sc-for>
+                  <sc-if value="{{ d.showNow }}" hint-placeholder-val="{{ false }}">
+                    <div style="position: absolute; left: 0; right: 0; top: {{ d.nowTop }}px; height: 2px; background: var(--color-accent); pointer-events: none;"></div>
+                    <div style="position: absolute; left: -5px; top: {{ d.nowDot }}px; width: 10px; height: 10px; background: var(--color-accent); pointer-events: none;"></div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ weekEmpty }}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 0; padding: 14px 0; font-size: 14px; color: color-mix(in srgb, var(--color-bg) 65%, transparent); border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">No sessions this week. The table rests.</p>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isWeekList }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; border-top: 2px solid var(--color-bg);">
+            <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+              <div style="display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <span style="font-size: 11px; font-weight: 400; letter-spacing: 0.14em; color: {{ d.wdFg }};">{{ d.wd }}</span>
+                  <span style="align-self: flex-start; min-width: 34px; height: 34px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 500; font-size: 22px; background: {{ d.numBg }}; color: {{ d.numFg }};">{{ d.num }}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                  <sc-for list="{{ d.events }}" as="e" hint-placeholder-count="0">
+                    <button style="all: unset; box-sizing: border-box; cursor: pointer; min-height: 56px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; background: {{ e.bg }}; color: {{ e.fg }}; border: {{ e.border }};" onClick="{{ e.onClick }}">
+                      <span style="font-size: 12px; font-weight: 400;">{{ e.range }}</span>
+                      <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; text-transform: uppercase; text-decoration: {{ e.deco }};">{{ e.camp }}</span>
+                      <span style="font-size: 13px; text-decoration: {{ e.deco }};">{{ e.title }}</span>
+                    </button>
+                  </sc-for>
+                  <sc-if value="{{ d.empty }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 50%, transparent);">Nothing scheduled</span>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isMonth }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top: 2px solid var(--color-bg);">
+            <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));">
+              <sc-for list="{{ wdHeads }}" as="h" hint-placeholder-count="7">
+                <div style="padding: 8px 6px; font-size: 11px; font-weight: 400; letter-spacing: 0.14em; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ h.label }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ month }}" as="row" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);">
+                <sc-for list="{{ row.cells }}" as="d" hint-placeholder-count="7">
+                  <div role="{{ d.role }}" style="min-height: {{ cellH }}; min-width: 0; padding: 6px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; border-left: 1px solid color-mix(in srgb, var(--color-bg) 8%, transparent); background: {{ d.bg }}; cursor: {{ d.cursor }};" onClick="{{ d.onCell }}">
+                    <span style="align-self: flex-start; min-width: 26px; height: 26px; padding: 0 3px; box-sizing: border-box; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 500; font-size: 14px; background: {{ d.numBg }}; color: {{ d.numFg }};">{{ d.num }}</span>
+                    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+                      <sc-for list="{{ d.chips }}" as="e" hint-placeholder-count="0">
+                        <button style="all: unset; box-sizing: border-box; cursor: pointer; display: flex; gap: 6px; align-items: baseline; padding: 3px 6px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; background: {{ e.bg }}; color: {{ e.fg }}; border: {{ e.border }};" style-hover="outline: 2px solid var(--color-bg); outline-offset: -2px;" onClick="{{ e.onClick }}">
+                          <span style="font-weight: 400; flex: none;">{{ e.time }}</span>
+                          <span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; text-decoration: {{ e.deco }};">{{ e.camp }}</span>
+                        </button>
+                      </sc-for>
+                      <sc-if value="{{ d.hasMore }}" hint-placeholder-val="{{ false }}">
+                        <button style="all: unset; cursor: pointer; font-size: 12px; font-weight: 700; padding: 2px 6px; color: var(--color-accent-300);" onClick="{{ d.onMore }}">{{ d.more }}</button>
+                      </sc-if>
+                    </sc-if>
+                    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; flex-direction: column; gap: 3px;">
+                        <sc-for list="{{ d.bars }}" as="b" hint-placeholder-count="0">
+                          <span style="display: block; height: 6px; background: {{ b.bg }}; border: {{ b.border }}; box-sizing: border-box;"></span>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ hasDayPick }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ dayPickLabel }}</span>
+                <sc-for list="{{ dayPick }}" as="e" hint-placeholder-count="0">
+                  <button style="all: unset; box-sizing: border-box; cursor: pointer; min-height: 56px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; background: {{ e.bg }}; color: {{ e.fg }}; border: {{ e.border }};" onClick="{{ e.onClick }}">
+                    <span style="font-size: 12px; font-weight: 400;">{{ e.range }}</span>
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; text-transform: uppercase; text-decoration: {{ e.deco }};">{{ e.camp }}</span>
+                    <span style="font-size: 13px; text-decoration: {{ e.deco }};">{{ e.title }}</span>
+                  </button>
+                </sc-for>
+                <sc-if value="{{ dayPickEmpty }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 55%, transparent);">Nothing scheduled.</span>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; border-top: 2px solid var(--color-bg);">
+            <sc-for list="{{ agenda }}" as="g" hint-placeholder-count="5">
+              <div style="display: flex; flex-direction: column;">
+                <sc-if value="{{ g.monthHead }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding: 20px 0 8px; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-300); border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">{{ g.monthLabel }}</div>
+                </sc-if>
+                <div style="display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);">
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 11px; font-weight: 400; letter-spacing: 0.14em; color: {{ g.wdFg }};">{{ g.wd }}</span>
+                    <span style="align-self: flex-start; min-width: 34px; height: 34px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 500; font-size: 22px; background: {{ g.numBg }}; color: {{ g.numFg }};">{{ g.num }}</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 0;">
+                    <sc-for list="{{ g.events }}" as="e" hint-placeholder-count="1">
+                      <button style="all: unset; box-sizing: border-box; cursor: pointer; min-height: 52px; padding: 8px; display: grid; grid-template-columns: {{ agendaCols }}; gap: 12px; align-items: center;" style-hover="background: color-mix(in srgb, var(--color-bg) 6%, transparent);" onClick="{{ e.onClick }}">
+                        <span style="width: 12px; height: 12px; background: {{ e.dot }};"></span>
+                        <span style="font-size: 13px; font-weight: 400;">{{ e.range }}</span>
+                        <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                          <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; text-transform: uppercase; text-decoration: {{ e.deco }};">{{ e.camp }}</span>
+                          <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 72%, transparent); text-decoration: {{ e.deco }};">{{ e.title }}</span>
+                        </span>
+                        <span style="display: {{ e.stDisp }}; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; background: {{ e.stBg }}; color: {{ e.stFg }};">{{ e.status }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ agendaEmpty }}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 0; padding: 20px 0; font-size: 15px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Nothing on the calendar in this stretch.</p>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isYear }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr)); column-gap: 16px; border-top: 2px solid var(--color-bg);">
+            <sc-for list="{{ year }}" as="m" hint-placeholder-count="12">
+              <div style="padding: 14px 12px 18px 0; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);">
+                <button style="all: unset; cursor: pointer; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; min-height: 32px;" style-hover="color: var(--color-accent-300);" onClick="{{ m.onClick }}">
+                  <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.02em;">{{ m.name }}</span>
+                  <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">{{ m.count }}</span>
+                </button>
+                <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px;">
+                  <sc-for list="{{ wdHeads }}" as="h" hint-placeholder-count="7">
+                    <span style="font-size: 10px; font-weight: 700; color: color-mix(in srgb, var(--color-bg) 50%, transparent); text-align: center;">{{ h.short }}</span>
+                  </sc-for>
+                  <sc-for list="{{ m.cells }}" as="d" hint-placeholder-count="30">
+                    <span style="aspect-ratio: 1; box-sizing: border-box; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: {{ d.bg }}; color: {{ d.fg }}; border: {{ d.border }};">{{ d.num }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </main>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; z-index: 40; background: color-mix(in srgb, #000000 60%, transparent);" onClick="{{ close }}">
+      <div role="dialog" aria-modal="true" aria-label="{{ d.title }}" style="position: absolute; right: 0; bottom: 0; top: {{ panelTop }}; width: {{ panelW }}; max-height: {{ panelMaxH }}; box-sizing: border-box; overflow-y: auto; background: var(--color-text); color: var(--color-bg); border-left: {{ panelBorderL }}; border-top: {{ panelBorderT }}; display: flex; flex-direction: column;" onClick="{{ stop }}">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 10px 10px 20px; border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+          <span style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+            <span style="width: 12px; height: 12px; flex: none; background: {{ d.dot }};"></span>
+            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;">{{ d.camp }}</span>
+          </span>
+          <button aria-label="Close" style="all: unset; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px;" style-hover="background: color-mix(in srgb, var(--color-bg) 10%, transparent);" onClick="{{ close }}">&times;</button>
+        </div>
+        <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ d.kicker }}</span>
+              <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; background: {{ d.stBg }}; color: {{ d.stFg }};">{{ d.status }}</span>
+            </span>
+            <h3 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: 32px; line-height: 0.98; letter-spacing: -0.02em; text-transform: uppercase; text-decoration: {{ d.deco }};">{{ d.title }}</h3>
+            <span style="font-size: 15px; font-weight: 600;">{{ d.when }}</span>
+            <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 70%, transparent);">{{ d.timeSys }}</span>
+            <sc-if value="{{ d.hasMoved }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 14px; color: var(--color-accent-300);">{{ d.moved }}</span>
+            </sc-if>
+            <sc-if value="{{ d.hasNote }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 14px; line-height: 1.45; color: color-mix(in srgb, var(--color-bg) 80%, transparent);">{{ d.note }}</span>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ d.hasRecap }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-300);">Last session recap</span>
+              <p style="margin: 0; font-size: 15px; line-height: 1.55; text-wrap: pretty;">{{ d.recap }}</p>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <sc-for list="{{ d.tags }}" as="t" hint-placeholder-count="0">
+                  <span style="font-size: 11px; font-weight: 600; padding: 3px 8px; border: 1px solid color-mix(in srgb, var(--color-bg) 30%, transparent);">{{ t.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ d.noRecap }}" hint-placeholder-val="{{ false }}">
+            <p style="margin: 0; padding-top: 16px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent); font-size: 14px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">No recap posted yet.</p>
+          </sc-if>
+
+          <sc-if value="{{ d.hasParty }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 0; padding-top: 16px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent); padding-bottom: 10px;">Party · {{ d.partyCount }}</span>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px;">
+                <sc-for list="{{ d.party }}" as="p" hint-placeholder-count="4">
+                  <div style="display: flex; gap: 10px; align-items: center; min-width: 0; padding: 10px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));">
+                    <span style="width: 32px; height: 32px; flex: none; display: grid; place-items: center; background: var(--color-bg); color: var(--color-text); font-family: var(--font-heading); font-weight: 800; font-size: 15px;">{{ p.initial }}</span>
+                    <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                      <span style="font-family: var(--font-heading); font-weight: 800; font-size: 14px; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ p.name }}</span>
+                      <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 68%, transparent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ p.klass }}</span>
+                    </span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ d.hasSeat }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">{{ d.seat }}</span>
+              <sc-if value="{{ d.hasRegister }}" hint-placeholder-val="{{ false }}">
+                <a href="{{ d.registerUrl }}" style="align-self: flex-start; height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 10px; background: var(--color-accent); color: #ffffff; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="background: var(--color-accent-600); color: #ffffff;">Apply for the seat <span>&rarr;</span></a>
+              </sc-if>
+              <sc-if value="{{ d.noRegister }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Registration is not open yet.</span>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+            <sc-if value="{{ d.canIcs }}" hint-placeholder-val="{{ true }}">
+              <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--color-bg); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="background: var(--color-bg); color: var(--color-text);" onClick="{{ d.onIcs }}"><span>Add this session to my calendar</span><span>.ics</span></button>
+            </sc-if>
+            <sc-if value="{{ d.canIcsAll }}" hint-placeholder-val="{{ true }}">
+              <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: var(--color-bg);" onClick="{{ d.onIcsAll }}"><span>Add all upcoming sessions</span><span>.ics</span></button>
+            </sc-if>
+            <sc-if value="{{ d.hasHome }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ d.homeUrl }}" style="height: 48px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;"><span>Campaign home</span><span>&rarr;</span></a>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showSkeleton&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WDF = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const ROW = 52;
+const VKEY = 'chocobie-calendar-view';
+const MUTED = 'color-mix(in srgb, var(--color-bg) 60%, transparent)';
+const pad = n => (n < 10 ? '0' : '') + n;
+const hm = h => pad(Math.floor(h) % 24) + ':' + pad(Math.round((h % 1) * 60));
+const C = () => window.ChocobieCalendar;
+const monday = s => C().addDays(s, -((C().dow(s) + 6) % 7));
+const dmy = s => +s.slice(8) + ' ' + MON[+s.slice(5, 7) - 1];
+
+class Component extends DCLogic {
+  state = { ready: false, view: 'week', cursor: '', hidden: {}, sel: null, mDay: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, now: Date.now() };
+
+  componentDidMount() {
+    try { const v = localStorage.getItem(VKEY); if (v) this.setState({ view: v }); } catch (e) {}
+    const init = () => {
+      if (window.ChocobieCalendar && window.CrookedMoonContent) this.setState({ ready: true, cursor: C().today() });
+      else this.poll = setTimeout(init, 60);
+    };
+    init();
+    this.tick = setInterval(() => this.setState({ now: Date.now() }), 30000);
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onKey = e => { if (e.key === 'Escape' && this.state.sel) this.setState({ sel: null }); };
+    this.onStore = () => this.forceUpdate();
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('storage', this.onStore);
+  }
+  componentWillUnmount() {
+    clearTimeout(this.poll); clearInterval(this.tick);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('storage', this.onStore);
+  }
+  setView(v) { try { localStorage.setItem(VKEY, v); } catch (e) {} this.setState({ view: v, mDay: null }); }
+  shift(dir) {
+    const s = this.state, cal = C();
+    let c = s.cursor;
+    if (s.view === 'week') c = cal.addDays(c, 7 * dir);
+    else if (s.view === 'agenda') c = cal.addDays(c, 28 * dir);
+    else {
+      let y = +c.slice(0, 4), m = +c.slice(5, 7);
+      if (s.view === 'year') y += dir; else { m += dir; if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } }
+      c = y + '-' + pad(m) + '-01';
+    }
+    this.setState({ cursor: c, mDay: null });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const loading = !s.ready || !!this.props.showSkeleton;
+    const wide = s.w >= 1024, mid = s.w >= 760;
+    const views = [['week', 'Week'], ['month', 'Month'], ['agenda', 'Agenda'], ['year', 'Year']].map(([k, label]) => ({
+      label, on: s.view === k,
+      bg: s.view === k ? 'var(--color-accent)' : 'transparent', fg: s.view === k ? '#ffffff' : 'var(--color-bg)',
+      hover: s.view === k ? 'var(--color-accent-600)' : 'color-mix(in srgb, var(--color-bg) 10%, transparent)',
+      onClick: () => this.setView(k)
+    }));
+    const base = { loading, ready: !loading, wide, narrow: !wide, views, hasSel: false };
+    if (loading) return base;
+
+    const cal = C(), today = cal.today(), now = s.now;
+    const camps = cal.campaigns();
+    const byId = {}; camps.forEach(c => { byId[c.id] = c; });
+    const sessOf = {}; camps.forEach(c => { sessOf[c.id] = cal.sessions(c); });
+    const all = [];
+    camps.forEach(c => { if (!s.hidden[c.id]) sessOf[c.id].forEach(x => all.push(x)); });
+    all.sort((a, b) => a.startMs - b.startMs);
+    const byDay = {}; all.forEach(x => { (byDay[x.date] = byDay[x.date] || []).push(x); });
+
+    const status = x => {
+      if (x.cancelled) return ['Cancelled', 'transparent', MUTED];
+      if (x.startMs <= now && now <= x.endMs) return ['Playing now', 'var(--color-accent)', '#ffffff'];
+      if (x.endMs < now) return ['Played', 'color-mix(in srgb, var(--color-bg) 14%, transparent)', 'var(--color-bg)'];
+      if (x.date === today) return ['Tonight', 'var(--color-accent)', '#ffffff'];
+      return [x.movedFrom ? 'Moved' : x.extra ? 'Extra' : 'Upcoming', 'var(--color-bg)', 'var(--color-text)'];
+    };
+    const ev = x => {
+      const c = byId[x.campId], t = cal.TONES[c.tone] || cal.TONES.stone, past = x.endMs < now, st = status(x);
+      return {
+        key: x.id, time: hm(x.hour), range: hm(x.hour) + '–' + hm(x.hour + x.duration), camp: c.title, title: x.title, dot: t.dot,
+        bg: x.cancelled ? 'transparent' : past ? 'color-mix(in srgb, ' + t.bg + ' 45%, var(--color-text))' : t.bg,
+        fg: x.cancelled ? MUTED : t.fg,
+        border: x.cancelled ? '1px dashed ' + t.border : '1px solid ' + (past ? 'transparent' : t.border),
+        deco: x.cancelled ? 'line-through' : 'none',
+        status: st[0], stBg: st[1], stFg: st[2], stDisp: mid ? 'inline-block' : 'none',
+        onClick: e => { if (e) e.stopPropagation(); this.setState({ sel: x.id }); }
+      };
+    };
+    const dayHead = d => ({
+      wd: WD[cal.dow(d)].toUpperCase(), num: +d.slice(8),
+      wdFg: d === today ? 'var(--color-accent-300)' : 'color-mix(in srgb, var(--color-bg) 65%, transparent)',
+      numBg: d === today ? 'var(--color-accent)' : 'transparent', numFg: d === today ? '#ffffff' : 'var(--color-bg)'
+    });
+
+    // hour range across all campaigns so the grid doesn't jump when toggling
+    let H0 = 24, H1 = 0;
+    camps.forEach(c => sessOf[c.id].forEach(x => { H0 = Math.min(H0, x.hour); H1 = Math.max(H1, x.hour + x.duration); }));
+    if (H0 > H1) { H0 = 17; H1 = 23; }
+    H0 = Math.max(0, Math.floor(H0) - 1); H1 = Math.min(24, Math.ceil(H1) + 1);
+    const nd = new Date(now), nowH = nd.getHours() + nd.getMinutes() / 60;
+
+    let title = '', week = [], month = [], agenda = [], year = [];
+    const cur = s.cursor;
+    if (s.view === 'week') {
+      const w0 = monday(cur), w6 = cal.addDays(w0, 6);
+      title = w0.slice(5, 7) === w6.slice(5, 7) ? (+w0.slice(8)) + ' – ' + dmy(w6) + ' ' + w6.slice(0, 4) : dmy(w0) + ' – ' + dmy(w6) + ' ' + w6.slice(0, 4);
+      week = Array.from({ length: 7 }, (_, i) => {
+        const d = cal.addDays(w0, i), list = byDay[d] || [];
+        const ends = [];
+        const placed = list.map(x => {
+          let lane = ends.findIndex(e => e <= x.hour);
+          if (lane < 0) { lane = ends.length; ends.push(0); }
+          ends[lane] = x.hour + x.duration;
+          return { x, lane };
+        });
+        const lanes = Math.max(1, ends.length);
+        return Object.assign(dayHead(d), {
+          key: d, empty: !list.length,
+          colBg: d === today ? 'color-mix(in srgb, var(--color-accent) 6%, transparent)' : 'transparent',
+          events: placed.map(({ x, lane }) => Object.assign(ev(x), {
+            top: (x.hour - H0) * ROW + 2,
+            height: Math.max(ROW - 4, (Math.min(H1, x.hour + x.duration) - x.hour) * ROW - 4),
+            left: lane * 100 / lanes, width: 100 / lanes
+          })),
+          showNow: d === today && nowH >= H0 && nowH <= H1,
+          nowTop: (nowH - H0) * ROW - 1, nowDot: (nowH - H0) * ROW - 5
+        });
+      });
+    } else if (s.view === 'month') {
+      const y = +cur.slice(0, 4), m = +cur.slice(5, 7);
+      title = MONTHS[m - 1] + ' ' + y;
+      const first = y + '-' + pad(m) + '-01';
+      const last = y + '-' + pad(m) + '-' + pad(new Date(Date.UTC(y, m, 0)).getUTCDate());
+      const end = cal.addDays(monday(last), 6);
+      for (let r = monday(first); r <= end; r = cal.addDays(r, 7)) {
+        month.push({ key: r, cells: Array.from({ length: 7 }, (_, i) => {
+          const d = cal.addDays(r, i), list = byDay[d] || [], inM = d.slice(5, 7) === pad(m), max = 3;
+          const picked = !wide && s.mDay === d;
+          return {
+            key: d, num: +d.slice(8),
+            numBg: d === today ? 'var(--color-accent)' : 'transparent',
+            numFg: d === today ? '#ffffff' : inM ? 'var(--color-bg)' : 'color-mix(in srgb, var(--color-bg) 35%, transparent)',
+            bg: picked ? 'color-mix(in srgb, var(--color-bg) 12%, var(--color-text))' : 'transparent',
+            role: wide ? 'presentation' : 'button', cursor: wide ? 'default' : 'pointer',
+            chips: list.slice(0, max).map(ev),
+            hasMore: list.length > max, more: '+' + (list.length - max) + ' more',
+            onMore: () => this.setState({ view: 'week', cursor: d }),
+            bars: list.map(x => { const e = ev(x); return { bg: e.bg, border: e.border }; }),
+            onCell: wide ? undefined : () => this.setState({ mDay: s.mDay === d ? null : d })
+          };
+        }) });
+      }
+    } else if (s.view === 'agenda') {
+      const endD = cal.addDays(cur, 55);
+      title = 'From ' + dmy(cur) + ' ' + cur.slice(0, 4);
+      let lastM = '';
+      Object.keys(byDay).filter(d => d >= cur && d <= endD).sort().forEach(d => {
+        const mk = d.slice(0, 7);
+        agenda.push(Object.assign(dayHead(d), {
+          key: d, monthHead: mk !== lastM, monthLabel: MONTHS[+d.slice(5, 7) - 1] + ' ' + d.slice(0, 4),
+          events: byDay[d].map(ev)
+        }));
+        lastM = mk;
+      });
+    } else {
+      const y = +cur.slice(0, 4);
+      title = String(y);
+      year = MONTHS.map((name, mi) => {
+        const first = y + '-' + pad(mi + 1) + '-01', n = new Date(Date.UTC(y, mi + 1, 0)).getUTCDate();
+        const lead = (cal.dow(first) + 6) % 7;
+        let count = 0;
+        const cells = Array.from({ length: lead }, (_, i) => ({ key: 'b' + i, num: '', bg: 'transparent', fg: 'inherit', border: '0' }));
+        for (let i = 1; i <= n; i++) {
+          const d = y + '-' + pad(mi + 1) + '-' + pad(i), list = (byDay[d] || []).filter(x => !x.cancelled);
+          count += list.length;
+          const t = list.length ? cal.TONES[byId[list[0].campId].tone] : null;
+          cells.push({ key: d, num: i, bg: t ? t.bg : 'transparent', fg: t ? t.fg : 'color-mix(in srgb, var(--color-bg) 70%, transparent)', border: d === today ? '2px solid var(--color-bg)' : '0' });
+        }
+        return { key: first, name, cells, count: count ? count + (count === 1 ? ' session' : ' sessions') : '', onClick: () => this.setState({ view: 'month', cursor: first }) };
+      });
+    }
+
+    const order = { running: 0, upcoming: 1, finished: 2 };
+    const campRows = camps.slice().sort((a, b) => order[a.status] - order[b.status]).map(c => {
+      const t = cal.TONES[c.tone] || cal.TONES.stone, on = !s.hidden[c.id];
+      const played = sessOf[c.id].filter(x => !x.cancelled && x.endMs < now).length;
+      const mY = d => MON[+d.slice(5, 7) - 1] + ' ' + d.slice(0, 4);
+      return {
+        key: c.id, title: c.title, dot: t.dot, checked: on, op: on ? 1 : 0.55,
+        box: on ? t.dot : 'transparent', tick: on ? '✓' : '',
+        status: c.status === 'running' ? 'Running' : c.status === 'upcoming' ? 'Upcoming' : 'Finished',
+        statusFg: c.status === 'running' ? 'var(--color-accent-300)' : 'color-mix(in srgb, var(--color-bg) 60%, transparent)',
+        sched: WDF[c.weekday] + 's' + (c.every > 1 ? ', every ' + c.every + ' weeks' : '') + ' · ' + hm(c.hour) + (c.tz ? ' ' + c.tz : ''),
+        range: c.status === 'upcoming' ? 'Starts ' + dmy(c.start) + ' ' + c.start.slice(0, 4)
+          : c.status === 'finished' ? mY(c.start) + ' – ' + mY(c.end) + ' · ' + played + ' sessions'
+          : 'Since ' + mY(c.start) + ' · ' + played + ' played',
+        onToggle: () => this.setState(st => ({ hidden: Object.assign({}, st.hidden, { [c.id]: !st.hidden[c.id] }) }))
+      };
+    });
+
+    const nx = all.find(x => !x.cancelled && x.endMs > now);
+    let next = null;
+    if (nx) {
+      const live = nx.startMs <= now, diff = nx.startMs - now;
+      const dd = Math.floor(diff / 864e5), hh = Math.floor(diff % 864e5 / 36e5), mm = Math.floor(diff % 36e5 / 6e4);
+      next = {
+        kicker: live ? 'At the table now' : nx.date === today ? 'Tonight' : 'Next session',
+        live, notLive: !live,
+        rel: live ? 'Playing now' : dd > 1 ? 'in ' + dd + ' days' : dd === 1 ? 'tomorrow' : hh > 0 ? 'in ' + hh + (hh === 1 ? ' hour' : ' hours') : 'in ' + Math.max(1, mm) + ' min',
+        camp: byId[nx.campId].title, title: (nx.n ? 'Session ' + pad(nx.n) : 'Session') + (nx.recap ? ' · ' + nx.title : ''),
+        day: WD[cal.dow(nx.date)] + ' ' + dmy(nx.date),
+        time: hm(nx.hour) + '–' + hm(nx.hour + nx.duration) + (byId[nx.campId].tz ? ' ' + byId[nx.campId].tz : ''),
+        onClick: () => this.setState({ sel: nx.id })
+      };
+    }
+
+    let d = {}, hasSel = false;
+    if (s.sel) {
+      const cid = s.sel.split(':')[0], c = byId[cid], x = c && sessOf[cid].find(y => y.id === s.sel);
+      if (x) {
+        hasSel = true;
+        const t = cal.TONES[c.tone] || cal.TONES.stone, st = status(x), upcoming = !x.cancelled && x.endMs > now;
+        const fut = sessOf[cid].filter(y => !y.cancelled && y.endMs > now).slice(0, 60);
+        const played = sessOf[cid].filter(y => !y.cancelled && y.endMs < now), isLast = played.length > 0 && played[played.length - 1].id === x.id;
+        const slug = c.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        d = {
+          camp: c.title, dot: t.dot, timeSys: hm(x.hour) + '–' + hm(x.hour + x.duration) + (c.tz ? ' ' + c.tz : '') + (c.system ? ' · ' + c.system : ''),
+          kicker: x.cancelled ? 'Cancelled session' : (x.extra ? 'Extra session · ' : 'Session ') + pad(x.n),
+          title: x.title, deco: x.cancelled ? 'line-through' : 'none',
+          status: st[0], stBg: st[1] === 'transparent' ? 'color-mix(in srgb, var(--color-bg) 14%, transparent)' : st[1], stFg: st[2] === MUTED ? 'var(--color-bg)' : st[2],
+          when: WDF[cal.dow(x.date)] + ' ' + +x.date.slice(8) + ' ' + MONTHS[+x.date.slice(5, 7) - 1] + ' ' + x.date.slice(0, 4),
+          time: hm(x.hour) + '–' + hm(x.hour + x.duration) + (c.tz ? ' ' + c.tz : ''),
+          hasMoved: !!x.movedFrom, moved: x.movedFrom ? 'Moved from ' + WD[cal.dow(x.movedFrom)] + ' ' + dmy(x.movedFrom) : '',
+          hasNote: !!x.note, note: x.note,
+          hasRecap: isLast && !!(x.recap && x.recap.body), recap: x.recap ? x.recap.body : '',
+          tags: x.recap && x.recap.tags ? String(x.recap.tags).split(',').map(v => ({ label: v.trim() })).filter(v => v.label) : [],
+          noRecap: isLast && !(x.recap && x.recap.body),
+          hasParty: c.party.length > 0, partyCount: c.party.length, party: c.party.map(p => { const [name, klass] = p.split(' · '); return { name, klass: klass || '', initial: name.trim().charAt(0).toUpperCase() }; }),
+          hasSeat: upcoming && c.openSeats > 0,
+          seat: c.openSeats + (c.openSeats === 1 ? ' seat open at the table' : ' seats open at the table'),
+          hasRegister: !!c.registerUrl, noRegister: !c.registerUrl, registerUrl: c.registerUrl,
+          hasHome: !!c.homeUrl, homeUrl: c.homeUrl,
+          canIcs: upcoming, canIcsAll: fut.length > 1,
+          onIcs: () => cal.download(slug + '-session-' + x.n + '.ics', cal.ics(c, [x])),
+          onIcsAll: () => cal.download(slug + '.ics', cal.ics(c, fut))
+        };
+      }
+    }
+
+    const dayPick = s.mDay && !wide ? (byDay[s.mDay] || []).map(ev) : [];
+    return Object.assign(base, {
+      cols: 'minmax(0, 1fr)', titleOrder: mid ? 1 : -1, titleFlex: mid ? '1 1 auto' : '1 1 100%',
+      asidePos: wide ? 'sticky' : 'static',
+      asideCols: wide ? 'minmax(0, 1fr)' : 'minmax(0, 420px)',
+      campDir: mid ? 'column' : 'row', campMin: mid ? '0' : '240px',
+      title, goToday: () => this.setState({ cursor: today, mDay: null }),
+      prev: () => this.shift(-1), nextPeriod: () => this.shift(1),
+      hasNext: !!next, next: next || {},
+      camps: campRows,
+      isWeekGrid: s.view === 'week' && mid, isWeekList: s.view === 'week' && !mid,
+      isMonth: s.view === 'month', isAgenda: s.view === 'agenda', isYear: s.view === 'year',
+      week, weekEmpty: week.every(x => x.empty),
+      hours: Array.from({ length: H1 - H0 }, (_, i) => ({ key: i, label: hm(H0 + i) })),
+      gridH: (H1 - H0) * ROW,
+      month, cellH: wide ? '112px' : '64px',
+      wdHeads: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(v => ({ key: v, label: v.toUpperCase(), short: v[0] })),
+      hasDayPick: !!s.mDay && !wide, dayPick, dayPickEmpty: !!s.mDay && !dayPick.length,
+      dayPickLabel: s.mDay ? WDF[cal.dow(s.mDay)] + ' ' + dmy(s.mDay) : '',
+      agenda, agendaEmpty: !agenda.length,
+      year,
+      hasSel, d,
+      panelTop: mid ? '0' : 'auto', panelMaxH: mid ? '100vh' : '88vh', agendaCols: mid ? '14px 110px minmax(0, 1fr) auto' : '12px 88px minmax(0, 1fr)', panelW: mid ? 'min(440px, 100%)' : '100%',
+      panelBorderL: mid ? '2px solid var(--color-accent)' : '0', panelBorderT: mid ? '0' : '2px solid var(--color-accent)',
+      close: () => this.setState({ sel: null }), stop: e => e.stopPropagation()
+    });
+  }
+}
+</script>
+</body>
+</html>

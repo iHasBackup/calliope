@@ -4,6 +4,7 @@
     arcTitle: 'The Harvest Below the Hill',
     arcChapter: 'Chapter II',
     arcBlurb: 'The party has followed the missing reapers to the barrow under Gallows Hill. The village insists the harvest must be finished before the moon turns full, and nobody will say what happens if it isn\u2019t.',
+    system: 'D&D 5e (2024)',
     keyArtUrl: '',
     nights: 8,
     progress: 24,
@@ -14,13 +15,13 @@
       'The Crone\u2019s price is still unpaid. She said she would name it at the full moon.',
       'A name in the church ledger of the dead belongs to someone the party spoke to yesterday.'
     ],
-    schedule: { weekday: 3, hour: 19, timezone: 'GMT+7' },
+    schedule: { weekday: 3, hour: 19, timezone: 'GMT+7', start: '2026-08-05', end: '', duration: 4, changes: [] },
     showOpenSeat: true,
     registration: {
       open: true,
       seats: 1,
       deadline: '2026-10-31',
-      modules: ['phb', 'dmg', 'tcm'],
+      modules: ['phb', 'tcm'],
       allowHomebrew: true,
       intro: 'One seat is open at the table. Tell us about yourself as a player and the character you want to bring to Hollowmere. The DM reads every application and will reply on Discord.',
       fitTitle: 'Campaign fit',

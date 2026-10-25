@@ -9,8 +9,8 @@
 <x-dc>
 <helmet>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="./modernist-styles.css">
-  
+  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
+  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
   <script src="./campaign-content.js"></script>
   <script src="./class-modules.js"></script>
   <script src="./registration-sections.js"></script>
@@ -19,6 +19,8 @@
     a { color: var(--color-accent-400); text-decoration: none; }
     a:hover { color: var(--color-accent); }
     input, textarea, select { color-scheme: dark; }
+    @keyframes cm-skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+    @media (prefers-reduced-motion: reduce) { [data-skel] { animation: none !important; } }
   </style>
 </helmet>
 
@@ -33,11 +35,18 @@
     <sc-if value="{{ showToolbar }}" hint-placeholder-val="{{ false }}">
       <div style="display: flex; align-items: center; gap: clamp(8px, 2vw, 16px); flex: none;">
         <span style="font-size: 13px; color: {{ statusColor }}; display: {{ statusDisplay }}; white-space: nowrap;">{{ status }}</span>
-        <a href="CampaignHome.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 4px; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);">View site</a>
+        <a href="Campaign Home v2.dc.html" style="height: 44px; display: flex; align-items: center; padding: 0 4px; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);">View site</a>
         <button class="btn btn-primary" style="height: 44px; padding: 0 18px; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; opacity: {{ saveOpacity }};" onClick="{{ save }}">{{ saveLabel }}</button>
       </div>
     </sc-if>
   </div>
+
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <div data-skel="" aria-busy="true" aria-label="Loading campaign admin" style="animation: cm-skel 1.4s ease-in-out infinite; display: flex; flex-wrap: wrap; align-items: flex-start; gap: clamp(20px, 4vw, 48px); padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px) clamp(56px, 8vw, 96px);">
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 200px; max-width: 240px;"><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"><div style="width: 70px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: transparent;"><div style="width: 79px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: transparent;"><div style="width: 88px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: transparent;"><div style="width: 97px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: transparent;"><div style="width: 106px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: transparent;"><div style="width: 75px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 44px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; background: transparent;"><div style="width: 84px; max-width: 100%; height: 12px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 16px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div>
+      <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0; flex: 999 1 420px;"><div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;"><div style="width: 110px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 320px; max-width: 100%; height: clamp(32px, 5vw, 48px); background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="height: 2px; background: color-mix(in srgb, var(--color-bg) 12%, transparent);"></div><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"><div style="width: 90px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 48px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); box-sizing: border-box;"></div></div><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px;"><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"><div style="width: 90px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 48px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); box-sizing: border-box;"></div></div><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"><div style="width: 90px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 48px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); box-sizing: border-box;"></div></div><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"><div style="width: 90px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 48px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); box-sizing: border-box;"></div></div></div><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"><div style="width: 90px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 140px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); box-sizing: border-box;"></div></div><div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"><div style="width: 90px; max-width: 100%; height: 10px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 48px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); box-sizing: border-box;"></div></div></div>
+    </div>
+  </sc-if>
 
   <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
     <div style="padding: clamp(48px, 10vw, 120px) clamp(16px, 4vw, 48px); max-width: 520px; display: flex; flex-direction: column; gap: 18px;">
@@ -83,6 +92,24 @@
             <div style="display: flex; flex-direction: column; gap: 6px;">
               <h2 style="margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Campaign</h2>
               <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">The hero, stat strip and story on the home page.</span>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px;">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em;">Game</span>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px;">
+                <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                  <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Game system</span>
+                  <input type="text" list="cm-systems" placeholder="D&amp;D 5e (2024)" value="{{ c.system }}" onChange="{{ on.system }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none; color-scheme: dark;" style-focus="border-color: var(--color-accent);">
+                  <datalist id="cm-systems">
+                    <option value="D&amp;D 5e (2024)"></option>
+                    <option value="D&amp;D 5e (2014)"></option>
+                    <option value="Pathfinder 2e"></option>
+                    <option value="Call of Cthulhu 7e"></option>
+                    <option value="Mörk Borg"></option>
+                    <option value="Daggerheart"></option>
+                  </datalist>
+                </label>
+              </div>
             </div>
 
             <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px;">
@@ -144,15 +171,15 @@
           <div style="display: flex; flex-direction: column; gap: 24px;">
             <div style="display: flex; flex-direction: column; gap: 6px;">
               <h2 style="margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Schedule</h2>
-              <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Drives the next-session countdown.</span>
+              <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Drives the next-session countdown and the calendar.</span>
             </div>
             <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 16px;">
+              <div style="display: grid; grid-template-columns: {{ schedCols }}; gap: 16px; align-items: end;">
                 <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
                   <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Day</span>
                   <select value="{{ weekdayVal }}" onChange="{{ on.weekday }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none;" style-focus="border-color: var(--color-accent);">
                     <sc-for list="{{ dayOptions }}" as="d" hint-placeholder-count="7">
-                      <option value="{{ d.v }}">{{ d.label }}</option>
+                      <option value="{{ d.v }}" selected="{{ d.sel }}">{{ d.label }}</option>
                     </sc-for>
                   </select>
                 </label>
@@ -160,7 +187,7 @@
                   <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Start time</span>
                   <select value="{{ hourVal }}" onChange="{{ on.hour }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none;" style-focus="border-color: var(--color-accent);">
                     <sc-for list="{{ hourOptions }}" as="h" hint-placeholder-count="24">
-                      <option value="{{ h.v }}">{{ h.label }}</option>
+                      <option value="{{ h.v }}" selected="{{ h.sel }}">{{ h.label }}</option>
                     </sc-for>
                   </select>
                 </label>
@@ -169,10 +196,127 @@
                   <input type="text" placeholder="GMT+7" value="{{ c.schedule.timezone }}" onChange="{{ on.timezone }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none;" style-focus="border-color: var(--color-accent);">
                 </label>
               </div>
-              <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
                 <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-400);">Next session</span>
                 <span style="font-family: var(--font-heading); font-weight: 800; font-size: 20px;">{{ nextPreview }}</span>
               </div>
+            </div>
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">Calendar</span>
+                <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Shown on chocobie.site/calendar. Sessions are generated weekly from the first session date.</span>
+              </div>
+              <div style="display: grid; grid-template-columns: {{ calCols }}; gap: 16px; align-items: end;">
+                <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                  <span style="display: flex; align-items: baseline; gap: 6px; height: 16px; white-space: nowrap; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">First session</span>
+                  <input type="date" value="{{ c.schedule.start }}" onChange="{{ on.start }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                </label>
+                <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                  <span style="display: flex; align-items: baseline; gap: 6px; height: 16px; white-space: nowrap; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Last session <span style="font-weight: 500; letter-spacing: 0.04em; text-transform: none;">optional</span></span>
+                  <input type="date" value="{{ c.schedule.end }}" onChange="{{ on.end }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                </label>
+                <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                  <span style="display: flex; align-items: baseline; gap: 6px; height: 16px; white-space: nowrap; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Session length <span style="font-weight: 500; letter-spacing: 0.04em; text-transform: none;">hours</span></span>
+                  <input type="number" min="1" max="12" value="{{ c.schedule.duration }}" onChange="{{ on.duration }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                </label>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Change the schedule</span>
+                <sc-if value="{{ noDraft }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 8px;">
+                    <button style="all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; min-height: 64px; padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start; text-align: left; background: var(--color-text); border: 1px solid color-mix(in srgb, var(--color-bg) 18%, transparent);" style-hover="border-color: var(--color-accent-400); background: color-mix(in srgb, var(--color-accent) 8%, var(--color-text));" onClick="{{ addCancel }}">
+                      <span style="flex: none; color: var(--color-accent-400); display: flex;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4"></rect><path d="M3 10h18"></path><path d="m14 14-4 4"></path><path d="m10 14 4 4"></path></svg></span>
+                      <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                        <span style="font-family: var(--font-heading); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;">Cancel a session</span>
+                        <span style="font-size: 13px; line-height: 1.4; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Strike one night off. It stays on the calendar, crossed out.</span>
+                      </span>
+                    </button>
+                    <button style="all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; min-height: 64px; padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start; text-align: left; background: var(--color-text); border: 1px solid color-mix(in srgb, var(--color-bg) 18%, transparent);" style-hover="border-color: var(--color-accent-400); background: color-mix(in srgb, var(--color-accent) 8%, var(--color-text));" onClick="{{ addMove }}">
+                      <span style="flex: none; color: var(--color-accent-400); display: flex;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4"></rect><path d="M3 10h18"></path><path d="M8 16h8"></path><path d="m13 13 3 3-3 3"></path></svg></span>
+                      <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                        <span style="font-family: var(--font-heading); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;">Move a session</span>
+                        <span style="font-size: 13px; line-height: 1.4; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Shift one night to another date or start time.</span>
+                      </span>
+                    </button>
+                    <button style="all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; min-height: 64px; padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start; text-align: left; background: var(--color-text); border: 1px solid color-mix(in srgb, var(--color-bg) 18%, transparent);" style-hover="border-color: var(--color-accent-400); background: color-mix(in srgb, var(--color-accent) 8%, var(--color-text));" onClick="{{ addExtra }}">
+                      <span style="flex: none; color: var(--color-accent-400); display: flex;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4"></rect><path d="M3 10h18"></path><path d="M12 13v6"></path><path d="M9 16h6"></path></svg></span>
+                      <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+                        <span style="font-family: var(--font-heading); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;">Extra session</span>
+                        <span style="font-size: 13px; line-height: 1.4; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Add a one-off night outside the weekly slot.</span>
+                      </span>
+                    </button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ hasDraft }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border: 2px solid var(--color-accent);">
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 16px; text-transform: uppercase;">{{ draft.heading }}</span>
+                    <div style="display: grid; grid-template-columns: {{ draftCols }}; gap: 12px; align-items: end;">
+                      <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ draft.dateLabel }}</span>
+                        <input type="date" value="{{ draft.date }}" onChange="{{ draft.onDate }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                      </label>
+                      <sc-if value="{{ draft.isMove }}" hint-placeholder-val="{{ false }}">
+                        <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">New date</span>
+                          <input type="date" value="{{ draft.toDate }}" onChange="{{ draft.onToDate }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                        </label>
+                      </sc-if>
+                      <sc-if value="{{ draft.hasTime }}" hint-placeholder-val="{{ false }}">
+                        <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Start time</span>
+                          <select value="{{ draft.toHour }}" onChange="{{ draft.onToHour }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                            <sc-for list="{{ draft.hours }}" as="h" hint-placeholder-count="24">
+                              <option value="{{ h.v }}" selected="{{ h.sel }}">{{ h.label }}</option>
+                            </sc-for>
+                          </select>
+                        </label>
+                      </sc-if>
+                    </div>
+                    <label style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Note shown on the calendar</span>
+                      <input type="text" placeholder="e.g. DM is travelling" value="{{ draft.note }}" onChange="{{ draft.onNote }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1; outline: none; color-scheme: dark; display: block; margin: 0;" style-focus="border-color: var(--color-accent);">
+                    </label>
+                    <sc-if value="{{ draft.hasErr }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size: 13px; font-weight: 600; color: var(--color-accent-400);">{{ draft.err }}</span>
+                    </sc-if>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                      <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 18px; display: flex; align-items: center; gap: 10px; background: var(--color-accent); color: #ffffff; font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="background: var(--color-accent-600);" onClick="{{ draft.onSubmit }}">Submit <span>&rarr;</span></button>
+                      <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 8px; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: var(--color-accent-400);" onClick="{{ draft.onCancel }}">Cancel</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+              </div>
+            </div>
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">History</span>
+                <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Submitted changes apply to the calendar right away</span>
+              </div>
+              <sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                  <sc-for list="{{ history }}" as="hi" hint-placeholder-count="3">
+                    <div style="display: grid; grid-template-columns: {{ histCols }}; gap: 4px 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 10%, transparent);">
+                      <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent); font-variant-numeric: tabular-nums;">{{ hi.at }}</span>
+                      <span style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                        <span style="display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;">
+                          <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 7px; background: {{ hi.tagBg }}; color: {{ hi.tagFg }};">{{ hi.action }}</span>
+                          <span style="font-size: 15px;">{{ hi.detail }}</span>
+                        </span>
+                        <sc-if value="{{ hi.hasNote }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ hi.note }}</span>
+                        </sc-if>
+                      </span>
+                      <sc-if value="{{ hi.canUndo }}" hint-placeholder-val="{{ false }}">
+                        <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 36px; padding: 0 12px; display: flex; align-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: var(--color-accent-400);" onClick="{{ hi.onUndo }}">Undo</button>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">No schedule changes yet.</span>
+              </sc-if>
             </div>
           </div>
         </sc-if>
@@ -496,7 +640,7 @@
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showSkeleton&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const SECTIONS = [['campaign', 'Campaign'], ['schedule', 'Schedule'], ['party', 'Party'], ['recaps', 'Recaps'], ['quests', 'Quest log'], ['registration', 'Registration'], ['applications', 'Applications']];
@@ -505,9 +649,18 @@ const STATUSES = [['new', 'New'], ['shortlisted', 'Shortlisted'], ['accepted', '
 const CM = () => window.CrookedMoonContent;
 const uid = () => Math.random().toString(36).slice(2, 9);
 const hourLabel = h => (h % 12 || 12) + ':00 ' + (h < 12 ? 'AM' : 'PM');
+const shortDate = s => { if (!s) return '?'; const d = new Date(s + 'T00:00:00'); return DAYS[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
+const chDesc = (ch, sc) => {
+  const hr = ch.toHour !== undefined && ch.toHour !== '' ? +ch.toHour : sc.hour;
+  if (ch.type === 'cancel') return 'Session on ' + shortDate(ch.date);
+  if (ch.type === 'move') return shortDate(ch.date) + ' → ' + shortDate(ch.toDate || ch.date) + ', ' + hourLabel(hr);
+  return shortDate(ch.date) + ', ' + hourLabel(hr);
+};
+const chKey = ch => [ch.type, ch.date, ch.toDate || '', ch.toHour === undefined ? '' : String(ch.toHour), ch.note || ''].join('|');
+const ACT = { cancel: 'Cancelled', move: 'Moved', extra: 'Extra session' };
 
 class Component extends DCLogic {
-  state = { c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
+  state = { draft: null, c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
 
   componentDidMount() {
     try { if (sessionStorage.getItem('cm-admin-ok') === '1') this.setState({ unlocked: true }); } catch (e) {}
@@ -533,6 +686,37 @@ class Component extends DCLogic {
 
   isDirty() { return !!this.state.c && JSON.stringify(this.state.c) !== this.state.savedJson; }
   upd(fn) { this.setState(s => { const c = CM().clone(s.c); fn(c); return { c }; }); }
+  applySched(fn) {
+    const stored = CM().load(); fn(stored.schedule); CM().save(stored);
+    this.setState(s => {
+      if (!s.c) return null;
+      const c = CM().clone(s.c), saved = JSON.parse(s.savedJson || '{}');
+      fn(c.schedule); if (saved.schedule) fn(saved.schedule);
+      return { c, savedJson: JSON.stringify(saved), draft: null, flash: 'Saved' };
+    });
+    clearTimeout(this.ft); this.ft = setTimeout(() => this.setState({ flash: '' }), 1600);
+  }
+  submitDraft() {
+    const d = this.state.draft;
+    if (!d) return;
+    if (!d.date) return this.setState({ draft: Object.assign({}, d, { err: d.type === 'extra' ? 'Pick a date.' : 'Pick the session date.' }) });
+    if (d.type === 'move' && !d.toDate) return this.setState({ draft: Object.assign({}, d, { err: 'Pick the new date.' }) });
+    const ch = { id: uid(), type: d.type, date: d.date, note: d.note || '' };
+    if (d.type === 'move') ch.toDate = d.toDate;
+    if (d.type !== 'cancel') ch.toHour = d.toHour;
+    this.applySched(sc => {
+      sc.changes = (sc.changes || []).filter(x => x.id !== ch.id).concat([ch]);
+      sc.history = [{ id: uid(), changeId: ch.id, at: new Date().toISOString(), kind: ch.type, action: ACT[ch.type], detail: chDesc(ch, sc), note: ch.note }].concat((sc.history || []).filter(h => h.id !== 'x')).slice(0, 100);
+    });
+  }
+  undoChange(changeId) {
+    this.applySched(sc => {
+      const ch = (sc.changes || []).find(x => x.id === changeId);
+      if (!ch) return;
+      sc.changes = sc.changes.filter(x => x.id !== changeId);
+      if (!(sc.history || []).some(h => h.undoOf === changeId)) sc.history = [{ id: uid(), undoOf: changeId, at: new Date().toISOString(), kind: 'remove', action: 'Undone', detail: ACT[ch.type] + ': ' + chDesc(ch, sc), note: '' }].concat(sc.history || []).slice(0, 100);
+    });
+  }
   save() {
     if (!this.state.c || !this.isDirty()) return;
     CM().save(this.state.c);
@@ -569,7 +753,8 @@ class Component extends DCLogic {
     const c = s.c;
     const narrow = s.w < 820;
     const dirty = this.isDirty();
-    const ready = !!c && s.unlocked;
+    const loading = !c || !!this.props.showSkeleton;
+    const ready = !loading && s.unlocked;
     const txt = k => e => { const v = e.target.value; this.upd(x => { x[k] = v; }); };
     const num = (k, min, max) => e => { const n = parseInt(e.target.value, 10); const v = isNaN(n) ? min : Math.max(min, Math.min(max, n)); this.upd(x => { x[k] = v; }); };
     const sch = k => e => { const v = e.target.value; this.upd(x => { x.schedule[k] = k === 'timezone' ? v : parseInt(v, 10); }); };
@@ -669,7 +854,7 @@ class Component extends DCLogic {
 
     return {
       c: c || { schedule: {} },
-      ready, locked: !s.unlocked, showToolbar: ready,
+      isLoading: loading, ready, locked: !loading && !s.unlocked, showToolbar: ready,
       narrow, wide: !narrow,
       brandDisplay: s.w < 520 ? 'none' : 'block',
       statusDisplay: s.w < 640 ? 'none' : 'inline',
@@ -696,7 +881,7 @@ class Component extends DCLogic {
           onClick: () => this.upd(x => { const cur = Array.isArray(x.registration.modules) ? x.registration.modules.slice() : window.CrookedMoonClassModules.DEFAULT_ACTIVE.slice(); x.registration.modules = on ? cur.filter(v => v !== m.id) : cur.concat(m.id); }) };
       }),
       hbRow: (() => { const on = reg.allowHomebrew !== false; return { pressed: on ? 'true' : 'false', mark: on ? '\u2713' : '', border: on ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 45%, transparent)', bg: on ? 'var(--color-accent)' : 'transparent', onClick: () => this.upd(x => { x.registration.allowHomebrew = !on; }) }; })(),
-      modNote: Array.isArray(reg.modules) && !reg.modules.length ? 'Nothing is on, so applicants see the defaults (PHB, DMG, TCM).' : '', noApps: apps.length === 0,
+      modNote: Array.isArray(reg.modules) && !reg.modules.length ? 'Nothing is on, so applicants see the defaults (PHB, TCM).' : '', noApps: apps.length === 0,
       appsNote: s.apps.length + (s.apps.length === 1 ? ' application' : ' applications') + ' \u00b7 ' + newCount + ' new. Status changes save immediately.',
       toggleReg: () => this.upd(x => { x.registration.open = !(x.registration.open !== false); }),
       regSw: { border: reg.open !== false ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 40%, transparent)', track: reg.open !== false ? 'var(--color-accent)' : 'transparent', knob: reg.open !== false ? '#ffffff' : 'color-mix(in srgb, var(--color-bg) 60%, transparent)', left: reg.open !== false ? '21px' : '3px', label: reg.open !== false ? 'Accepting applications' : 'Applications closed' },
@@ -715,14 +900,45 @@ class Component extends DCLogic {
       on: {
         arcTitle: txt('arcTitle'), arcChapter: txt('arcChapter'), arcBlurb: txt('arcBlurb'), keyArtUrl: txt('keyArtUrl'), summary: txt('summary'),
         nights: num('nights', 0, 9999), partyLevel: num('partyLevel', 1, 20), progress: num('progress', 0, 100),
-        weekday: sch('weekday'), hour: sch('hour'), timezone: sch('timezone')
+        weekday: sch('weekday'), hour: sch('hour'), timezone: sch('timezone'),
+        system: txt('system'),
+        start: e => { const v = e.target.value; this.upd(x => { x.schedule.start = v; }); },
+        end: e => { const v = e.target.value; this.upd(x => { x.schedule.end = v; }); },
+        duration: e => { const n = parseInt(e.target.value, 10); this.upd(x => { x.schedule.duration = isNaN(n) ? 4 : Math.max(1, Math.min(12, n)); }); }
       },
       segments: Array.from({ length: 20 }, (_, i) => ({ bg: i < Math.round(progress / 5) ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 14%, transparent)' })),
       weekdayVal: c ? String(c.schedule.weekday) : '3',
       hourVal: c ? String(c.schedule.hour) : '19',
-      dayOptions: DAYS.map((d, i) => ({ v: String(i), label: d })),
-      hourOptions: Array.from({ length: 24 }, (_, h) => ({ v: String(h), label: hourLabel(h) })),
+      dayOptions: DAYS.map((d, i) => ({ v: String(i), label: d, sel: !!c && c.schedule.weekday === i })),
+      hourOptions: Array.from({ length: 24 }, (_, h) => ({ v: String(h), label: hourLabel(h), sel: !!c && c.schedule.hour === h })),
+      schedCols: s.w >= 700 ? 'repeat(3, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      calCols: s.w >= 700 ? 'minmax(0, 1fr) minmax(0, 1fr) minmax(120px, 160px)' : 'minmax(0, 1fr)',
       nextPreview,
+      addCancel: () => this.setState({ draft: { type: 'cancel', date: '', note: '' } }),
+      addMove: () => this.setState({ draft: { type: 'move', date: '', toDate: '', toHour: c ? String(c.schedule.hour) : '19', note: '' } }),
+      addExtra: () => this.setState({ draft: { type: 'extra', date: '', toHour: c ? String(c.schedule.hour) : '19', note: '' } }),
+      hasDraft: !!s.draft, noDraft: !s.draft,
+      draftCols: s.w >= 700 ? 'repeat(3, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      draft: s.draft ? (() => {
+        const d = s.draft, set = k => e => { const v = e.target.value; this.setState(st => ({ draft: Object.assign({}, st.draft, { [k]: v, err: '' }) })); };
+        return {
+          heading: { cancel: 'Cancel a session', move: 'Move a session', extra: 'Add an extra session' }[d.type],
+          dateLabel: d.type === 'extra' ? 'Date' : 'Session date', date: d.date, toDate: d.toDate || '', note: d.note || '', toHour: d.toHour,
+          isMove: d.type === 'move', hasTime: d.type !== 'cancel',
+          hours: Array.from({ length: 24 }, (_, h) => ({ v: String(h), label: hourLabel(h), sel: String(h) === String(d.toHour) })),
+          onDate: set('date'), onToDate: set('toDate'), onToHour: set('toHour'), onNote: set('note'),
+          hasErr: !!d.err, err: d.err || '',
+          onSubmit: () => this.submitDraft(), onCancel: () => this.setState({ draft: null })
+        };
+      })() : {},
+      history: (c && c.schedule.history ? c.schedule.history : []).map((h, i) => {
+        const d = new Date(h.at);
+        const tag = { cancel: ['var(--color-bg)', 'var(--color-text)'], move: ['var(--color-accent)', '#ffffff'], extra: ['var(--color-accent-200)', 'var(--color-accent-900)'] }[h.kind] || ['color-mix(in srgb, var(--color-bg) 16%, transparent)', 'var(--color-bg)'];
+        const active = !!h.changeId && !!(c.schedule.changes || []).some(x => x.id === h.changeId);
+        return { key: 'h' + i, canUndo: active, onUndo: () => this.undoChange(h.changeId), at: d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear() + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'), action: h.action, detail: h.detail, note: h.note, hasNote: !!h.note, tagBg: tag[0], tagFg: tag[1] };
+      }),
+      hasHistory: !!(c && c.schedule.history && c.schedule.history.length), noHistory: !(c && c.schedule.history && c.schedule.history.length),
+      histCols: s.w >= 700 ? '150px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto',
       party,
       partyNote: party.length + (party.length === 1 ? ' member' : ' members') + (seatOn ? ' · open seat shown' : ''),
       addMember: () => this.upd(x => { x.party.push({ id: uid(), name: '', species: '', klass: '', sub: '', portraitUrl: '' }); }),
