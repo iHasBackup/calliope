@@ -1,6 +1,8 @@
 import type { Content } from '../../content';
 import { FieldRow, NumberField, Panel, SectionHeader, TextAreaField, TextField, mutedInk } from '../fields';
 
+const GAME_SYSTEMS = ['D&D 5e (2024)', 'D&D 5e (2014)', 'Pathfinder 2e', 'Call of Cthulhu 7e', 'Mörk Borg', 'Daggerheart'];
+
 export function CampaignSection({ draft, update }: { draft: Content; update: (fn: (c: Content) => void) => void }) {
   const progress = Math.max(0, Math.min(100, draft.progress));
   const filled = Math.round(progress / 5);
@@ -9,6 +11,16 @@ export function CampaignSection({ draft, update }: { draft: Content; update: (fn
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <SectionHeader title="Campaign" description="The hero, stat strip and story on the home page." />
+
+      <Panel title="Game">
+        <TextField
+          label="Game system"
+          placeholder="D&D 5e (2024)"
+          value={draft.system}
+          suggestions={GAME_SYSTEMS}
+          onChange={(v) => update((c) => (c.system = v))}
+        />
+      </Panel>
 
       <Panel title="Current arc">
         <FieldRow>

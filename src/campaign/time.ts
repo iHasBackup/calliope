@@ -100,3 +100,19 @@ export function nextSession(now: Date, weekday: number, hour: number, timeZone: 
     timeLabel: `${hh}:00 ${ampm}`,
   };
 }
+
+/** The instant a wall-clock date and hour in `timeZone` happens, e.g.
+ * ('2026-10-28', 21, 'Asia/Jakarta'). Uses that day's own UTC offset, so
+ * sessions on either side of a DST change both land at the right hour. */
+export function zonedInstant(ymd: string, hour: number, timeZone: string): number {
+  const [y, m, d] = ymd.split('-').map(Number);
+  const noon = new Date(Date.UTC(y, m - 1, d, 12));
+  const { offsetMinutes } = zonedParts(noon, timeZone);
+  return zonedWallTimeToUtc(y, m, d, hour, 0, 0, offsetMinutes).getTime();
+}
+
+/** Today's date (YYYY-MM-DD) as seen in `timeZone`. */
+export function todayIn(timeZone: string, now = new Date()): string {
+  const z = zonedParts(now, timeZone);
+  return `${z.year}-${String(z.month).padStart(2, '0')}-${String(z.day).padStart(2, '0')}`;
+}

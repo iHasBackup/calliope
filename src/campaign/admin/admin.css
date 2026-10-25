@@ -14,3 +14,90 @@
 .campaign-site select {
   color-scheme: dark;
 }
+
+/* Schedule → Calendar: change tiles, the inline form's buttons, History undo.
+   Tiles sit three across or one per row, never 2 + 1. */
+.admin-sched-tiles {
+  container-type: inline-size;
+}
+.admin-sched-tiles-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+@container (min-width: 720px) {
+  .admin-sched-tiles-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.admin-sched-tile {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  min-width: 0;
+  min-height: 64px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  text-align: left;
+  background: var(--color-text);
+  border: 1px solid color-mix(in srgb, var(--color-bg) 18%, transparent);
+}
+.admin-sched-tile:hover,
+.admin-sched-tile:focus-visible {
+  border-color: var(--color-accent-400);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-text));
+}
+.admin-sched-submit,
+.admin-sched-cancel,
+.admin-sched-undo {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-heading);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.admin-sched-submit {
+  height: 44px;
+  padding: 0 18px;
+  background: var(--color-accent);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+}
+.admin-sched-submit:hover {
+  background: var(--color-accent-600);
+}
+.admin-sched-cancel {
+  height: 44px;
+  padding: 0 14px;
+  border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent);
+  font-weight: 700;
+  font-size: 13px;
+}
+.admin-sched-undo {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--color-bg) 30%, transparent);
+  font-weight: 600;
+  font-size: 12px;
+}
+.admin-sched-cancel:hover,
+.admin-sched-undo:hover {
+  border-color: var(--color-accent-400);
+}
+.admin-sched-submit:focus-visible,
+.admin-sched-cancel:focus-visible,
+.admin-sched-undo:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.admin-sched-submit:disabled,
+.admin-sched-undo:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

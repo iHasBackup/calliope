@@ -192,7 +192,15 @@ export default function AdminPage() {
             )}
 
             {admin.section === 'campaign' && <CampaignSection draft={admin.draft} update={admin.update} />}
-            {admin.section === 'schedule' && <ScheduleSection draft={admin.draft} update={admin.update} />}
+            {admin.section === 'schedule' && (
+              <ScheduleSection
+                draft={admin.draft}
+                update={admin.update}
+                width={admin.width}
+                submitChange={admin.submitScheduleChange}
+                undoChange={admin.undoScheduleChange}
+              />
+            )}
             {admin.section === 'party' && (
               <PartySection draft={admin.draft} update={admin.update} removeMember={admin.removeMember} addMember={admin.addMember} />
             )}

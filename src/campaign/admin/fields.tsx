@@ -1,4 +1,4 @@
-import type { ChangeEvent, ReactNode } from 'react';
+import { useId, type ChangeEvent, type ReactNode } from 'react';
 
 const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
 
@@ -19,7 +19,7 @@ const inputStyle: React.CSSProperties = {
 
 function Label({ children }: { children: ReactNode }) {
   return (
-    <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: mutedInk(65) }}>
+    <span style={{ display: 'flex', alignItems: 'baseline', gap: 6, fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: mutedInk(65) }}>
       {children}
     </span>
   );
@@ -42,13 +42,16 @@ export function TextField({
   onChange,
   placeholder,
   type = 'text',
+  suggestions,
 }: {
-  label: string;
+  label: ReactNode;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   type?: 'text' | 'url' | 'password' | 'date';
+  suggestions?: string[];
 }) {
+  const listId = useId();
   const focus = useFocusRing();
   return (
     <label style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
@@ -57,10 +60,18 @@ export function TextField({
         type={type}
         value={value}
         placeholder={placeholder}
+        list={suggestions ? listId : undefined}
         onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-        style={{ ...inputStyle, height: 44, padding: '0 12px' }}
+        style={{ ...inputStyle, height: 44, padding: '0 12px', colorScheme: 'dark' }}
         {...focus}
       />
+      {suggestions && (
+        <datalist id={listId}>
+          {suggestions.map((o) => (
+            <option key={o} value={o} />
+          ))}
+        </datalist>
+      )}
     </label>
   );
 }
@@ -72,7 +83,7 @@ export function NumberField({
   max,
   onChange,
 }: {
-  label: string;
+  label: ReactNode;
   value: number;
   min: number;
   max: number;
@@ -131,7 +142,7 @@ export function SelectField({
   options,
   onChange,
 }: {
-  label: string;
+  label: ReactNode;
   value: string;
   options: { value: string; label: string }[];
   onChange: (v: string) => void;

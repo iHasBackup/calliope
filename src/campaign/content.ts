@@ -21,11 +21,40 @@ export interface Recap {
   tags: string; // comma separated
 }
 
+export type ScheduleChangeType = 'cancel' | 'move' | 'extra';
+
+/** A one-off exception to the weekly slot, shown on the public calendar. */
+export interface ScheduleChange {
+  id: string;
+  type: ScheduleChangeType;
+  date: string; // YYYY-MM-DD — the session affected (cancel/move) or the new session (extra)
+  toDate?: string; // move only
+  toHour?: number; // move/extra; missing = the weekly hour
+  note: string;
+}
+
+/** One row of the admin's schedule history log. Written server-side. */
+export interface ScheduleHistory {
+  id: string;
+  changeId?: string; // the change this row created
+  undoOf?: string; // the change this row removed
+  at: string; // ISO timestamp
+  kind: ScheduleChangeType | 'remove';
+  action: string; // "Cancelled", "Moved", "Extra session", "Undone"
+  detail: string;
+  note: string;
+}
+
 export interface Schedule {
   weekday: number; // 0-6, 0 = Sunday
   hour: number; // 0-23
   timezone: string; // IANA zone, e.g. "Asia/Jakarta" — drives the countdown math
   label: string; // display label, e.g. "GMT+7"
+  start: string; // first session, YYYY-MM-DD — '' falls back to the earliest recap
+  end: string; // last session, YYYY-MM-DD — '' means open-ended
+  duration: number; // hours, 1-12
+  changes: ScheduleChange[];
+  history: ScheduleHistory[]; // newest first, max 100
 }
 
 export interface FitQuestion {
@@ -52,6 +81,7 @@ export interface Content {
   arcTitle: string;
   arcChapter: string;
   arcBlurb: string;
+  system: string; // game system, free text, e.g. "D&D 5e (2024)"
   keyArtUrl: string;
   nights: number;
   progress: number; // 0-100
@@ -71,6 +101,7 @@ export const DEFAULT_CONTENT: Content = {
   arcChapter: 'Chapter II',
   arcBlurb:
     'The party has followed the missing reapers to the barrow under Gallows Hill. The village insists the harvest must be finished before the moon turns full, and nobody will say what happens if it isn’t.',
+  system: 'D&D 5e (2024)',
   keyArtUrl: '',
   nights: 8,
   progress: 24,
@@ -82,7 +113,7 @@ export const DEFAULT_CONTENT: Content = {
     'The Crone’s price is still unpaid. She said she would name it at the full moon.',
     'A name in the church ledger of the dead belongs to someone the party spoke to yesterday.',
   ],
-  schedule: { weekday: 3, hour: 19, timezone: 'Asia/Jakarta', label: 'GMT+7' },
+  schedule: { weekday: 3, hour: 19, timezone: 'Asia/Jakarta', label: 'GMT+7', start: '2026-08-05', end: '', duration: 4, changes: [], history: [] },
   showOpenSeat: true,
   registration: {
     open: true,
@@ -153,7 +184,12 @@ export const LIMITS = {
   maxFitQuestions: 20,
   maxFitOptions: 12,
   maxModules: 20,
+  maxChanges: 300,
+  maxHistory: 100,
 };
+
+const YMD = /^\d{4}-\d{2}-\d{2}$/;
+const ymdOr = (v: string, fallback = '') => (YMD.test(v) ? v : fallback);
 
 function clampInt(n: unknown, min: number, max: number, fallback: number): number {
   const v = typeof n === 'number' ? n : Number(n);
@@ -164,6 +200,50 @@ function clampInt(n: unknown, min: number, max: number, fallback: number): numbe
 function str(v: unknown, maxLen: number, fallback = ''): string {
   const s = typeof v === 'string' ? v : fallback;
   return s.trim().slice(0, maxLen);
+}
+
+export function sanitizeChanges(input: unknown): ScheduleChange[] {
+  const list = Array.isArray(input) ? input : [];
+  const out: ScheduleChange[] = [];
+  list.slice(0, LIMITS.maxChanges).forEach((raw, i) => {
+    const x = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const type = x.type === 'cancel' || x.type === 'move' || x.type === 'extra' ? x.type : null;
+    const date = ymdOr(str(x.date, 10));
+    if (!type || !date) return;
+    const change: ScheduleChange = { id: str(x.id, 40) || `c${i}`, type, date, note: str(x.note, LIMITS.shortText) };
+    if (type === 'move') {
+      const toDate = ymdOr(str(x.toDate, 10));
+      if (!toDate) return;
+      change.toDate = toDate;
+    }
+    if (type !== 'cancel' && x.toHour !== undefined && x.toHour !== null && x.toHour !== '') change.toHour = clampInt(x.toHour, 0, 23, 0);
+    out.push(change);
+  });
+  return out;
+}
+
+function sanitizeHistory(input: unknown): ScheduleHistory[] {
+  const list = Array.isArray(input) ? input : [];
+  const kinds = ['cancel', 'move', 'extra', 'remove'];
+  return list.slice(0, LIMITS.maxHistory).flatMap((raw, i) => {
+    const h = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const at = str(h.at, 40);
+    if (!kinds.includes(h.kind as string) || Number.isNaN(Date.parse(at))) return [];
+    const changeId = str(h.changeId, 40);
+    const undoOf = str(h.undoOf, 40);
+    return [
+      {
+        id: str(h.id, 40) || `h${i}`,
+        ...(changeId ? { changeId } : {}),
+        ...(undoOf ? { undoOf } : {}),
+        at,
+        kind: h.kind as ScheduleHistory['kind'],
+        action: str(h.action, 40),
+        detail: str(h.detail, LIMITS.shortText),
+        note: str(h.note, LIMITS.shortText),
+      },
+    ];
+  });
 }
 
 /** Sanitizes and validates an arbitrary parsed JSON body into a well-formed
@@ -182,6 +262,12 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
   const regModules = Array.isArray(reg.modules) ? reg.modules : [];
   const deadline = str(reg.deadline, 10);
 
+  const firstRecap =
+    recaps
+      .map((r) => (r && typeof r === 'object' ? str((r as Record<string, unknown>).date, 10) : ''))
+      .filter((d) => YMD.test(d))
+      .sort()[0] ?? '';
+
   let timezone = str(sched.timezone, 100, DEFAULT_CONTENT.schedule.timezone);
   try {
     new Intl.DateTimeFormat('en-US', { timeZone: timezone });
@@ -193,6 +279,7 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
     arcTitle: str(c.arcTitle, LIMITS.shortText, DEFAULT_CONTENT.arcTitle),
     arcChapter: str(c.arcChapter, LIMITS.shortText, DEFAULT_CONTENT.arcChapter),
     arcBlurb: str(c.arcBlurb, LIMITS.longText),
+    system: str(c.system, LIMITS.shortText),
     keyArtUrl: str(c.keyArtUrl, LIMITS.url),
     nights: clampInt(c.nights, 0, 9999, DEFAULT_CONTENT.nights),
     progress: clampInt(c.progress, 0, 100, DEFAULT_CONTENT.progress),
@@ -204,6 +291,12 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
       hour: clampInt(sched.hour, 0, 23, DEFAULT_CONTENT.schedule.hour),
       timezone,
       label: str(sched.label, 40, DEFAULT_CONTENT.schedule.label),
+      // A document saved before the calendar existed has no start: use its first recap.
+      start: ymdOr(str(sched.start, 10), firstRecap),
+      end: ymdOr(str(sched.end, 10)),
+      duration: clampInt(sched.duration, 1, 12, DEFAULT_CONTENT.schedule.duration),
+      changes: sanitizeChanges(sched.changes),
+      history: sanitizeHistory(sched.history),
     },
     showOpenSeat: c.showOpenSeat !== false,
     registration: {

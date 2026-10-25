@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { DEFAULT_CONTENT, type Content, type PartyMember, type Recap } from '../content';
 import type { Application, ApplicationStatus } from '../application';
+import type { ChangeInput } from '../schedule';
 
 export type Section = 'campaign' | 'schedule' | 'party' | 'recaps' | 'quests' | 'registration' | 'applications';
 
@@ -252,6 +253,30 @@ export function useAdmin() {
     [draft, saved],
   );
 
+  // Schedule changes save immediately on the server, outside the Save
+  // button. Only the schedule's changes and history (and the new
+  // updatedAt) are merged into the draft, so unrelated unsaved edits stay
+  // unsaved and the next Save does not hit a spurious conflict.
+  const postSchedule = useCallback(async (payload: object): Promise<string> => {
+    const { status, body } = await jsonFetch<Content & { error?: string }>('/api/schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (status !== 200 || !body?.schedule) return body?.error || 'Could not save. Try again.';
+    setSaved(body);
+    setDraft((prev) =>
+      prev ? { ...prev, schedule: { ...prev.schedule, changes: body.schedule.changes, history: body.schedule.history }, updatedAt: body.updatedAt } : body,
+    );
+    setFlash('Saved');
+    clearTimeout(flashTimer.current);
+    flashTimer.current = setTimeout(() => setFlash(''), 2000);
+    return '';
+  }, []);
+
+  const submitScheduleChange = useCallback((change: ChangeInput) => postSchedule({ action: 'add', change }), [postSchedule]);
+  const undoScheduleChange = useCallback((changeId: string) => postSchedule({ action: 'undo', changeId }), [postSchedule]);
+
   const deleteApplication = useCallback(async (app: Application) => {
     if (!window.confirm(`Delete the application from ${app.discord || app.name || 'this player'}?`)) return;
     await jsonFetch(`/api/applications?id=${app.id}`, { method: 'DELETE' });
@@ -293,5 +318,7 @@ export function useAdmin() {
     removeThread,
     changeStatus,
     deleteApplication,
+    submitScheduleChange,
+    undoScheduleChange,
   };
 }
