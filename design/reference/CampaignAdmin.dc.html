@@ -313,6 +313,18 @@
                     </div>
                   </sc-for>
                 </div>
+                <sc-if value="{{ histPaged }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent); font-variant-numeric: tabular-nums;">{{ histRange }}</span>
+                    <div style="display: flex; gap: 2px;">
+                      <button aria-label="Previous page" disabled="{{ histPrevOff }}" style="all: unset; box-sizing: border-box; cursor: pointer; min-width: 40px; height: 40px; padding: 0 10px; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 600; font-size: 13px; border: 1px solid color-mix(in srgb, var(--color-bg) 30%, transparent); opacity: {{ histPrevOp }};" style-hover="border-color: var(--color-accent-400);" onClick="{{ histPrev }}">&larr;</button>
+                      <sc-for list="{{ histPages }}" as="pg" hint-placeholder-count="2">
+                        <button aria-current="{{ pg.cur }}" style="all: unset; box-sizing: border-box; cursor: pointer; min-width: 40px; height: 40px; padding: 0 10px; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 600; font-size: 13px; background: {{ pg.bg }}; color: {{ pg.fg }}; border: 1px solid {{ pg.border }};" style-hover="border-color: var(--color-accent-400);" onClick="{{ pg.onClick }}">{{ pg.n }}</button>
+                      </sc-for>
+                      <button aria-label="Next page" disabled="{{ histNextOff }}" style="all: unset; box-sizing: border-box; cursor: pointer; min-width: 40px; height: 40px; padding: 0 10px; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 600; font-size: 13px; border: 1px solid color-mix(in srgb, var(--color-bg) 30%, transparent); opacity: {{ histNextOp }};" style-hover="border-color: var(--color-accent-400);" onClick="{{ histNext }}">&rarr;</button>
+                    </div>
+                  </div>
+                </sc-if>
               </sc-if>
               <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ true }}">
                 <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">No schedule changes yet.</span>
@@ -660,7 +672,7 @@ const chKey = ch => [ch.type, ch.date, ch.toDate || '', ch.toHour === undefined 
 const ACT = { cancel: 'Cancelled', move: 'Moved', extra: 'Extra session' };
 
 class Component extends DCLogic {
-  state = { draft: null, c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
+  state = { histPage: 0, draft: null, c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
 
   componentDidMount() {
     try { if (sessionStorage.getItem('cm-admin-ok') === '1') this.setState({ unlocked: true }); } catch (e) {}
@@ -692,7 +704,7 @@ class Component extends DCLogic {
       if (!s.c) return null;
       const c = CM().clone(s.c), saved = JSON.parse(s.savedJson || '{}');
       fn(c.schedule); if (saved.schedule) fn(saved.schedule);
-      return { c, savedJson: JSON.stringify(saved), draft: null, flash: 'Saved' };
+      return { c, savedJson: JSON.stringify(saved), draft: null, flash: 'Saved', histPage: 0 };
     });
     clearTimeout(this.ft); this.ft = setTimeout(() => this.setState({ flash: '' }), 1600);
   }
@@ -931,7 +943,18 @@ class Component extends DCLogic {
           onSubmit: () => this.submitDraft(), onCancel: () => this.setState({ draft: null })
         };
       })() : {},
-      history: (c && c.schedule.history ? c.schedule.history : []).map((h, i) => {
+      ...(() => {
+        const n = c && c.schedule.history ? c.schedule.history.length : 0, pages = Math.max(1, Math.ceil(n / 5)), p = Math.min(s.histPage, pages - 1);
+        const go = i => this.setState({ histPage: Math.max(0, Math.min(pages - 1, i)) });
+        return {
+          histPaged: n > 5, histRange: n ? (p * 5 + 1) + '–' + Math.min(n, p * 5 + 5) + ' of ' + n : '',
+          histPrevOff: p === 0, histNextOff: p >= pages - 1, histPrevOp: p === 0 ? 0.45 : 1, histNextOp: p >= pages - 1 ? 0.45 : 1,
+          histPrev: () => go(p - 1), histNext: () => go(p + 1),
+          histPages: Array.from({ length: pages }, (_, i) => ({ key: 'p' + i, n: i + 1, cur: i === p ? 'page' : undefined, bg: i === p ? 'var(--color-accent)' : 'transparent', fg: i === p ? '#ffffff' : 'var(--color-bg)', border: i === p ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 30%, transparent)', onClick: () => go(i) })),
+          histStart: p * 5
+        };
+      })(),
+      history: (c && c.schedule.history ? c.schedule.history : []).map((h, i) => ({ h, i })).slice(Math.min(s.histPage, Math.max(0, Math.ceil(((c && c.schedule.history) || []).length / 5) - 1)) * 5).slice(0, 5).map(({ h, i }) => {
         const d = new Date(h.at);
         const tag = { cancel: ['var(--color-bg)', 'var(--color-text)'], move: ['var(--color-accent)', '#ffffff'], extra: ['var(--color-accent-200)', 'var(--color-accent-900)'] }[h.kind] || ['color-mix(in srgb, var(--color-bg) 16%, transparent)', 'var(--color-bg)'];
         const active = !!h.changeId && !!(c.schedule.changes || []).some(x => x.id === h.changeId);

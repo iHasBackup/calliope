@@ -2,8 +2,8 @@
 # Copy a Claude Design handoff bundle into design/.
 # Files in the bundle overwrite their copies; nothing else is deleted, since a
 # handoff can hold only the pages that changed. A changes-only bundle
-# (folder named *changes*) keeps its README as design/CHANGES-<date>.md
-# instead of overwriting the main spec.
+# keeps its README as design/CHANGES-<date or name>.md instead of
+# overwriting the main spec.
 # Usage: npm run design:import [-- path/to/bundle.zip]
 # Default: newest ~/Downloads/DnD*.zip (covers browser renames like "DnD (1).zip").
 set -euo pipefail
@@ -38,10 +38,14 @@ if [ ${#entries[@]} -eq 1 ] && [ -d "${entries[0]}" ]; then
   src="${entries[0]}"
 fi
 
+# A delta bundle (folder named *changes*, or a README that calls itself a
+# delta) keeps its README beside the main spec instead of replacing it.
 bundle="$(basename "$src")"
-if [[ "$bundle" == *changes* ]] && [ -f "$src/README.md" ]; then
-  stamp="$(echo "$bundle" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || date +%Y-%m-%d)"
+if [ -f "$src/README.md" ] && { [[ "$bundle" == *changes* ]] || head -20 "$src/README.md" | grep -qi 'delta'; }; then
+  stamp="$(echo "$bundle" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || true)"
+  [ -z "$stamp" ] && stamp="$(echo "$bundle" | sed -E 's/^design_handoff_//; s/_/-/g')"
   mv "$src/README.md" "$src/CHANGES-$stamp.md"
+  echo "Delta handoff: README saved as design/CHANGES-$stamp.md"
 fi
 
 if [ -z "$(ls -A "$src")" ]; then
