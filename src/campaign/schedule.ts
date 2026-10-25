@@ -59,6 +59,21 @@ export function changeError(input: ChangeInput): string {
   return '';
 }
 
+/** Refuses a change that would stack on an existing one for the same
+ * session (two cancels, a move of a cancelled night, a repeated extra).
+ * Stacked changes can't be undone one at a time. '' = no clash. */
+export function conflictError(schedule: Schedule, input: ChangeInput): string {
+  if (input.type === 'extra') {
+    const hour = input.toHour ?? schedule.hour;
+    const same = schedule.changes.some((x) => x.type === 'extra' && x.date === input.date && (x.toHour ?? schedule.hour) === hour);
+    return same ? 'There is already an extra session at that time.' : '';
+  }
+  const existing = schedule.changes.find((x) => x.type !== 'extra' && x.date === input.date);
+  if (!existing) return '';
+  if (input.type === 'cancel') return existing.type === 'cancel' ? 'That session is already cancelled.' : 'That session has been moved. Undo the move first.';
+  return existing.type === 'cancel' ? 'That session is cancelled. Undo the cancellation first.' : 'That session has already been moved. Undo the move first.';
+}
+
 /** Adds a change and its history row. Returns a new schedule. */
 export function addScheduleChange(schedule: Schedule, input: ChangeInput, now = new Date()): Schedule {
   const change: ScheduleChange = { id: uid(), type: input.type, date: input.date, note: (input.note || '').trim() };
