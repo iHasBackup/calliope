@@ -258,11 +258,17 @@ export function useAdmin() {
   // updatedAt) are merged into the draft, so unrelated unsaved edits stay
   // unsaved and the next Save does not hit a spurious conflict.
   const postSchedule = useCallback(async (payload: object): Promise<string> => {
-    const { status, body } = await jsonFetch<Content & { error?: string }>('/api/schedule', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    let res: { status: number; body: Content & { error?: string } };
+    try {
+      res = await jsonFetch<Content & { error?: string }>('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      return 'Could not reach the server. Check your connection and try again.';
+    }
+    const { status, body } = res;
     if (status !== 200 || !body?.schedule) return body?.error || 'Could not save. Try again.';
     setSaved(body);
     setDraft((prev) =>
