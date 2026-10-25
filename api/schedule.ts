@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRedis } from './_redis.js';
 import { requireSession } from './_session.js';
 import { DEFAULT_CONTENT, sanitizeChanges, sanitizeContent, type Content } from '../src/campaign/content.js';
-import { addScheduleChange, changeError, conflictError, undoScheduleChange, type ChangeInput } from '../src/campaign/schedule.js';
+import { addScheduleChange, changeError, scheduleChangeError, undoScheduleChange, type ChangeInput } from '../src/campaign/schedule.js';
 
 const CONTENT_KEY = 'content:crooked-moon';
 
@@ -39,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return;
       }
       const input: ChangeInput = { type: clean.type, date: clean.date, toDate: clean.toDate, toHour: clean.toHour, note: clean.note };
-      const clash = conflictError(schedule, input);
+      const clash = scheduleChangeError(schedule, input);
       if (clash) {
         res.status(409).json({ error: clash });
         return;

@@ -59,6 +59,28 @@ export function changeError(input: ChangeInput): string {
   return '';
 }
 
+/** Cancel and move act on the weekly sessions only: the date must be one
+ * the calendar generates. '' = it is. */
+export function slotError(schedule: Schedule, input: ChangeInput): string {
+  if (input.type === 'extra') return '';
+  if (!schedule.start) return 'Set the first session date first.';
+  let first = schedule.start;
+  while (weekdayOf(first) !== schedule.weekday) first = addDays(first, 1);
+  const day = shortDate(input.date);
+  if (weekdayOf(input.date) !== schedule.weekday) {
+    const isExtra = schedule.changes.some((x) => x.type === 'extra' && x.date === input.date);
+    return isExtra ? "That's an extra session. Undo it in History instead." : `No session on ${day}. Sessions are on ${DAYS[schedule.weekday]}s.`;
+  }
+  if (input.date < first) return `No session on ${day}. The first session is ${shortDate(first)}.`;
+  if (schedule.end && input.date > schedule.end) return `No session on ${day}. The last session is ${shortDate(schedule.end)}.`;
+  return '';
+}
+
+/** Everything the admin form and /api/schedule check before saving a change. '' = valid. */
+export function scheduleChangeError(schedule: Schedule, input: ChangeInput): string {
+  return changeError(input) || slotError(schedule, input) || conflictError(schedule, input);
+}
+
 /** Refuses a change that would stack on an existing one for the same
  * session (two cancels, a move of a cancelled night, a repeated extra).
  * Stacked changes can't be undone one at a time. '' = no clash. */

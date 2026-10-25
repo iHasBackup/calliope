@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import type { Content, ScheduleChangeType } from '../../content';
-import { changeError, conflictError, hourLabel, type ChangeInput } from '../../schedule';
+import { hourLabel, scheduleChangeError, type ChangeInput } from '../../schedule';
 import { nextSession } from '../../time';
 import { Panel, SectionHeader, SelectField, TextField, mutedInk } from '../fields';
 
@@ -189,7 +189,7 @@ export function ScheduleSection({
     };
     if (form.type === 'move') input.toDate = form.toDate;
     if (form.type !== 'cancel') input.toHour = Number(form.toHour);
-    const err = changeError(input) || conflictError(sc, input);
+    const err = scheduleChangeError(sc, input);
     if (err) return setForm({ ...form, err });
     setForm({ ...form, busy: true });
     const serverErr = await submitChange(input);
