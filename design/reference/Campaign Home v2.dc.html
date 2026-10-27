@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
+  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <script src="./campaign-content.js"></script>
+  <style>
+    body { margin: 0; background: #201e1d; -webkit-text-size-adjust: 100%; }
+    a { color: var(--color-accent-400); text-decoration: none; }
+    a:hover { color: var(--color-accent); }
+    @keyframes cm-skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+    @keyframes cm-view-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes cm-menu-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { [data-skel], [data-anim] { animation: none !important; transition: none !important; } }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; max-width: 1440px; margin: 0 auto; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
+
+  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 57px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px);">
+    <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 auto;">
+      <div style="width: 28px; height: 28px; flex: none; display: grid; place-items: center; background: var(--color-accent); color: #ffffff; border-radius: 6px; font-family: var(--font-heading); font-weight: 800; font-size: 17px; line-height: 1;">C</div>
+      <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(12px, 3.9vw, 16px); letter-spacing: clamp(0.02em, 0.5vw, 0.08em); text-transform: uppercase; white-space: nowrap;">The Crooked Moon</div>
+    </div>
+    <sc-if value="{{ burger }}" hint-placeholder-val="{{ false }}">
+      <button aria-label="{{ menuLabel }}" aria-expanded="{{ menuOpen }}" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: {{ menuBtnBg }};" onClick="{{ toggleMenu }}">
+        <span style="display: block; width: 20px; height: 2px; background: var(--color-bg); transform: {{ bar1 }}; transition: transform 0.2s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--color-bg); opacity: {{ bar2 }}; transition: opacity 0.2s;"></span>
+        <span style="display: block; width: 20px; height: 2px; background: var(--color-bg); transform: {{ bar3 }}; transition: transform 0.2s;"></span>
+      </button>
+    </sc-if>
+    <sc-if value="{{ inlineTabs }}" hint-placeholder-val="{{ true }}">
+    <div data-tabs="" style="position: relative; display: flex; gap: 2px; flex: none;">
+      <div data-anim="" data-tab-ind="" aria-hidden="true" style="position: absolute; top: 0; left: 0; height: 44px; width: 0; opacity: 0; background: var(--color-accent); pointer-events: none; will-change: transform, width;"></div>
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+        <button data-anim="" aria-current="{{ t.cur }}" style="all: unset; position: relative; cursor: pointer; transition: color 260ms ease, background-color 200ms ease; height: 44px; padding: 0 clamp(8px, 2.6vw, 14px); display: flex; align-items: center; font-family: var(--font-heading); font-weight: 700; font-size: clamp(11px, 3.2vw, 13px); letter-spacing: 0.06em; text-transform: uppercase; color: {{ t.color }}; background: {{ t.bg }};" style-hover="color: {{ t.hover }};" onClick="{{ t.onClick }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; top: 57px; left: 0; right: 0; bottom: 0; z-index: 19; background: #000000;" onClick="{{ closeMenu }}">
+      <div data-anim="" style="animation: cm-menu-in 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both; background: #000000; border-bottom: 2px solid var(--color-accent); padding: 8px clamp(10px, 4vw, 48px) 16px; display: flex; flex-direction: column;" onClick="{{ stop }}">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+          <button style="all: unset; box-sizing: border-box; cursor: pointer; min-height: 56px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent); font-family: var(--font-heading); font-weight: 800; font-size: 20px; letter-spacing: 0.02em; text-transform: uppercase; color: {{ t.color }}; background: {{ t.bg }};" onClick="{{ t.onClick }}">
+            <span>{{ t.label }}</span>
+            <span style="font-size: 18px;">&rarr;</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <div data-skel="" aria-busy="true" aria-label="Loading campaign" style="animation: cm-skel 1.4s ease-in-out infinite; display: flex; flex-direction: column;">
+      <div style="width: 100%; height: clamp(200px, 32vw, 400px); background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(28px, 5vw, 56px); padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px);">
+        <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;"><div style="width: 200px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;"><div style="width: 85%; max-width: 100%; height: clamp(36px, 6vw, 72px); background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 50%; max-width: 100%; height: clamp(36px, 6vw, 72px); background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div><div style="max-width: 560px;"><div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;"><div style="width: 100%; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 65%; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div></div>
+        <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 14px; border-top: 3px solid color-mix(in srgb, var(--color-bg) 12%, transparent);"><div style="width: 120px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 220px; max-width: 100%; height: 40px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 100%; max-width: 100%; height: 8px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 160px; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px; padding: 0 clamp(16px, 4vw, 48px) clamp(56px, 8vw, 96px);"><div style="display: flex; gap: 12px; align-items: center; padding: 14px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"><div style="width: 56px; max-width: 100%; height: 56px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text)); flex: none;"></div><div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1;"><div style="width: 90px; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 120px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div><div style="display: flex; gap: 12px; align-items: center; padding: 14px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"><div style="width: 56px; max-width: 100%; height: 56px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text)); flex: none;"></div><div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1;"><div style="width: 90px; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 120px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div><div style="display: flex; gap: 12px; align-items: center; padding: 14px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"><div style="width: 56px; max-width: 100%; height: 56px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text)); flex: none;"></div><div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1;"><div style="width: 90px; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 120px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div><div style="display: flex; gap: 12px; align-items: center; padding: 14px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"><div style="width: 56px; max-width: 100%; height: 56px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text)); flex: none;"></div><div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1;"><div style="width: 90px; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 120px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div><div style="display: flex; gap: 12px; align-items: center; padding: 14px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"><div style="width: 56px; max-width: 100%; height: 56px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text)); flex: none;"></div><div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1;"><div style="width: 90px; max-width: 100%; height: 14px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div><div style="width: 120px; max-width: 100%; height: 11px; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text));"></div></div></div></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div data-anim="" style="animation: cm-view-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;">
+      <div style="display: flex; flex-direction: column;">
+        <div style="position: relative; width: 100%; height: clamp(200px, 32vw, 400px);">
+          <div class="grayscale" style="position: absolute; inset: 0;">
+            <sc-if value="{{ hasKeyArt }}" hint-placeholder-val="{{ false }}">
+              <div role="img" aria-label="Campaign key art" style="width: 100%; height: 100%; background: {{ keyArtBg }} center / cover no-repeat;"></div>
+            </sc-if>
+            <sc-if value="{{ noKeyArt }}" hint-placeholder-val="{{ true }}">
+              <image-slot id="hero-keyart" shape="rect" placeholder="Drop campaign key art"></image-slot>
+            </sc-if>
+          </div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 45%; pointer-events: none; background: linear-gradient(180deg, transparent, var(--color-text));"></div>
+          <div style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--color-text) 0%, transparent 18%, transparent 82%, var(--color-text) 100%);"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 0; height: 30%; pointer-events: none; background: linear-gradient(0deg, transparent, var(--color-text));"></div>
+        </div>
+        
+
+        <div style="position: relative; pointer-events: none; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px; padding: clamp(20px, 3vw, 32px) clamp(16px, 4vw, 48px) clamp(28px, 4vw, 44px);">
+          <div style="display: flex; flex-direction: column; gap: 16px; max-width: 720px; flex: 1 1 320px; min-width: 0;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;">
+              <span style="width: 8px; height: 8px; flex: none; background: var(--color-accent); transform: rotate(45deg);"></span>
+              <span style="color: var(--color-accent-400);">Current arc</span>
+              <span style="color: color-mix(in srgb, var(--color-bg) 45%, transparent);">/</span>
+              <span style="color: color-mix(in srgb, var(--color-bg) 80%, transparent);">{{ arcChapter }}</span>
+            </div>
+            <h1 style="margin: 0; font-size: clamp(38px, 8vw, 104px); overflow-wrap: break-word; line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; text-wrap: balance;">{{ arcTitle }}</h1>
+            <p style="margin: 0; font-size: clamp(15px, 1.6vw, 18px); line-height: 1.55; max-width: 560px; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">{{ arcBlurb }}</p>
+            <div style="display: flex; gap: clamp(8px, 2vw, 10px); flex-wrap: nowrap; pointer-events: auto; padding-top: 4px;">
+              <button class="btn btn-primary" style="height: 48px; padding: 0 clamp(12px, 3.4vw, 22px); font-size: clamp(11px, 3.3vw, 14px); letter-spacing: clamp(0.02em, 0.4vw, 0.06em); text-transform: uppercase; white-space: nowrap; flex: 0 1 auto; min-width: 0;" onClick="{{ goRecaps }}">Catch up on recaps</button>
+              <button style="all: unset; cursor: pointer; height: 48px; padding: 0 clamp(12px, 3.4vw, 22px); white-space: nowrap; flex: 0 1 auto; min-width: 0; display: flex; align-items: center; font-family: var(--font-heading); font-weight: 700; font-size: clamp(11px, 3.3vw, 14px); letter-spacing: clamp(0.02em, 0.4vw, 0.06em); text-transform: uppercase; border: 2px solid var(--color-bg); box-sizing: border-box;" style-hover="background: var(--color-bg); color: var(--color-text);" onClick="{{ goActivities }}">Play activities</button>
+            </div>
+          </div>
+
+          <div style="pointer-events: auto; background: var(--color-accent); color: #ffffff; padding: clamp(16px, 4vw, 24px); width: {{ sessionW }}; box-sizing: border-box; display: flex; flex-direction: column; gap: clamp(10px, 2.5vw, 14px); box-shadow: 0 16px 40px rgba(0,0,0,0.4);">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;">Next session · {{ nextSessionLabel }}</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 3vw, 14px);">
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(40px, 11vw, 64px); line-height: 0.9; font-variant-numeric: tabular-nums;">{{ cdDays }}</span>
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;">Days</span>
+              </div>
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(40px, 11vw, 64px); line-height: 0.9; font-variant-numeric: tabular-nums;">{{ cdHours }}</span>
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;">Hours</span>
+              </div>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.4); padding-top: clamp(8px, 2vw, 10px); font-size: clamp(13px, 3.6vw, 14px); font-weight: 600; white-space: nowrap;">{{ nextDate }} · {{ nextTime }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 0 clamp(16px, 4vw, 48px);">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          <div style="flex: 1 1 150px; min-width: 0; box-sizing: border-box; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: 18px 20px; display: flex; align-items: center; gap: 16px;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none;" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">In-game night</span>
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums;">{{ nightsText }}</span>
+            </div>
+          </div>
+          <div style="flex: 1 1 150px; min-width: 0; box-sizing: border-box; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: 18px 20px; display: flex; align-items: center; gap: 16px;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" style="flex: none;"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline><line x1="13" y1="19" x2="19" y2="13"></line><line x1="16" y1="16" x2="20" y2="20"></line><line x1="19" y1="21" x2="21" y2="19"></line><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"></polyline><line x1="5" y1="14" x2="9" y2="18"></line><line x1="7" y1="17" x2="4" y2="20"></line><line x1="3" y1="19" x2="5" y2="21"></line></svg>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Party level</span>
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 34px; line-height: 1;">Lv. {{ level }}</span>
+            </div>
+          </div>
+          <div style="flex: 2 1 300px; min-width: 0; box-sizing: border-box; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: 18px 20px; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Campaign progress</span>
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 28px; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums;">{{ progressText }}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px;">
+              <sc-for list="{{ segments }}" as="seg" hint-placeholder-count="20">
+                <div style="height: 14px; background: {{ seg.bg }};"></div>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">
+              <span>{{ arcChapter }} of the adventure</span>
+              <span>{{ sessionsPlayed }} sessions played</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: clamp(48px, 7vw, 88px) clamp(16px, 4vw, 48px) 0; display: flex; flex-direction: column; gap: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">{{ partyCount }}</span>
+            <h2 style="margin: 0; font-size: clamp(30px, 4.5vw, 52px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">The party</h2>
+          </div>
+          <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Drop a portrait onto any card</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat({{ partyCols }}, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px);">
+          <sc-for list="{{ party }}" as="p" hint-placeholder-count="5">
+            <div style="position: relative; container-type: inline-size; aspect-ratio: 3 / 4.2; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 2px solid {{ p.border }}; overflow: hidden;">
+              <div class="grayscale" style="position: absolute; inset: 0;">
+                <sc-if value="{{ p.hasPortrait }}" hint-placeholder-val="{{ false }}">
+                  <div role="img" aria-label="Portrait" style="width: 100%; height: 100%; background: {{ p.portraitBg }} center / cover no-repeat;"></div>
+                </sc-if>
+                <sc-if value="{{ p.noPortrait }}" hint-placeholder-val="{{ true }}">
+                  <image-slot id="v2-portrait-{{ p.id }}" shape="rect" placeholder="{{ p.placeholder }}"></image-slot>
+                </sc-if>
+              </div>
+              <div style="position: absolute; inset: auto 0 0 0; height: 62%; pointer-events: none; background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-text) 80%, transparent) 45%, var(--color-text) 100%);"></div>
+              <div style="position: absolute; top: 10px; left: 10px; pointer-events: none; background: {{ p.badgeBg }}; color: #ffffff; padding: 4px 8px; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">{{ p.badge }}</div>
+              <div style="position: absolute; left: clamp(10px, 2.4vw, 14px); right: clamp(10px, 2.4vw, 14px); bottom: clamp(10px, 2.4vw, 14px); pointer-events: none; display: grid; grid-template-rows: 16px 30px 24px 18px; gap: 6px; min-width: 0;">
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.species }}</div>
+                <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px, 12cqi, 30px); line-height: 30px; letter-spacing: -0.01em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
+                <div style="display: flex; min-width: 0;"><span style="background: var(--color-bg); color: var(--color-text); padding: 0 8px; line-height: 24px; font-size: 12px; font-weight: 700; max-width: 100%; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.klass }}</span></div>
+                <div style="font-size: 13px; line-height: 18px; color: color-mix(in srgb, var(--color-bg) 75%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.sub }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="padding: clamp(48px, 7vw, 88px) clamp(16px, 4vw, 48px) clamp(56px, 8vw, 96px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(28px, 5vw, 56px);">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">{{ nightsRange }}</span>
+          <h2 style="margin: 0; font-size: clamp(30px, 4.5vw, 52px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">The story so far</h2>
+          <sc-for list="{{ summary }}" as="para" hint-placeholder-count="2">
+            <p style="margin: 0; font-size: 16px; line-height: 1.65; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">{{ para }}</p>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasThreads }}" hint-placeholder-val="{{ true }}"><div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 14px; align-self: start; border-top: 3px solid var(--color-accent);">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.02em;">Quest log</span>
+            <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">{{ threadCount }} active</span>
+          </div>
+          <sc-for list="{{ threads }}" as="th" hint-placeholder-count="3">
+            <div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; align-items: start; padding-top: 12px; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+              <span style="width: 10px; height: 10px; margin-top: 5px; border: 2px solid var(--color-accent); transform: rotate(45deg);"></span>
+              <span style="font-size: 15px; line-height: 1.5; text-wrap: pretty;">{{ th.text }}</span>
+            </div>
+          </sc-for>
+        </div></sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isRecaps }}" hint-placeholder-val="{{ false }}">
+    <div data-anim="" style="animation: cm-view-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both; padding: clamp(36px, 6vw, 72px) clamp(16px, 4vw, 48px); display: flex; flex-direction: column; gap: 36px; max-width: 900px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">{{ sessionsPlayed }} sessions · {{ nightsText }} nights</span>
+        <h1 style="margin: 0; font-size: clamp(40px, 7vw, 88px); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase;">Session recaps</h1>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <sc-for list="{{ recaps }}" as="r" hint-placeholder-count="7">
+          <div style="display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 0 clamp(10px, 2.5vw, 18px);">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 14px; height: 14px; margin-top: 26px; transform: rotate(45deg); background: {{ r.node }}; border: 2px solid {{ r.nodeBorder }}; flex: none;"></div>
+              <div style="flex: 1; width: 2px; background: color-mix(in srgb, var(--color-bg) 18%, transparent);"></div>
+            </div>
+            <div style="padding-bottom: 14px;">
+              <div data-anim="" style="background: {{ r.bg }}; border: 1px solid {{ r.border }}; transition: background-color 280ms ease, border-color 280ms ease;">
+                <button style="all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px clamp(14px, 3vw, 18px); min-height: 44px;" onClick="{{ r.onToggle }}">
+                  <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <span style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                      <span style="font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.1em; color: var(--color-accent-400);">SESSION {{ r.no }}</span>
+                      <span style="font-size: 12px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">{{ r.meta }}</span>
+                      <sc-if value="{{ r.latest }}" hint-placeholder-val="{{ false }}">
+                        <span style="background: var(--color-accent); color: #ffffff; padding: 2px 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;">LATEST</span>
+                      </sc-if>
+                    </span>
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px, 2.4vw, 24px); line-height: 1.1; text-transform: uppercase; text-wrap: pretty;">{{ r.title }}</span>
+                  </span>
+                  <span data-anim="" style="width: 32px; height: 32px; flex: none; display: grid; place-items: center; border: 1px solid {{ r.signBorder }}; background: {{ r.signBg }}; color: {{ r.signFg }}; transform: rotate({{ r.signRot }}deg); transition: transform 340ms cubic-bezier(0.65, 0, 0.25, 1), background-color 240ms ease, border-color 240ms ease, color 240ms ease; font-family: var(--font-heading); font-weight: 800; font-size: 18px;">{{ r.sign }}</span>
+                </button>
+                <div data-anim="" aria-hidden="{{ r.hidden }}" style="display: grid; grid-template-rows: {{ r.rows }}; visibility: {{ r.vis }}; transition: grid-template-rows 380ms cubic-bezier(0.65, 0, 0.25, 1), visibility 0s linear {{ r.visDelay }};">
+                  <div style="min-height: 0; overflow: hidden;">
+                  <div data-anim="" style="padding: 0 clamp(14px, 3vw, 18px) 20px; display: flex; flex-direction: column; gap: 14px; opacity: {{ r.op }}; transform: translateY({{ r.ty }}px); transition: opacity 300ms ease {{ r.fadeDelay }}, transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1) {{ r.fadeDelay }};">
+                    <p style="margin: 0; font-size: 15px; line-height: 1.65; color: color-mix(in srgb, var(--color-bg) 85%, transparent); max-width: 620px; text-wrap: pretty;">{{ r.body }}</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                      <sc-for list="{{ r.tags }}" as="tg" hint-placeholder-count="2">
+                        <span style="border: 1px solid color-mix(in srgb, var(--color-bg) 35%, transparent); padding: 3px 8px; font-size: 12px;">{{ tg }}</span>
+                      </sc-for>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isActivities }}" hint-placeholder-val="{{ false }}">
+    <div data-anim="" style="animation: cm-view-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both; padding: clamp(36px, 6vw, 72px) clamp(16px, 4vw, 48px); display: flex; flex-direction: column; gap: 32px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">Between sessions</span>
+        <h1 style="margin: 0; font-size: clamp(40px, 7vw, 88px); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase;">Activities</h1>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px;">
+        <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); display: flex; flex-direction: column; overflow: hidden;">
+          <div style="position: relative; aspect-ratio: 16 / 9; background: var(--color-bg); display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; padding: 3px; box-sizing: border-box;">
+            <sc-for list="{{ thumbCells }}" as="tc" hint-placeholder-count="21">
+              <div style="background: {{ tc.bg }}; display: grid; place-items: center; font-family: var(--font-heading); font-weight: 800; font-size: 16px; color: var(--color-text);">{{ tc.ch }}</div>
+            </sc-for>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;"><span style="background: var(--color-accent); color: #ffffff; padding: 3px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;">LIVE</span><span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">Puzzle · Crossword</span></div>
+            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 24px; line-height: 1.05; text-transform: uppercase;">Puzzle No. 01</span>
+            <span style="font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 80%, transparent);">16 words from the vale. No hints. Ranked by words solved, then time.</span>
+            <div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 13px; padding: 10px 0; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+              <span style="color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Top score</span>
+              <span style="font-weight: 700; overflow-wrap: anywhere;">{{ leaderName }}</span>
+              <span style="color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Entries</span>
+              <span style="font-weight: 700;">{{ entries }}</span>
+            </div>
+            <a class="btn btn-primary" href="Crossword.dc.html" style="height: 48px; padding: 0 22px; color: #ffffff; display: inline-flex; align-items: center; align-self: flex-start; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Play now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showSkeleton&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+const THUMB = '.....#.#.#.#.#.....#.#.#.#.#.....';
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const CM = () => window.CrookedMoonContent;
+const EMPTY = { arcTitle: '', arcChapter: '', arcBlurb: '', keyArtUrl: '', nights: 0, progress: 0, partyLevel: 1, summary: '', threads: [], schedule: { weekday: 3, hour: 19, timezone: '' }, showOpenSeat: false, party: [], recaps: [] };
+
+class Component extends DCLogic {
+  state = { menu: false, view: 'home', openId: 'latest', now: Date.now(), leader: null, entries: 0, w: typeof window !== 'undefined' ? window.innerWidth : 1200, content: CM() ? CM().load() : null };
+
+  placeInd(view, animate) {
+    const el = document.querySelector('[data-tab-ind]');
+    if (!el) return false;
+    const i = (this.tabKeys || []).indexOf(view);
+    const b = i < 0 ? null : document.querySelectorAll('[data-tabs] > button')[i];
+    if (!b || !b.offsetWidth) { el.style.opacity = '0'; return !!b; }
+    el.style.transition = animate && el.dataset.placed ? 'transform 380ms cubic-bezier(0.65, 0, 0.25, 1), width 380ms cubic-bezier(0.65, 0, 0.25, 1)' : 'none';
+    el.style.width = b.offsetWidth + 'px';
+    el.style.transform = 'translateX(' + b.offsetLeft + 'px)';
+    el.style.opacity = '1';
+    el.dataset.placed = '1';
+    return true;
+  }
+  measureTabs() { return this.placeInd(this.state.view, false); }
+  remeasure() { cancelAnimationFrame(this.mraf); this.mraf = requestAnimationFrame(() => this.measureTabs()); }
+  componentDidMount() {
+    let tries = 0;
+    this.indPoll = setInterval(() => { if (this.measureTabs() || ++tries > 60) clearInterval(this.indPoll); }, 120);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.remeasure());
+    this.onResizeTabs = () => this.remeasure();
+    window.addEventListener('resize', this.onResizeTabs);
+    const h = (location.hash || '').replace('#', '');
+    if (h === 'recaps' || h === 'activities') this.setState({ view: h });
+    try {
+      const v = JSON.parse(localStorage.getItem('crooked-moon-crossword-scores-v1') || '[]');
+      if (Array.isArray(v) && v.length) {
+        const top = v.slice().sort((a, b) => (b.words - a.words) || (a.time - b.time))[0];
+        this.setState({ leader: top, entries: v.length });
+      }
+    } catch (e) {}
+    this.tick = setInterval(() => this.setState({ now: Date.now() }), 60000);
+    this.onResize = () => this.setState(st => ({ w: window.innerWidth, menu: window.innerWidth < 640 ? st.menu : false }));
+    this.onEsc = e => { if (e.key === 'Escape' && this.state.menu) this.setState({ menu: false }); };
+    window.addEventListener('keydown', this.onEsc);
+    this.onStore = () => { if (CM()) this.setState({ content: CM().load() }); };
+    this.onVis = () => { if (!document.hidden) this.onStore(); };
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('storage', this.onStore);
+    document.addEventListener('visibilitychange', this.onVis);
+    if (!this.state.content) this.wait = setInterval(() => { if (CM()) { clearInterval(this.wait); this.onStore(); } }, 50);
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick); clearInterval(this.wait); cancelAnimationFrame(this.mraf); clearInterval(this.indPoll); window.removeEventListener('resize', this.onResizeTabs);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('keydown', this.onEsc);
+    window.removeEventListener('storage', this.onStore);
+    document.removeEventListener('visibilitychange', this.onVis);
+  }
+
+  go(view) {
+    const el = document.querySelector('[data-tab-ind]');
+    if (el && !el.dataset.placed) { this.placeInd(this.state.view, false); void el.offsetWidth; }
+    this.placeInd(view, true);
+    this.setState({ view, menu: false });
+    try { history.replaceState(null, '', view === 'home' ? location.pathname : '#' + view); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+
+  nextSession(sch) {
+    const d = new Date(this.state.now);
+    const t = new Date(d);
+    t.setHours(sch.hour, 0, 0, 0);
+    let add = (sch.weekday - d.getDay() + 7) % 7;
+    if (add === 0 && d.getTime() > t.getTime() + 4 * 3600000) add = 7;
+    t.setDate(t.getDate() + add);
+    return t;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const c = s.content || EMPTY;
+    const loading = !s.content || !!this.props.showSkeleton;
+    const t = this.nextSession(c.schedule);
+    const diff = Math.max(0, t.getTime() - s.now);
+    const hh = t.getHours();
+    const progress = Math.min(100, Math.max(0, Number(c.progress) || 0));
+    const filled = Math.round(progress / 5);
+    const showOpen = c.showOpenSeat !== false;
+    const level = c.partyLevel;
+    const nights = Number(c.nights) || 0;
+
+    const party = c.party.map(p => ({ ...p, name: p.name || 'Unnamed', species: p.species || 'Species TBD', klass: p.klass || 'Class TBD', sub: p.sub || 'Subclass TBD', hasPortrait: !!p.portraitUrl, noPortrait: !p.portraitUrl, portraitBg: p.portraitUrl ? 'url(' + JSON.stringify(p.portraitUrl) + ')' : 'none', border: 'transparent', badge: 'LV ' + level, badgeBg: 'var(--color-accent)', placeholder: 'Portrait of ' + (p.name || 'member') }));
+    if (showOpen) party.push({ id: 'open', name: 'Seat open', species: 'Fifth player', klass: 'Joining soon', sub: 'Class TBD', hasPortrait: false, noPortrait: true, border: 'color-mix(in srgb, var(--color-bg) 25%, transparent)', badge: '+1', badgeBg: 'color-mix(in srgb, var(--color-bg) 25%, var(--color-text))', placeholder: 'Portrait' });
+
+    const tabDefs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['activities', 'Activities']];
+    const rg = c.registration || {};
+    const rgPast = /^\d{4}-\d{2}-\d{2}$/.test(rg.deadline || '') && Date.now() > new Date(rg.deadline + 'T23:59:59').getTime();
+    if (rg.open !== false && !rgPast) tabDefs.push(['apply', 'Apply']);
+    this.tabKeys = tabDefs.map(d => d[0]);
+    const tabs = tabDefs.map(([k, label]) => ({
+      label, cur: s.view === k ? 'page' : undefined,
+      bg: 'transparent',
+      color: s.view === k ? '#ffffff' : 'color-mix(in srgb, var(--color-bg) 75%, transparent)',
+      hover: s.view === k ? '#ffffff' : 'var(--color-bg)',
+      onClick: e => {
+        if (k === 'apply') { location.href = 'Registration.dc.html'; return; }
+        this.go(k);
+      }
+    }));
+
+    const sorted = c.recaps.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const recaps = sorted.map((r, i) => {
+      const no = i + 1;
+      const d = r.date ? new Date(r.date + 'T12:00:00') : null;
+      const latest = no === sorted.length;
+      const open = s.openId === 'latest' ? latest : s.openId === r.id;
+      return {
+        no: String(no).padStart(2, '0'), title: r.title || 'Untitled session', body: r.body, open, latest,
+        tags: String(r.tags || '').split(',').map(x => x.trim()).filter(Boolean),
+        meta: (d ? DAYS[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] : '') + (r.nights ? '  ·  Night ' + r.nights : ''),
+        sign: open ? '\u2212' : '+',
+        bg: open ? 'color-mix(in srgb, var(--color-bg) 7%, var(--color-text))' : 'transparent',
+        border: open ? 'color-mix(in srgb, var(--color-bg) 20%, transparent)' : 'color-mix(in srgb, var(--color-bg) 10%, transparent)',
+        node: latest ? 'var(--color-accent)' : 'var(--color-text)',
+        nodeBorder: latest ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 50%, transparent)',
+        rows: open ? '1fr' : '0fr', vis: open ? 'visible' : 'hidden', visDelay: open ? '0s' : '380ms', hidden: open ? 'false' : 'true',
+        op: open ? 1 : 0, ty: open ? 0 : -6, fadeDelay: open ? '80ms' : '0ms',
+        signRot: open ? 180 : 0, signBg: open ? 'var(--color-accent)' : 'transparent', signFg: open ? '#ffffff' : 'var(--color-bg)',
+        signBorder: open ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 30%, transparent)',
+        onToggle: () => this.setState({ openId: open ? null : r.id })
+      };
+    }).reverse();
+    const threads = c.threads.filter(x => String(x).trim());
+
+    return {
+      tabs,
+      sessionW: s.w < 640 ? '100%' : 'min(100%, 320px)',
+      burger: s.w < 640, inlineTabs: s.w >= 640, showMenu: s.w < 640 && s.menu,
+      menuOpen: s.menu ? 'true' : 'false', menuLabel: s.menu ? 'Close menu' : 'Open menu',
+      menuBtnBg: s.menu ? 'var(--color-accent)' : 'transparent',
+      bar1: s.menu ? 'translateY(7px) rotate(45deg)' : 'none', bar2: s.menu ? 0 : 1, bar3: s.menu ? 'translateY(-7px) rotate(-45deg)' : 'none',
+      toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
+      closeMenu: () => this.setState({ menu: false }),
+      stop: e => e.stopPropagation(),
+      isLoading: loading, isHome: !loading && s.view === 'home', isRecaps: !loading && s.view === 'recaps', isActivities: !loading && s.view === 'activities',
+      goRecaps: () => this.go('recaps'),
+      goActivities: () => this.go('activities'),
+      arcTitle: c.arcTitle, arcChapter: c.arcChapter, arcBlurb: c.arcBlurb,
+      hasKeyArt: !!c.keyArtUrl, noKeyArt: !c.keyArtUrl, keyArtBg: c.keyArtUrl ? 'url(' + JSON.stringify(c.keyArtUrl) + ')' : 'none',
+      summary: String(c.summary || '').split(/\n\s*\n/).map(x => x.trim()).filter(Boolean),
+      nightsRange: 'Nights 1\u2013' + nights,
+      nextSessionLabel: 'S' + String(sorted.length + 1).padStart(2, '0'),
+      cdDays: String(Math.floor(diff / 86400000)).padStart(2, '0'),
+      cdHours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0'),
+      nextDate: DAYS[t.getDay()].slice(0, 3) + ' ' + t.getDate() + ' ' + MONTHS[t.getMonth()],
+      nextTime: (hh % 12 || 12) + ':00 ' + (hh < 12 ? 'AM' : 'PM') + (c.schedule.timezone ? ' ' + c.schedule.timezone : ''),
+      nightsText: String(nights).padStart(2, '0'),
+      level,
+      progressText: progress + '%',
+      segments: Array.from({ length: 20 }, (_, i) => ({ bg: i < filled ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 14%, transparent)' })),
+      sessionsPlayed: sorted.length,
+      party,
+      partyCols: s.w < 600 ? 2 : s.w < 1100 ? 3 : Math.max(1, Math.min(5, party.length)),
+      partyCount: c.party.length + ' adventurers' + (showOpen ? ' · 1 joining' : ''),
+      threads: threads.map(text => ({ text })),
+      threadCount: threads.length,
+      hasThreads: threads.length > 0,
+      recaps,
+      thumbCells: THUMB.slice(0, 21).split('').map(ch => ({ ch: '', bg: ch === '#' ? 'var(--color-text)' : '#ffffff' })),
+      leaderName: s.leader ? s.leader.name + ' — ' + s.leader.words + '/16' : 'No entries yet',
+      entries: s.entries
+    };
+  }
+}
+</script>
+</body>
+</html>
