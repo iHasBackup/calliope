@@ -15,19 +15,22 @@ export default function CampaignSite() {
   return (
     <div className="campaign-site">
       <Header view={site.view} go={site.go} width={site.width} menuOpen={site.menuOpen} setMenuOpen={site.setMenuOpen} showApply={site.showApply} />
-      {site.view === 'home' &&
-        (site.contentLoading ? (
-          <HomeSkeleton />
-        ) : (
-          <HomeTab go={site.go} session={site.session} countdown={site.countdown} content={site.content} partyColumns={site.partyColumns} width={site.width} />
-        ))}
-      {site.view === 'recaps' &&
-        (site.contentLoading ? (
-          <RecapsSkeleton />
-        ) : (
-          <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} width={site.width} />
-        ))}
-      {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} />}
+      {/* Keyed by view so each view fades in when it mounts (not when its content loads). */}
+      <div key={site.view} className="cm-view" data-anim="">
+        {site.view === 'home' &&
+          (site.contentLoading ? (
+            <HomeSkeleton />
+          ) : (
+            <HomeTab go={site.go} session={site.session} countdown={site.countdown} content={site.content} partyColumns={site.partyColumns} width={site.width} />
+          ))}
+        {site.view === 'recaps' &&
+          (site.contentLoading ? (
+            <RecapsSkeleton />
+          ) : (
+            <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} width={site.width} />
+          ))}
+        {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} />}
+      </div>
     </div>
   );
 }

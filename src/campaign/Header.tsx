@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import type { CampaignView } from './useCampaignSite';
@@ -28,6 +28,52 @@ export function Header({
 }) {
   const wide = width >= 640;
   const scrollYRef = useRef(0);
+
+  // The red block behind the active tab. Positioned directly on the element
+  // (not through render-time styles, which lagged one click behind in the
+  // prototype), from the target button's own offset — button positions don't
+  // depend on which tab is active, so they can be measured before the change.
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const indRef = useRef<HTMLSpanElement>(null);
+  const placed = useRef(false);
+  const viewRef = useRef(view);
+  viewRef.current = view;
+  const placeInd = useCallback((index: number, animate: boolean) => {
+    const ind = indRef.current;
+    const btn = tabsRef.current?.querySelectorAll<HTMLElement>('[data-tab]')[index];
+    if (!ind || !btn) return;
+    if (animate && !placed.current) {
+      // First click before any placement: start under the current tab so it still slides.
+      placeInd(TABS.findIndex((t) => t.key === viewRef.current), false);
+    }
+    ind.classList.toggle('is-moving', animate);
+    if (animate) void ind.offsetWidth; // commit the start position before the transition
+    ind.style.transform = `translateX(${btn.offsetLeft}px)`;
+    ind.style.width = `${btn.offsetWidth}px`;
+    placed.current = true;
+  }, []);
+  // First placement, and again once Archivo has loaded and on resize: no slide.
+  useLayoutEffect(() => {
+    if (!wide) {
+      placed.current = false;
+      return;
+    }
+    const place = () => placeInd(TABS.findIndex((t) => t.key === viewRef.current), false);
+    place();
+    document.fonts?.ready.then(place).catch(() => {});
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [wide, placeInd]);
+
+  // A view change from anywhere (a button on the page, the address hash)
+  // slides too. Only a real change of view: crossing the phone/desktop
+  // width remounts the tabs and is handled by the placement above.
+  const lastView = useRef(view);
+  useEffect(() => {
+    if (lastView.current === view) return;
+    lastView.current = view;
+    if (wide && placed.current) placeInd(TABS.findIndex((t) => t.key === view), true);
+  }, [view, wide, placeInd]);
 
   // Lock background scroll while the mobile menu overlay is open. Plain
   // overflow:hidden on body doesn't reliably stop touch-scroll/rubber-band
@@ -107,11 +153,16 @@ export function Header({
       </div>
 
       {wide ? (
-        <div style={{ display: 'flex', gap: 2, flex: 'none' }}>
-          {TABS.map((t) => (
+        <div className="cm-tabs" ref={tabsRef}>
+          <span className="cm-tab-ind" ref={indRef} data-anim="" aria-hidden="true" />
+          {TABS.map((t, i) => (
             <button
               key={t.key}
               type="button"
+              className="cm-tab"
+              data-tab=""
+              data-anim=""
+              aria-current={view === t.key ? 'page' : undefined}
               style={{
                 all: 'unset',
                 cursor: 'pointer',
@@ -124,10 +175,14 @@ export function Header({
                 fontSize: 'clamp(11px, 3.2vw, 13px)',
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
+                position: 'relative',
                 color: view === t.key ? '#ffffff' : mutedInk(75),
-                background: view === t.key ? 'var(--color-accent)' : 'transparent',
+                background: 'transparent',
               }}
-              onClick={() => go(t.key)}
+              onClick={() => {
+                placeInd(i, true);
+                go(t.key);
+              }}
             >
               {t.label}
             </button>
@@ -207,6 +262,8 @@ export function Header({
                   onClick={() => setMenuOpen(false)}
                 />
                 <div
+                  className="cm-menu-panel"
+                  data-anim=""
                   style={{
                     position: 'fixed',
                     top: 57,

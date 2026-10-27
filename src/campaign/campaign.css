@@ -83,3 +83,91 @@
 @media (prefers-reduced-motion: reduce) {
   .reg-skel { animation: none; }
 }
+
+/* Motion (design/CHANGES-campaign-home-motion.md). On :root because the
+   mobile menu is portalled outside .campaign-site. */
+:root {
+  --ease-move: cubic-bezier(0.65, 0, 0.25, 1);
+  --ease-enter: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes cm-view-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cm-menu-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+.cm-view {
+  animation: cm-view-in 360ms var(--ease-enter) both;
+}
+.cm-menu-panel {
+  animation: cm-menu-in 220ms var(--ease-enter) both;
+}
+
+/* Header tabs: a red block slides behind the active tab. */
+.cm-tabs {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+.cm-tab-ind {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 44px;
+  background: var(--color-accent);
+  pointer-events: none;
+}
+.cm-tab-ind.is-moving {
+  transition: transform 380ms var(--ease-move), width 380ms var(--ease-move);
+}
+.cm-tab {
+  position: relative;
+  transition: color 260ms;
+}
+.cm-tab:not([aria-current='page']):hover {
+  color: var(--color-bg) !important;
+}
+
+/* Recap accordion: height leads, content follows. */
+.cm-recap-card {
+  transition: background-color 280ms, border-color 280ms;
+}
+.cm-recap-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 380ms var(--ease-move), visibility 0s linear 380ms;
+}
+.cm-recap-body > div {
+  min-height: 0;
+  overflow: hidden;
+}
+.cm-recap-inner {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 300ms ease, transform 380ms var(--ease-enter);
+}
+.cm-recap-body.is-open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 380ms var(--ease-move), visibility 0s;
+}
+.cm-recap-body.is-open .cm-recap-inner {
+  opacity: 1;
+  transform: none;
+  transition-delay: 80ms;
+}
+.cm-recap-sign {
+  transition: transform 340ms var(--ease-move), background-color 240ms, border-color 240ms, color 240ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] {
+    animation: none !important;
+    transition: none !important;
+  }
+}

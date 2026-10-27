@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchScores } from '../api';
 import type { Score } from '../types';
@@ -41,12 +41,14 @@ export function useCampaignSite() {
   // whenever real recaps reuse those same ids (edited in place via the CMS
   // rather than recreated), since the guard below then blocks the real
   // latest recap from ever overriding the stale pick.
+  // Only once: after that, closing every recap must leave them all closed.
+  const defaultedRecap = useRef(false);
   useEffect(() => {
-    if (!loading && content.recaps.length && !openRecap) {
-      const latest = content.recaps.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
-      if (latest) setOpenRecap(latest.id);
-    }
-  }, [loading, content.recaps, openRecap]);
+    if (defaultedRecap.current || loading || !content.recaps.length) return;
+    defaultedRecap.current = true;
+    const latest = content.recaps.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
+    if (latest) setOpenRecap((cur) => cur || latest.id);
+  }, [loading, content.recaps]);
 
   useEffect(() => {
     let cancelled = false;

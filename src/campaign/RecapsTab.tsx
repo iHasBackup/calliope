@@ -5,6 +5,7 @@ type Props = Pick<ReturnType<typeof useCampaignSite>, 'openRecap' | 'setOpenReca
 const MOBILE_BREAKPOINT = 640;
 const HEADER_HEIGHT = 57;
 const SCROLL_GAP = 16;
+const COLLAPSE_MS = 380; // matches .cm-recap-body in campaign.css
 
 const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
 
@@ -53,6 +54,8 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
             </div>
             <div style={{ paddingBottom: 14 }}>
               <div
+                className="cm-recap-card"
+                data-anim=""
                 style={{
                   background: r.open ? 'var(--panel)' : 'transparent',
                   border: `1px solid ${r.open ? mutedInk(20) : mutedInk(10)}`,
@@ -60,6 +63,8 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
               >
                 <button
                   type="button"
+                  aria-expanded={r.open}
+                  aria-controls={`recap-${r.id}`}
                   style={{
                     all: 'unset',
                     boxSizing: 'border-box',
@@ -79,15 +84,12 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
                     setOpenRecap(r.open ? '' : r.id);
                     if (opening && width < MOBILE_BREAKPOINT) {
                       // Opening this one also collapses whichever was open,
-                      // which changes page layout — wait for React to
-                      // commit and the browser to paint that new layout
-                      // before measuring where to scroll, or this lands in
-                      // the pre-reflow position instead of the real one.
-                      requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        });
-                      });
+                      // which moves everything below it. Wait for that
+                      // collapse to finish (380ms, none under reduced
+                      // motion) before measuring where to scroll, or this
+                      // lands where the header was mid-animation.
+                      const settle = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : COLLAPSE_MS;
+                      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), settle);
                     }
                   }}
                 >
@@ -120,13 +122,19 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
                     </span>
                   </span>
                   <span
+                    className="cm-recap-sign"
+                    data-anim=""
+                    aria-hidden="true"
                     style={{
                       width: 32,
                       height: 32,
                       flex: 'none',
                       display: 'grid',
                       placeItems: 'center',
-                      border: `1px solid ${mutedInk(30)}`,
+                      border: `1px solid ${r.open ? 'var(--color-accent)' : mutedInk(30)}`,
+                      background: r.open ? 'var(--color-accent)' : 'transparent',
+                      color: r.open ? '#ffffff' : 'var(--color-bg)',
+                      transform: r.open ? 'rotate(180deg)' : 'none',
                       fontFamily: 'var(--font-heading)',
                       fontWeight: 800,
                       fontSize: 18,
@@ -135,20 +143,29 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
                     {r.open ? '−' : '+'}
                   </span>
                 </button>
-                {r.open && (
-                  <div style={{ padding: '0 clamp(14px, 3vw, 18px) 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                    <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: mutedInk(85), maxWidth: 620, textWrap: 'pretty', whiteSpace: 'pre-line' }}>{r.body}</p>
-                    {r.tags.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                        {r.tags.map((tag) => (
-                          <span key={tag} style={{ border: `1px solid ${mutedInk(35)}`, padding: '3px 8px', fontSize: 12 }}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                {/* Always mounted so it can animate; hidden (and out of the tab order) when closed. */}
+                <div id={`recap-${r.id}`} className={`cm-recap-body${r.open ? ' is-open' : ''}`} data-anim="" aria-hidden={!r.open}>
+                  <div>
+                    <div
+                      className="cm-recap-inner"
+                      data-anim=""
+                      style={{ padding: '0 clamp(14px, 3vw, 18px) 20px', display: 'flex', flexDirection: 'column', gap: 14 }}
+                    >
+                      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.65, color: mutedInk(85), maxWidth: 620, textWrap: 'pretty', whiteSpace: 'pre-line' }}>
+                        {r.body}
+                      </p>
+                      {r.tags.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          {r.tags.map((tag) => (
+                            <span key={tag} style={{ border: `1px solid ${mutedInk(35)}`, padding: '3px 8px', fontSize: 12 }}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
