@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Content, FitQuestion } from '../../content';
 import { MODULES, DEFAULT_ACTIVE, BASE } from '../../classModules';
+import { todayIn } from '../../time';
 import { NumberField, OutlineAddButton, Panel, SectionHeader, TextAreaField, TextField, mutedInk } from '../fields';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -48,7 +49,9 @@ function Checkbox({ on, size = 18 }: { on: boolean; size?: number }) {
 export function RegistrationSection({ draft, update }: { draft: Content; update: (fn: (c: Content) => void) => void }) {
   const reg = draft.registration;
   const dl = /^\d{4}-\d{2}-\d{2}$/.test(reg.deadline) ? new Date(`${reg.deadline}T23:59:59`) : null;
-  const dlPast = !!dl && Date.now() > dl.getTime();
+  // Same rule as the public site: the deadline day counts, in the campaign's timezone.
+  const dlPast = !!dl && todayIn(draft.schedule.timezone) > reg.deadline;
+  const blockedByDeadline = reg.open !== false && dlPast;
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const dlNote = !dl
     ? 'No deadline. Applications stay open until you switch them off.'
@@ -96,6 +99,16 @@ export function RegistrationSection({ draft, update }: { draft: Content; update:
 
       <Panel title="Status">
         <Switch on={reg.open !== false} onClick={() => update((c) => (c.registration.open = c.registration.open === false))} label={reg.open !== false ? 'Accepting applications' : 'Applications closed'} />
+        {blockedByDeadline && dl && (
+          <div role="status" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px 16px', padding: '12px 14px', border: '2px solid var(--color-accent)' }}>
+            <span style={{ fontSize: 14, lineHeight: 1.45, color: 'var(--color-bg)' }}>
+              Applications are still closed: the deadline ({dl.getDate()} {MONTHS[dl.getMonth()]} {dl.getFullYear()}) has passed. Clear it or pick a later date, then save.
+            </span>
+            <button type="button" className="admin-sched-cancel" onClick={() => update((c) => (c.registration.deadline = ''))}>
+              Clear deadline
+            </button>
+          </div>
+        )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 16 }}>
           <NumberField label="Seats open" value={reg.seats} min={1} max={8} onChange={(v) => update((c) => (c.registration.seats = v))} />
           <TextField label="Deadline · closes end of day" type="date" value={reg.deadline} onChange={(v) => update((c) => (c.registration.deadline = v))} />

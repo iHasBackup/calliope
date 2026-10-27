@@ -12,6 +12,7 @@ import { RegistrationSection } from './sections/RegistrationSection';
 import { ApplicationsSection } from './sections/ApplicationsSection';
 import { useAdmin, type Section } from './useAdmin';
 import { useDarkBody } from '../useDarkBody';
+import { registrationOpen } from '../schedule';
 
 const SECTIONS: { key: Section; label: string }[] = [
   { key: 'campaign', label: 'Campaign' },
@@ -29,7 +30,8 @@ export default function AdminPage() {
   const narrow = admin.width < 820;
   const brandHidden = admin.width < 520;
 
-  const regOpen = admin.hasDraft && admin.draft.registration.open !== false;
+  // What the public site does, deadline included, not just the toggle.
+  const regOpen = admin.hasDraft && registrationOpen(admin.draft);
   const counts: Record<Section, string> = {
     campaign: '',
     schedule: '',
