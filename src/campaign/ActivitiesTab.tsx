@@ -67,7 +67,7 @@ export function ActivitiesTab({ leader, entries }: Props) {
             >
               <span style={{ color: mutedInk(60) }}>Top score</span>
               <span style={{ fontWeight: 700, overflowWrap: 'anywhere' }}>
-                {leader ? `${leader.name} — ${leader.words}/${WORDS.length}` : 'No entries yet'}
+                {leader ? `${leader.name} · ${leader.words}/${WORDS.length}` : 'No entries yet'}
               </span>
               <span style={{ color: mutedInk(60) }}>Entries</span>
               <span style={{ fontWeight: 700 }}>{entries}</span>

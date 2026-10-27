@@ -49,7 +49,7 @@ export function buildSpecs(step: number, a: ApplicationDraft, reg: Registration)
       { id: 'playstyle', kind: 'multi', exclusive: 'help', label: 'What kind of player are you at the table?', help: 'Pick any that fit, or let the DM figure it out.', opts: PLAYSTYLES, req: true },
       { id: 'lines', kind: 'area', rows: 3, label: 'Lines', help: 'Hard limits. Content that should never appear in the game.', placeholder: 'Write "none" if you have none', req: false },
       { id: 'veils', kind: 'area', rows: 3, label: 'Veils', help: 'Content that can happen in the story, but off-screen or faded to black.', placeholder: 'Write "none" if you have none', req: false },
-      { id: 'pitch', kind: 'area', rows: 5, label: 'What makes you interesting for this campaign?', help: 'Why this table, what you bring to it, anything the DM should know about you.', req: true },
+      { id: 'pitch', kind: 'area', rows: 5, label: 'What makes you interested in this campaign?', help: 'Why you want to join this campaign: what drew you to it and what you hope to get out of it.', req: true },
     ];
   }
   if (step === 1) {

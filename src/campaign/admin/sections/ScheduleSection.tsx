@@ -230,7 +230,7 @@ export function ScheduleSection({
           <TextField label="Timezone label" placeholder="GMT+7" value={sc.label} onChange={(v) => update((c) => (c.schedule.label = v))} />
         </div>
         <TextField
-          label="IANA timezone · drives the actual countdown math"
+          label="IANA timezone · used for the countdown"
           placeholder="Asia/Jakarta"
           value={sc.timezone}
           onChange={(v) => update((c) => (c.schedule.timezone = v))}

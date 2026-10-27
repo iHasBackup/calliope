@@ -6,7 +6,7 @@ import { NumberField, OutlineAddButton, Panel, SectionHeader, TextAreaField, Tex
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 const STD_SECTIONS = [
-  { n: '01', title: 'General information', desc: 'Discord, D&D experience, favourite aspects (up to 2), playstyle, lines and veils, why them.' },
+  { n: '01', title: 'General information', desc: 'Discord, D&D experience, favourite aspects (up to 2), playstyle, lines and veils, and why this campaign.' },
   { n: '03', title: 'Vibe check', desc: 'How they bond with other players and how they want to handle conflict.' },
   { n: '04', title: 'Your character', desc: 'Name, species, class, subclass and backstory, with a live character card.' },
 ];
@@ -164,7 +164,7 @@ export function RegistrationSection({ draft, update }: { draft: Content; update:
         </div>
       </Panel>
 
-      <Panel title="02 · Campaign fit — this campaign only">
+      <Panel title="02 · Campaign fit (this campaign only)">
         <TextField label="Section title" value={reg.fitTitle} onChange={(v) => update((c) => (c.registration.fitTitle = v))} />
         <TextAreaField label="Section intro" rows={3} value={reg.fitIntro} onChange={(v) => update((c) => (c.registration.fitIntro = v))} />
         {reg.fitQuestions.map((fq, i) => (

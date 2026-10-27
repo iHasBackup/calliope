@@ -39,7 +39,7 @@ export const PLAYSTYLES: Option[] = [
   { v: 'thinker', label: 'The Thinker', desc: 'Loves puzzles and mysteries. Takes notes, connects dots the rest of the party missed.' },
   { v: 'completionist', label: 'The Completionist', desc: 'Must finish every side quest and find every secret. Hates leaving content unexplored.' },
   { v: 'specialist', label: 'The Specialist', desc: 'Always plays the same character archetype and knows it deeply.' },
-  { v: 'socializer', label: 'The Socializer', desc: 'Thrives in NPC interactions and political intrigue. Avoids combat when possible.' },
+  { v: 'socializer', label: 'The Socializer', desc: 'Loves NPC conversations and political intrigue. Avoids combat when possible.' },
   { v: 'inventor', label: 'The Inventor', desc: 'Solves problems in unexpected ways. "Can I use the giant crab as a battering ram?"' },
   { v: 'casual', label: 'The Casual', desc: 'Here to hang out with friends. Zero stress, maximum vibes.' },
   { v: 'help', label: 'Help me figure it out', desc: 'Let the DM read your style over the first sessions' },
@@ -70,7 +70,7 @@ export interface VibeQuestion {
 export const VIBE_QS: VibeQuestion[] = [
   {
     id: 'spotlight',
-    label: 'How do you handle spotlight, are you comfortable sharing it or do you like leading scenes?',
+    label: 'How do you handle the spotlight? Do you like sharing it, or leading scenes?',
     opts: [
       { v: 'a', label: 'I prefer leading and driving scenes forward' },
       { v: 'b', label: "I'm happy sharing equally with everyone" },
@@ -84,7 +84,7 @@ export const VIBE_QS: VibeQuestion[] = [
     label: 'What do you do when another player is having a big moment?',
     opts: [
       { v: 'a', label: 'I sit back and let them shine fully' },
-      { v: 'b', label: 'I engage and react to make their moment feel more impactful' },
+      { v: 'b', label: 'I react and play along so their moment lands' },
       { v: 'c', label: 'I might jump in if I see a way to contribute' },
       { v: 'd', label: 'I find it hard to hold back but I try' },
       { v: 'other', label: 'Other' },
@@ -127,7 +127,7 @@ export const VIBE_QS: VibeQuestion[] = [
 
 export const CONDUCT = {
   label: 'Do you understand and agree with the table’s conduct policy?',
-  help: 'This is a collaborative storytelling game, every player’s experience matters equally. If behaviour is negatively affecting the table, a private conversation will happen first. If the issue continues, you may be asked to leave the campaign.',
+  help: 'We tell this story together, and every player’s experience matters equally. If your behaviour is causing problems at the table, the DM will talk to you privately first. If it keeps happening, you may be asked to leave the campaign.',
   agree: 'Understood and agreed',
 };
 
@@ -228,7 +228,7 @@ export function summarize(a: ApplicationDraft, reg: Pick<Registration, 'fitQuest
         { q: 'Playstyle', a: many(PLAYSTYLES, a.playstyle) },
         { q: 'Lines', a: a.lines },
         { q: 'Veils', a: a.veils },
-        { q: 'Why them', a: a.pitch },
+        { q: 'What makes you interested in this campaign?', a: a.pitch },
       ],
     },
     {

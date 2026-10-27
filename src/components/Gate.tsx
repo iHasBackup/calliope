@@ -42,8 +42,8 @@ export function Gate({ name, setName, gateError, ranked, narrow, onStart, goBoar
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 440 }}>
           <hr className="hr" style={{ margin: 0 }} />
           <p style={{ margin: 0, fontSize: 16, lineHeight: 1.5, textWrap: 'pretty' }}>
-            No hints, no checking, no account. Type a name, fill the grid, submit once. You are
-            ranked by words solved first, then by time.
+            No hints, and nothing gets checked as you go. You don&rsquo;t need an account: type a name,
+            fill the grid and submit once. Ranking is by words solved, then by time.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <label
