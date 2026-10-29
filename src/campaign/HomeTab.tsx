@@ -1,4 +1,4 @@
-import { MoonIcon } from './MoonIcon';
+import { GamepadIcon } from './GamepadIcon';
 import { SwordsIcon } from './SwordsIcon';
 import type { useCampaignSite } from './useCampaignSite';
 
@@ -206,14 +206,25 @@ export function HomeTab({ go, session, countdown, content, partyColumns, width }
       {/* Stat strip */}
       <div style={{ padding: '0 clamp(16px, 4vw, 48px)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ flex: '1 1 150px', minWidth: 0, boxSizing: 'border-box', background: 'var(--panel)', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-            <MoonIcon />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div style={{ flex: '2 1 240px', minWidth: 0, boxSizing: 'border-box', background: 'var(--panel)', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+            <GamepadIcon />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
               <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: mutedInk(65) }}>
-                In-game night
+                Game system
               </span>
-              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 34, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
-                {String(content.nights).padStart(2, '0')}
+              <span
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 800,
+                  fontSize: 20,
+                  lineHeight: 1.15,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0,
+                  overflowWrap: 'normal',
+                  textWrap: 'balance',
+                }}
+              >
+                {content.system.trim() || 'TBD'}
               </span>
             </div>
           </div>

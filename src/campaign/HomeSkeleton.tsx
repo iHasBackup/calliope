@@ -43,7 +43,7 @@ export function HomeSkeleton() {
       {/* Stat strip */}
       <div style={{ padding: '0 clamp(16px, 4vw, 48px)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ flex: '1 1 150px' }}>
+          <div style={{ flex: '2 1 240px' }}>
             <Bar width="100%" height={80} />
           </div>
           <div style={{ flex: '1 1 150px' }}>
