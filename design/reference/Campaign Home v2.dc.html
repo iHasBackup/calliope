@@ -167,8 +167,8 @@
         </div>
         <div style="display: grid; grid-template-columns: repeat({{ partyCols }}, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px);">
           <sc-for list="{{ party }}" as="p" hint-placeholder-count="5">
-            <div style="position: relative; container-type: inline-size; aspect-ratio: 3 / 4.2; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 2px solid {{ p.border }}; overflow: hidden;">
-              <div class="grayscale" style="position: absolute; inset: 0;">
+            <div data-anim="" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" style="position: relative; container-type: inline-size; aspect-ratio: 3 / 4.2; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); border: 2px solid {{ p.borderNow }}; overflow: hidden; transform: translateY({{ p.lift }}px); box-shadow: {{ p.shadow }}; transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1), border-color 220ms ease, box-shadow 320ms cubic-bezier(0.2, 0.7, 0.2, 1);">
+              <div class="grayscale" data-anim="" style="position: absolute; inset: 0; transform: scale({{ p.zoom }}); transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);">
                 <sc-if value="{{ p.hasPortrait }}" hint-placeholder-val="{{ false }}">
                   <div role="img" aria-label="Portrait" style="width: 100%; height: 100%; background: {{ p.portraitBg }} center / cover no-repeat;"></div>
                 </sc-if>
@@ -178,7 +178,8 @@
               </div>
               <div style="position: absolute; inset: auto 0 0 0; height: 62%; pointer-events: none; background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-text) 80%, transparent) 45%, var(--color-text) 100%);"></div>
               <div style="position: absolute; top: 10px; left: 10px; pointer-events: none; background: {{ p.badgeBg }}; color: #ffffff; padding: 4px 8px; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">{{ p.badge }}</div>
-              <div style="position: absolute; left: clamp(10px, 2.4vw, 14px); right: clamp(10px, 2.4vw, 14px); bottom: clamp(10px, 2.4vw, 14px); pointer-events: none; display: grid; grid-template-rows: 16px 30px 24px 18px; gap: 6px; min-width: 0;">
+              <div data-anim="" aria-hidden="true" style="position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: var(--color-accent); transform-origin: left; transform: scaleX({{ p.bar }}); transition: transform 360ms cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none;"></div>
+              <div data-anim="" style="position: absolute; left: clamp(10px, 2.4vw, 14px); right: clamp(10px, 2.4vw, 14px); bottom: clamp(10px, 2.4vw, 14px); transform: translateY({{ p.textLift }}px); transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none; display: grid; grid-template-rows: 16px 30px 24px 18px; gap: 6px; min-width: 0;">
                 <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.species }}</div>
                 <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(18px, 12cqi, 30px); line-height: 30px; letter-spacing: -0.01em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</div>
                 <div style="display: flex; min-width: 0;"><span style="background: var(--color-bg); color: var(--color-text); padding: 0 8px; line-height: 24px; font-size: 12px; font-weight: 700; max-width: 100%; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.klass }}</span></div>
@@ -384,8 +385,18 @@ class Component extends DCLogic {
     const level = c.partyLevel;
     const nights = Number(c.nights) || 0;
 
-    const party = c.party.map(p => ({ ...p, name: p.name || 'Unnamed', species: p.species || 'Species TBD', klass: p.klass || 'Class TBD', sub: p.sub || 'Subclass TBD', hasPortrait: !!p.portraitUrl, noPortrait: !p.portraitUrl, portraitBg: p.portraitUrl ? 'url(' + JSON.stringify(p.portraitUrl) + ')' : 'none', border: 'transparent', badge: 'LV ' + level, badgeBg: 'var(--color-accent)', placeholder: 'Portrait of ' + (p.name || 'member') }));
+    const party = c.party.map(p => ({ ...p,
+ name: p.name || 'Unnamed', species: p.species || 'Species TBD', klass: p.klass || 'Class TBD', sub: p.sub || 'Subclass TBD', hasPortrait: !!p.portraitUrl, noPortrait: !p.portraitUrl, portraitBg: p.portraitUrl ? 'url(' + JSON.stringify(p.portraitUrl) + ')' : 'none', border: 'transparent', badge: 'LV ' + level, badgeBg: 'var(--color-accent)', placeholder: 'Portrait of ' + (p.name || 'member') }));
     if (showOpen) party.push({ id: 'open', name: 'Seat open', species: 'Fifth player', klass: 'Joining soon', sub: 'Class TBD', hasPortrait: false, noPortrait: true, border: 'color-mix(in srgb, var(--color-bg) 25%, transparent)', badge: '+1', badgeBg: 'color-mix(in srgb, var(--color-bg) 25%, var(--color-text))', placeholder: 'Portrait' });
+    party.forEach(p => {
+      const h = s.hoverId === p.id;
+      Object.assign(p, {
+        lift: h ? -6 : 0, zoom: h ? 1.06 : 1, bar: h ? 1 : 0, textLift: h ? -6 : 0,
+        shadow: h ? 'var(--shadow-lg)' : 'none', borderNow: h ? 'var(--color-accent)' : p.border,
+        onEnter: () => this.setState({ hoverId: p.id }),
+        onLeave: () => this.setState(st => st.hoverId === p.id ? { hoverId: null } : null)
+      });
+    });
 
     const tabDefs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['activities', 'Activities']];
     const rg = c.registration || {};
