@@ -171,3 +171,50 @@
     transition: none !important;
   }
 }
+
+/* Party card hover (design/CHANGES-party-card-hover.md). Plain CSS; only on
+   devices that really hover, so a tap doesn't leave a card lifted. */
+.cm-party-card {
+  border: 2px solid var(--card-border, transparent);
+  transition: transform 320ms var(--ease-enter), border-color 220ms ease, box-shadow 320ms var(--ease-enter);
+}
+.cm-party-card .cm-party-portrait {
+  transition: transform 600ms var(--ease-enter);
+}
+.cm-party-card .cm-party-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 360ms var(--ease-enter);
+  pointer-events: none;
+}
+.cm-party-card .cm-party-info {
+  transition: transform 320ms var(--ease-enter);
+}
+@media (hover: hover) {
+  .cm-party-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-lg);
+  }
+  .cm-party-card:hover .cm-party-portrait {
+    transform: scale(1.06);
+  }
+  .cm-party-card:hover .cm-party-bar {
+    transform: scaleX(1);
+  }
+  .cm-party-card:hover .cm-party-info {
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cm-party-card,
+  .cm-party-card * {
+    transition: none !important;
+  }
+}

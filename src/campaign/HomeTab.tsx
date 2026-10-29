@@ -275,18 +275,19 @@ export function HomeTab({ go, session, countdown, content, partyColumns, width }
           {party.map((p) => (
             <div
               key={p.id}
+              className="cm-party-card"
               style={{
                 position: 'relative',
                 containerType: 'inline-size',
                 aspectRatio: '3 / 4.2',
                 background: 'var(--panel)',
-                border: `2px solid ${p.border}`,
+                ['--card-border' as string]: p.border,
                 overflow: 'hidden',
               }}
             >
               {p.portraitUrl && (
                 <div
-                  className="grayscale"
+                  className="grayscale cm-party-portrait"
                   style={{
                     position: 'absolute',
                     inset: 0,
@@ -320,7 +321,9 @@ export function HomeTab({ go, session, countdown, content, partyColumns, width }
               >
                 {p.badge}
               </div>
+              <div className="cm-party-bar" aria-hidden="true" />
               <div
+                className="cm-party-info"
                 style={{
                   position: 'absolute',
                   left: 'clamp(10px, 2.4vw, 14px)',
