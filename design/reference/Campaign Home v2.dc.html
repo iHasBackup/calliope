@@ -61,7 +61,28 @@
     </div>
   </sc-if>
 
-  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ isLoadingMap }}" hint-placeholder-val="{{ false }}">
+    <div data-skel="" aria-busy="true" aria-label="Loading map" style="animation: cm-skel 1.4s ease-in-out infinite; padding-top: clamp(36px, 6vw, 72px); display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 0 clamp(16px, 4vw, 48px);">
+        <div style="height: 12px; width: 140px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: clamp(40px, 7vw, 80px); width: clamp(140px, 22vw, 260px); background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; padding: 0 clamp(16px, 4vw, 48px) 64px;">
+        <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+          <div style="aspect-ratio: 1561 / 1008; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 20px; max-width: 420px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        </div>
+        <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="height: 88px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLoadingHome }}" hint-placeholder-val="{{ false }}">
     <div data-skel="" aria-busy="true" aria-label="Loading campaign" style="animation: cm-skel 1.4s ease-in-out infinite; display: flex; flex-direction: column;">
       <div style="width: 100%; height: clamp(200px, 32vw, 400px); background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(28px, 5vw, 56px); padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 48px);">
@@ -214,6 +235,36 @@
     </div>
   </sc-if>
 
+  <sc-if value="{{ isMap }}" hint-placeholder-val="{{ false }}">
+    <div data-anim="" style="animation: cm-view-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both; padding-top: clamp(36px, 6vw, 72px); display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 clamp(16px, 4vw, 48px);">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">Detail map of</span>
+        <h1 style="margin: 0; font-size: clamp(32px, 5.5vw, 60px); line-height: 0.95; letter-spacing: -0.03em; text-transform: uppercase;">Wickermoor Hollow</h1>
+      </div>
+      <div style="position: relative;">
+        <sc-if value="{{ mapSkel }}" hint-placeholder-val="{{ true }}">
+          <div data-skel="" aria-busy="true" aria-label="Loading map" style="animation: cm-skel 1.4s ease-in-out infinite;">
+      <div style="display: flex; flex-wrap: wrap; gap: 24px; padding: 0 clamp(16px, 4vw, 48px) 64px;">
+        <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+          <div style="aspect-ratio: 1561 / 1008; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 20px; max-width: 420px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        </div>
+        <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="height: 88px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+          <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        </div>
+      </div>
+          </div>
+        </sc-if>
+        <div style="position: {{ mapWrap.pos }}; top: 0; left: 0; right: 0; opacity: {{ mapWrap.op }}; pointer-events: {{ mapWrap.pe }}; transition: opacity 240ms ease;">
+          <dc-import name="Map Section" on-ready="{{ onMapReady }}" hint-size="100%,1px"></dc-import>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ isRecaps }}" hint-placeholder-val="{{ false }}">
     <div data-anim="" style="animation: cm-view-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both; padding: clamp(36px, 6vw, 72px) clamp(16px, 4vw, 48px); display: flex; flex-direction: column; gap: 36px; max-width: 900px;">
       <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -288,22 +339,6 @@
             <a class="btn btn-primary" href="Crossword.dc.html" style="height: 48px; padding: 0 22px; color: #ffffff; display: inline-flex; align-items: center; align-self: flex-start; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Play now</a>
           </div>
         </div>
-        <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); display: flex; flex-direction: column; overflow: hidden;">
-          <div class="grayscale" style="position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--color-text);">
-            <img src="assets/wickermoor-map.png" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; display: block;">
-          </div>
-          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;"><span style="background: var(--color-accent); color: #ffffff; padding: 3px 7px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em;">LIVE</span><span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">Explore · Map</span></div>
-            <span style="font-family: var(--font-heading); font-weight: 800; font-size: 24px; line-height: 1.05; text-transform: uppercase;">Map of Wickermoor</span>
-            <span style="font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 80%, transparent);">Where the party has been, what they have heard of, and where they stand tonight.</span>
-            <div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 13px; padding: 10px 0; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
-              <span style="color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Party at</span>
-              <span style="font-weight: 700; overflow-wrap: anywhere;">{{ mapPartyAt }}</span>
-              <span style="color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Discovered</span>
-              <span style="font-weight: 700;">{{ mapDiscovered }}</span>
-            </div>
-            <a class="btn btn-primary" href="Map.dc.html" style="height: 48px; padding: 0 22px; color: #ffffff; display: inline-flex; align-items: center; align-self: flex-start; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;">Open map</a>
-          </div>
         </div>
       </div>
     </div>
@@ -319,7 +354,7 @@ const CM = () => window.CrookedMoonContent;
 const EMPTY = { arcTitle: '', arcChapter: '', arcBlurb: '', keyArtUrl: '', nights: 0, progress: 0, partyLevel: 1, summary: '', threads: [], schedule: { weekday: 3, hour: 19, timezone: '' }, showOpenSeat: false, party: [], recaps: [] };
 
 class Component extends DCLogic {
-  state = { menu: false, view: 'home', openId: 'latest', now: Date.now(), leader: null, entries: 0, w: typeof window !== 'undefined' ? window.innerWidth : 1200, content: CM() ? CM().load() : null };
+  state = { mapReady: false, menu: false, view: (typeof location !== 'undefined' && ['recaps', 'activities', 'map'].includes((location.hash || '').slice(1))) ? location.hash.slice(1) : 'home', openId: 'latest', now: Date.now(), leader: null, entries: 0, w: typeof window !== 'undefined' ? window.innerWidth : 1200, content: CM() ? CM().load() : null };
 
   placeInd(view, animate) {
     const el = document.querySelector('[data-tab-ind]');
@@ -343,7 +378,7 @@ class Component extends DCLogic {
     this.onResizeTabs = () => this.remeasure();
     window.addEventListener('resize', this.onResizeTabs);
     const h = (location.hash || '').replace('#', '');
-    if (h === 'recaps' || h === 'activities') this.setState({ view: h });
+    if (h === 'recaps' || h === 'activities' || h === 'map') this.setState({ view: h });
     try {
       const v = JSON.parse(localStorage.getItem('crooked-moon-crossword-scores-v1') || '[]');
       if (Array.isArray(v) && v.length) {
@@ -374,7 +409,7 @@ class Component extends DCLogic {
     const el = document.querySelector('[data-tab-ind]');
     if (el && !el.dataset.placed) { this.placeInd(this.state.view, false); void el.offsetWidth; }
     this.placeInd(view, true);
-    this.setState({ view, menu: false });
+    this.setState(view === 'map' && this.state.view !== 'map' ? { view, menu: false, mapReady: false } : { view, menu: false });
     try { history.replaceState(null, '', view === 'home' ? location.pathname : '#' + view); } catch (e) {}
     window.scrollTo(0, 0);
   }
@@ -415,7 +450,7 @@ class Component extends DCLogic {
       });
     });
 
-    const tabDefs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['activities', 'Activities']];
+    const tabDefs = [['home', 'Campaign'], ['recaps', 'Recaps'], ['map', 'Map'], ['activities', 'Activities']];
     const rg = c.registration || {};
     const rgPast = /^\d{4}-\d{2}-\d{2}$/.test(rg.deadline || '') && Date.now() > new Date(rg.deadline + 'T23:59:59').getTime();
     if (rg.open !== false && !rgPast) tabDefs.push(['apply', 'Apply']);
@@ -465,7 +500,9 @@ class Component extends DCLogic {
       toggleMenu: () => this.setState(st => ({ menu: !st.menu })),
       closeMenu: () => this.setState({ menu: false }),
       stop: e => e.stopPropagation(),
-      isLoading: loading, isHome: !loading && s.view === 'home', isRecaps: !loading && s.view === 'recaps', isActivities: !loading && s.view === 'activities',
+      isLoading: loading, isLoadingMap: loading && s.view === 'map', isLoadingHome: loading && s.view !== 'map',
+      mapSkel: !s.mapReady, mapWrap: s.mapReady ? { pos: 'relative', op: 1, pe: 'auto' } : { pos: 'absolute', op: 0, pe: 'none' },
+      onMapReady: () => { if (!this.state.mapReady) this.setState({ mapReady: true }); }, isHome: !loading && s.view === 'home', isRecaps: !loading && s.view === 'recaps', isActivities: !loading && s.view === 'activities', isMap: !loading && s.view === 'map',
       goRecaps: () => this.go('recaps'),
       goActivities: () => this.go('activities'),
       ...(() => { const m = c.map || { places: [] }; const pp = m.places.find(p => p.id === m.partyAt); const n = m.places.filter(p => p.status !== 'hidden').length; return { mapPartyAt: pp ? pp.name : 'Unknown', mapDiscovered: n + (n === 1 ? ' place' : ' places') }; })(),
