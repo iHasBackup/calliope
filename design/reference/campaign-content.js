@@ -16,6 +16,169 @@
       'A name in the church ledger of the dead belongs to someone the party spoke to yesterday.'
     ],
     schedule: { weekday: 3, hour: 19, timezone: 'GMT+7', start: '2026-08-05', end: '', duration: 4, changes: [] },
+    map: {
+      "version": 2,
+      "image": "assets/wickermoor-map.png",
+      "partyAt": "foxwallow",
+      "path": [
+        "wickermoor-village",
+        "crooked-house",
+        "wickermoor-village",
+        "foxwallow"
+      ],
+      "places": [
+        {
+          "id": "wickermoor-village",
+          "name": "Wickermoor Village",
+          "x": 64.1,
+          "y": 56.5,
+          "status": "visited",
+          "desc": "The oldest and biggest settlement, on the banks of the Silverbell River. It looks like a friendly, quiet town, but a cult of the Crooked Queen hides inside it, and its people lean on the Old Ways to survive.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "crooked-house",
+          "name": "Druskenvald Estate (the Crooked House)",
+          "x": 63.4,
+          "y": 49.6,
+          "status": "visited",
+          "desc": "The manor Phillip and Adela came to claim. Its walls hold the Lockwood family’s grief, and the Crooked Man hunts through it.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "foxwallow",
+          "name": "Foxwillow Farmland",
+          "x": 78.8,
+          "y": 43.7,
+          "status": "visited",
+          "desc": "Miles of fertile farms east of the village, and the valley’s breadbasket. The town of Foxwillow sits at the center. Right now it’s emptying out, and the crops are dying.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "dawns-gate",
+          "name": "Dawn’s Gate and the Howlers",
+          "x": 30.1,
+          "y": 69.4,
+          "status": "known",
+          "desc": "A mountain town in the foothills of a snow-capped range that walls off the west. The people hunt and mine, and live in fear of the Crimson Monastery above them.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "crimson-monastery",
+          "name": "The Crimson Monastery",
+          "x": 23.1,
+          "y": 63.5,
+          "status": "known",
+          "desc": "A fortress up in the mountains, run by Father Renathyr, a vampire abbot who burns or feeds on anyone who won’t convert to his goddess, the Crimson Rose.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "murkwater",
+          "name": "The Drowned Crossroads",
+          "x": 67.9,
+          "y": 31.7,
+          "status": "known",
+          "desc": "A black-water swamp at the valley’s lowest point. Its main town, Murkwater Bend, is a lawless refuge for people who want to escape everyone else’s rules.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "moonsong-lake",
+          "name": "Moonsong Lake and the Isle of Mourn",
+          "x": 30.5,
+          "y": 47,
+          "status": "known",
+          "desc": "A huge lake in the west where it rains for weeks. On its island, Memory’s Rest Sanatorium once healed people, and its waters now swarm with parasites.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "harts-forest",
+          "name": "Hartsblight Forest",
+          "x": 35.9,
+          "y": 30.5,
+          "status": "known",
+          "desc": "A forest in the northwest overrun by blight. Fungus is the dominant life, and the air is thick with spores.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "maidemrst",
+          "name": "Maidenmist Cemetery",
+          "x": 73,
+          "y": 67.5,
+          "status": "known",
+          "desc": "Rolling hills south of the village, packed with tombs and crypts. People say the iron gates creep a little further out every night.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "skitterdeep",
+          "name": "Skitterdeep Mine",
+          "x": 44.8,
+          "y": 43.7,
+          "status": "known",
+          "desc": "Stonoga Blackstinger’s lair, the centipede hag, where Hayden’s grandson is probably held.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "wytchwood",
+          "name": "The Wytchwood",
+          "x": 52,
+          "y": 22,
+          "status": "known",
+          "desc": "The oldest and wildest forest in the valley. Nobody who goes past the tree line comes back, and something in there calls to people across the valley.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "silverbell-river",
+          "name": "Silverbell River",
+          "x": 69.8,
+          "y": 59.5,
+          "status": "visited",
+          "desc": "The river Wickermoor Village sits on.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "wickermoor-hollow",
+          "name": "Wickermoor Hollow",
+          "x": 19.2,
+          "y": 10.9,
+          "status": "hidden",
+          "desc": "A bowl of dead wicker in the far north, where something enormous was woven and then left to rot.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "bloody-brook",
+          "name": "The Bloody Brook",
+          "x": 66,
+          "y": 70.4,
+          "status": "hidden",
+          "desc": "A stream that runs red after rain.",
+          "npcs": "",
+          "rumors": ""
+        },
+        {
+          "id": "mausoleum",
+          "name": "Mausoleum",
+          "x": 78.5,
+          "y": 69.4,
+          "status": "hidden",
+          "desc": "A sealed tomb at the cemetery’s edge. The seal is on the inside.",
+          "npcs": "",
+          "rumors": ""
+        }
+      ]
+    },
     showOpenSeat: true,
     registration: {
       open: true,
@@ -57,6 +220,7 @@
       if (v && typeof v === 'object') {
         Object.keys(v).forEach(function (k) { base[k] = v[k]; });
         base.schedule = Object.assign(clone(DEFAULTS.schedule), v.schedule || {});
+        if (!v.map || v.map.version !== DEFAULTS.map.version) base.map = clone(DEFAULTS.map);
       }
     } catch (e) {}
     return base;

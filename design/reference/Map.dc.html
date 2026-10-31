@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Map of Wickermoor · The Crooked Moon</title>
+  <link rel="stylesheet" href="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/styles.css">
+  <script src="_ds/modernist-5926a435-70c0-4950-b1da-5ff2eb0a70a0/_ds_bundle.js"></script>
+  <script src="./campaign-content.js"></script>
+  <style>
+    body { margin: 0; background: #201e1d; -webkit-text-size-adjust: 100%; }
+    a { color: var(--color-accent-400); text-decoration: none; }
+    a:hover { color: var(--color-accent); }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+    @keyframes cm-skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+    @keyframes cm-pulse { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(1.9); opacity: 0; } }
+    @keyframes cm-march { to { stroke-dashoffset: -36; } }
+    @keyframes cm-sheet { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { [data-skel], [data-anim] { animation: none !important; transition: none !important; } }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; max-width: 1440px; margin: 0 auto; background: var(--color-text); color: var(--color-bg); font-family: var(--font-body); font-size: 15px;">
+
+  <div style="position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px clamp(10px, 4vw, 48px); min-height: 56px; box-sizing: border-box; background: color-mix(in srgb, var(--color-text) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+      <div style="width: 12px; height: 12px; flex: none; background: var(--color-accent); transform: rotate(45deg);"></div>
+      <div style="font-family: var(--font-heading); font-weight: 800; font-size: clamp(12px, 3.4vw, 16px); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;">The Crooked Moon</div>
+    </div>
+    <a href="Campaign Home v2.dc.html#activities" style="height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 4px; font-family: var(--font-heading); font-weight: 600; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);"><span>&larr;</span><span>Activities</span></a>
+  </div>
+
+  <div style="padding: clamp(24px, 4vw, 48px) clamp(10px, 4vw, 48px) clamp(16px, 2vw, 24px); display: flex; flex-direction: column; gap: 8px;">
+    <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-400);">Map</span>
+    <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(40px, 8vw, 88px); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase;">Wickermoor</h1>
+  </div>
+
+  <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+    <div data-skel="" aria-busy="true" aria-label="Loading map" style="animation: cm-skel 1.4s ease-in-out infinite; display: flex; flex-wrap: wrap; gap: 24px; padding: 0 clamp(10px, 4vw, 48px) 64px;">
+      <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+        <div style="aspect-ratio: 1561 / 1008; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 20px; max-width: 420px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+      </div>
+      <div style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="height: 88px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+        <div style="height: 44px; background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));"></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+    <div style="display: grid; grid-template-columns: {{ cols }}; gap: 24px; align-items: start; padding: 0 clamp(10px, 4vw, 48px) 64px;">
+
+      <div style="min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+        <div data-mapscroll="" style="overflow-x: auto; overflow-y: hidden; border-top: 2px solid var(--color-bg); -webkit-overflow-scrolling: touch;">
+          <div style="position: relative; min-width: {{ mapMin }}; aspect-ratio: 1561 / 1008; background: var(--color-text); overflow: hidden; user-select: none;" onClick="{{ clearSel }}">
+            <img src="assets/wickermoor-map.png" alt="Illustrated map of the Wickermoor vale" draggable="false" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; filter: grayscale(1) contrast(1.05);">
+            <img src="assets/wickermoor-map.png" alt="" aria-hidden="true" draggable="false" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; clip-path: circle({{ partyR }} at {{ partyX }}% {{ partyY }}%);">
+            <img data-anim="" src="assets/wickermoor-map.png" alt="" aria-hidden="true" draggable="false" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; clip-path: circle({{ spotR }} at {{ spotX }}% {{ spotY }}%); transition: {{ spotTr }};">
+            <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: color-mix(in srgb, var(--color-text) 80%, transparent); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); mask-image: {{ fogMask }}; -webkit-mask-image: {{ fogMask }}; mask-composite: intersect; -webkit-mask-composite: source-in;"></div>
+            <sc-if value="{{ hasPath }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible;">
+                <polyline points="{{ pathPts }}" fill="none" style="stroke: var(--color-text); stroke-width: 7px; stroke-opacity: 0.55; vector-effect: non-scaling-stroke; stroke-linejoin: miter;"></polyline>
+                <polyline data-anim="" points="{{ pathPts }}" fill="none" style="stroke: var(--color-accent); stroke-width: 3px; stroke-dasharray: 10 8; vector-effect: non-scaling-stroke; stroke-linejoin: miter; animation: cm-march 1.6s linear infinite;"></polyline>
+              </svg>
+            </sc-if>
+            <sc-for list="{{ pins }}" as="p" hint-placeholder-count="0">
+              <button aria-label="{{ p.aria }}" aria-pressed="{{ p.pressed }}" style="all: unset; position: absolute; left: {{ p.x }}%; top: {{ p.y }}%; width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; cursor: pointer; z-index: {{ p.z }};" onClick="{{ p.onClick }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" onFocus="{{ p.onEnter }}" onBlur="{{ p.onLeave }}">
+                <span data-anim="" style="width: {{ p.size }}px; height: {{ p.size }}px; box-sizing: border-box; background: {{ p.fill }}; border: 2px solid {{ p.ring }}; box-shadow: var(--shadow-md); outline: {{ p.outline }}; outline-offset: 3px; transform: scale({{ p.scale }}); transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);"></span>
+                <span data-anim="" style="position: absolute; bottom: 100%; left: 50%; transform: translate(-50%, {{ p.tipY }}px); opacity: {{ p.tipOp }}; transition: opacity 180ms ease, transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none; white-space: nowrap; background: var(--color-text); color: var(--color-bg); padding: 5px 8px; font-family: var(--font-heading); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">{{ p.name }}</span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ hasParty }}" hint-placeholder-val="{{ false }}">
+              <button aria-label="{{ party.aria }}" style="all: unset; position: absolute; left: {{ party.x }}%; top: {{ party.y }}%; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; cursor: pointer; z-index: 6;" onClick="{{ party.onClick }}" onMouseEnter="{{ party.onEnter }}" onMouseLeave="{{ party.onLeave }}" onFocus="{{ party.onEnter }}" onBlur="{{ party.onLeave }}">
+                <span data-anim="" aria-hidden="true" style="position: absolute; width: 36px; height: 36px; box-sizing: border-box; border: 2px solid var(--color-accent); animation: cm-pulse 2s ease-out infinite;"></span>
+                <span data-anim="" style="position: relative; width: 36px; height: 36px; box-sizing: border-box; display: grid; place-items: center; background: var(--color-accent); color: #ffffff; border: 2px solid #ffffff; box-shadow: var(--shadow-lg); outline: {{ party.outline }}; outline-offset: 3px; transform: scale({{ party.scale }}); transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </span>
+                <span style="position: absolute; bottom: calc(100% - 6px); left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none; background: var(--color-accent); color: #ffffff; padding: 4px 8px; font-family: var(--font-heading); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">{{ party.tag }}</span>
+              </button>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; font-size: 13px; color: color-mix(in srgb, var(--color-bg) 70%, transparent);">
+          <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; box-sizing: border-box; background: var(--color-accent); border: 2px solid #ffffff;"></span>Visited</span>
+          <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; box-sizing: border-box; background: var(--color-bg); border: 2px solid var(--color-text); outline: 1px solid color-mix(in srgb, var(--color-bg) 50%, transparent);"></span>Heard of</span>
+          <span style="display: flex; align-items: center; gap: 8px;"><svg width="28" height="6" viewBox="0 0 28 6" aria-hidden="true"><line x1="0" y1="3" x2="28" y2="3" style="stroke: var(--color-accent); stroke-width: 3px; stroke-dasharray: 7 5;"></line></svg>Route so far</span>
+          <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; box-sizing: border-box; background: color-mix(in srgb, var(--color-bg) 12%, var(--color-text)); border: 1px solid color-mix(in srgb, var(--color-bg) 35%, transparent);"></span>Unexplored</span>
+          <sc-if value="{{ scrollHint }}" hint-placeholder-val="{{ false }}">
+            <span style="flex-basis: 100%;">Scroll sideways to see the whole vale.</span>
+          </sc-if>
+        </div>
+      </div>
+
+      <aside data-mappanel="" style="min-width: 0; box-sizing: border-box; position: {{ panel.pos }}; top: {{ panel.top }}; left: {{ panel.side }}; right: {{ panel.side }}; bottom: {{ panel.bottom }}; z-index: {{ panel.z }}; max-height: {{ panel.maxH }}; overflow-y: auto; background: {{ panel.bg }}; border-top: 2px solid {{ panel.rule }}; box-shadow: {{ panel.shadow }}; padding: {{ panel.pad }}; animation: {{ panel.anim }};">
+
+        <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: -10px -10px 0 0;">
+              <span style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; background: {{ d.tagBg }}; color: {{ d.tagFg }}; border: 1px solid {{ d.tagBorder }};">{{ d.status }}</span>
+                <sc-if value="{{ d.partyHere }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; background: var(--color-bg); color: var(--color-text); border: 1px solid var(--color-bg);">Party is here</span>
+                </sc-if>
+              </span>
+              <button aria-label="Close" style="all: unset; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; flex: none;" style-hover="background: color-mix(in srgb, var(--color-bg) 10%, transparent);" onClick="{{ clearSel }}">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: clamp(28px, 3vw, 36px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase; text-wrap: balance;">{{ d.name }}</h2>
+              <sc-if value="{{ d.hasDesc }}" hint-placeholder-val="{{ false }}">
+                <p style="margin: 0; font-size: 15px; line-height: 1.55; color: color-mix(in srgb, var(--color-bg) 85%, transparent); text-wrap: pretty;">{{ d.desc }}</p>
+              </sc-if>
+            </div>
+            <sc-if value="{{ d.hasNpcs }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; padding-top: 14px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent); padding-bottom: 6px;">Notable NPCs</span>
+                <sc-for list="{{ d.npcs }}" as="n" hint-placeholder-count="2">
+                  <div style="display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 10%, transparent);">
+                    <span style="font-family: var(--font-heading); font-weight: 700; font-size: 15px;">{{ n.name }}</span>
+                    <sc-if value="{{ n.hasRole }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">{{ n.role }}</span>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ d.hasRumors }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent-400);">Rumors &amp; hooks</span>
+                <sc-for list="{{ d.rumors }}" as="r" hint-placeholder-count="1">
+                  <div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: start;">
+                    <span style="width: 8px; height: 8px; margin-top: 7px; border: 2px solid var(--color-accent); transform: rotate(45deg);"></span>
+                    <span style="font-size: 15px; line-height: 1.5; text-wrap: pretty;">{{ r.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ d.empty }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Nothing recorded here yet.</span>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ noSel }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <sc-if value="{{ hasParty }}" hint-placeholder-val="{{ false }}">
+              <button style="all: unset; box-sizing: border-box; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px; background: var(--color-accent); color: #ffffff; text-align: left;" style-hover="background: var(--color-accent-600);" onClick="{{ party.onClick }}" onMouseEnter="{{ party.onEnter }}" onMouseLeave="{{ party.onLeave }}">
+                <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                  <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;">The party is at</span>
+                  <span style="font-family: var(--font-heading); font-weight: 800; font-size: 22px; line-height: 1.05; text-transform: uppercase;">{{ party.name }}</span>
+                </span>
+                <span style="font-size: 20px; flex: none;">&rarr;</span>
+              </button>
+            </sc-if>
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent); padding-bottom: 8px; border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">{{ g.label }}</span>
+                <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="4">
+                  <button style="all: unset; box-sizing: border-box; cursor: pointer; min-height: 48px; padding: 8px 4px; display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 12px; align-items: center; border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 10%, transparent);" style-hover="background: color-mix(in srgb, var(--color-bg) 6%, transparent);" onClick="{{ it.onClick }}" onMouseEnter="{{ it.onEnter }}" onMouseLeave="{{ it.onLeave }}" onFocus="{{ it.onEnter }}" onBlur="{{ it.onLeave }}">
+                    <span style="width: 12px; height: 12px; box-sizing: border-box; background: {{ it.fill }}; border: 2px solid {{ it.ring }};"></span>
+                    <span style="font-size: 15px; font-weight: 500;">{{ it.name }}</span>
+                    <span style="font-size: 16px; color: color-mix(in srgb, var(--color-bg) 55%, transparent);">&rarr;</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </aside>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showSkeleton&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
+const STATUS = { visited: 'Visited', known: 'Heard of' };
+const lines = v => String(v || '').split('\n').map(l => l.trim()).filter(Boolean);
+
+class Component extends DCLogic {
+  state = { ready: false, c: null, sel: null, hover: null, last: null, spot: null, grown: false, snap: false, w: typeof window !== 'undefined' ? window.innerWidth : 1200 };
+
+  componentDidMount() {
+    const init = () => {
+      if (window.CrookedMoonContent) this.setState({ ready: true, c: window.CrookedMoonContent.load() }, () => setTimeout(() => this.centerOnParty(), 60));
+      else this.poll = setTimeout(init, 60);
+    };
+    init();
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onKey = e => { if (e.key === 'Escape' && this.state.sel) this.setState({ sel: null }); };
+    this.onStore = () => window.CrookedMoonContent && this.setState({ c: window.CrookedMoonContent.load() });
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('storage', this.onStore);
+  }
+  componentWillUnmount() {
+    clearTimeout(this.poll); cancelAnimationFrame(this.gr);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('storage', this.onStore);
+  }
+  centerOnParty() {
+    const box = document.querySelector('[data-mapscroll]'), m = this.state.c && this.state.c.map;
+    if (!box || !m || box.scrollWidth <= box.clientWidth) return;
+    const p = (m.places || []).find(x => x.id === m.partyAt);
+    if (p) box.scrollLeft = p.x / 100 * box.scrollWidth - box.clientWidth / 2;
+  }
+  grow(id, extra) {
+    if (this.state.spot === id && this.state.grown) { this.setState(extra); return; }
+    cancelAnimationFrame(this.gr);
+    this.setState(Object.assign({ spot: id, grown: false, snap: true }, extra), () => {
+      this.gr = requestAnimationFrame(() => { this.gr = requestAnimationFrame(() => this.setState({ grown: true, snap: false })); });
+    });
+  }
+  select(id) { this.grow(id, { sel: id, last: id }); }
+  hoverOn(id) { this.grow(id, { hover: id, last: id }); }
+  hoverOff(id) {
+    if (this.state.hover !== id) return;
+    const sel = this.state.sel;
+    if (sel && sel !== id) this.grow(sel, { hover: null });
+    else this.setState({ hover: null });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const loading = !s.ready || !!this.props.showSkeleton;
+    const wide = s.w >= 1024;
+    if (loading) return { loading: true, ready: false, hasSel: false, noSel: true, hasParty: false, hasPath: false, pins: [], groups: [], panel: {}, d: {}, party: {} };
+
+    const m = s.c.map || window.CrookedMoonContent.DEFAULTS.map;
+    const places = m.places || [];
+    const byId = {}; places.forEach(p => { byId[p.id] = p; });
+    const shown = places.filter(p => p.status === 'visited' || p.status === 'known');
+    const pp = byId[m.partyAt] || null;
+    const active = s.hover || s.sel;
+    const spot = byId[s.spot] || { x: 50, y: 50 };
+    const spotOn = !!active && active === s.spot && s.grown;
+
+    const fogHoles = shown.concat(pp && pp.status === 'hidden' ? [pp] : []).map(p => {
+      const big = p.status !== 'known';
+      return 'radial-gradient(ellipse ' + (big ? 10 : 6.5) + '% ' + (big ? 15.5 : 10) + '% at ' + p.x + '% ' + p.y + '%, transparent 45%, #000 100%)';
+    });
+
+    const pins = shown.filter(p => p.id !== m.partyAt).map(p => {
+      const on = active === p.id, sel = s.sel === p.id, v = p.status === 'visited';
+      return {
+        key: p.id, name: p.name, x: p.x, y: p.y, aria: p.name + ', ' + STATUS[p.status].toLowerCase(), pressed: sel ? 'true' : 'false',
+        size: v ? 18 : 14, fill: v ? 'var(--color-accent)' : 'var(--color-bg)', ring: v ? '#ffffff' : 'var(--color-text)',
+        scale: on ? 1.35 : 1, outline: sel ? '2px solid #ffffff' : '0 solid transparent',
+        tipOp: on ? 1 : 0, tipY: on ? -2 : 4, z: on ? 5 : 2,
+        onClick: e => { e.stopPropagation(); this.select(p.id); },
+        onEnter: () => this.hoverOn(p.id), onLeave: () => this.hoverOff(p.id)
+      };
+    });
+
+    const party = pp ? {
+      name: pp.name, x: pp.x, y: pp.y, tag: 'Party', aria: 'The party is at ' + pp.name,
+      scale: active === pp.id ? 1.12 : 1, outline: s.sel === pp.id ? '2px solid #ffffff' : '0 solid transparent',
+      onClick: e => { if (e) e.stopPropagation(); this.select(pp.id); },
+      onEnter: () => this.hoverOn(pp.id), onLeave: () => this.hoverOff(pp.id)
+    } : {};
+
+    const route = (m.path || []).map(id => byId[id]).filter(p => p && p.status !== 'hidden');
+    const item = p => ({
+      key: p.id, name: p.name,
+      fill: p.status === 'visited' ? 'var(--color-accent)' : 'var(--color-bg)',
+      ring: p.status === 'visited' ? 'var(--color-accent)' : 'var(--color-bg)',
+      onClick: () => this.select(p.id), onEnter: () => this.hoverOn(p.id), onLeave: () => this.hoverOff(p.id)
+    });
+    const visited = shown.filter(p => p.status === 'visited'), known = shown.filter(p => p.status === 'known');
+    const groups = [];
+    if (visited.length) groups.push({ key: 'v', label: 'Visited · ' + visited.length, items: visited.map(item) });
+    if (known.length) groups.push({ key: 'k', label: 'Heard of · ' + known.length, items: known.map(item) });
+
+    const sp = byId[s.sel];
+    let d = {};
+    if (sp) {
+      const npcs = lines(sp.npcs).map((l, i) => { const parts = l.split(/\s+[\u2014\u2013-]\s+/); return { key: 'n' + i, name: parts[0], role: parts.slice(1).join(' \u2014 '), hasRole: parts.length > 1 }; });
+      const rumors = lines(sp.rumors).map((text, i) => ({ key: 'r' + i, text }));
+      const v = sp.status === 'visited';
+      d = {
+        name: sp.name, desc: sp.desc || '', hasDesc: !!(sp.desc || '').trim(),
+        status: STATUS[sp.status] || 'Visited', partyHere: sp.id === m.partyAt,
+        tagBg: v ? 'var(--color-accent)' : 'transparent', tagFg: v ? '#ffffff' : 'var(--color-bg)', tagBorder: v ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 45%, transparent)',
+        npcs, hasNpcs: npcs.length > 0, rumors, hasRumors: rumors.length > 0,
+        empty: !npcs.length && !rumors.length && !(sp.desc || '').trim()
+      };
+    }
+    const sheet = !wide && !!sp;
+    const panel = wide
+      ? { pos: 'sticky', top: '72px', side: 'auto', bottom: 'auto', z: 1, maxH: 'calc(100vh - 96px)', bg: 'color-mix(in srgb, var(--color-bg) 7%, var(--color-text))', rule: 'transparent', shadow: 'none', pad: '20px', anim: 'none' }
+      : sheet
+        ? { pos: 'fixed', top: 'auto', side: '0', bottom: '0', z: 40, maxH: '64vh', bg: 'var(--color-text)', rule: 'var(--color-accent)', shadow: 'var(--shadow-lg)', pad: '20px clamp(16px, 4vw, 24px) 28px', anim: 'cm-sheet 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both' }
+        : { pos: 'static', top: 'auto', side: 'auto', bottom: 'auto', z: 1, maxH: 'none', bg: 'transparent', rule: 'transparent', shadow: 'none', pad: '0', anim: 'none' };
+
+    return {
+      loading: false, ready: true,
+      cols: wide ? 'minmax(0, 1fr) 360px' : 'minmax(0, 1fr)',
+      mapMin: s.w < 760 ? '760px' : '0', scrollHint: s.w < 760,
+      image: m.image || 'assets/wickermoor-map.png',
+      spotX: spot.x, spotY: spot.y, spotR: spotOn ? '11%' : '0%',
+      spotTr: s.snap ? 'none' : 'clip-path 520ms cubic-bezier(0.2, 0.7, 0.2, 1)',
+      partyX: pp ? pp.x : 50, partyY: pp ? pp.y : 50, partyR: pp ? '9%' : '0%',
+      fogMask: fogHoles.length ? fogHoles.join(', ') : 'none',
+      hasPath: route.length > 1, pathPts: route.map(p => p.x + ',' + p.y).join(' '),
+      pins, party, hasParty: !!pp, groups,
+      hasSel: !!sp, noSel: !sp, d, panel,
+      clearSel: () => this.setState({ sel: null, hover: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

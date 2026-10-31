@@ -287,7 +287,6 @@
                 </sc-if>
               </div>
               </div>
-            </div>
             <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;">
                 <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">History</span>
@@ -466,6 +465,119 @@
               <sc-if value="{{ noThreads }}" hint-placeholder-val="{{ false }}">
                 <span style="font-size: 14px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">No open threads. The quest log is hidden on the site until you add one.</span>
               </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isMap }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+              <div style="display: flex; flex-direction: column; gap: 6px; max-width: 520px;">
+                <h2 style="margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase;">Map</h2>
+                <span style="font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Pins, fog of war and the party's route on the public map. Hidden places stay under the fog until you reveal them.</span>
+              </div>
+              <a href="Map.dc.html" style="height: 44px; padding: 0 18px; display: inline-flex; align-items: center; gap: 8px; border: 2px solid color-mix(in srgb, var(--color-bg) 35%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-bg);" style-hover="border-color: var(--color-accent);">View map <span>&rarr;</span></a>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">DM view</span>
+                <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Dashed pins are hidden from players. The shade shows their fog.</span>
+              </div>
+              <sc-if value="{{ mapMoving }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 8px 8px 14px; background: var(--color-accent); color: #ffffff;">
+                  <span style="font-size: 14px; font-weight: 600;">Click the map to place {{ mapMovingName }}</span>
+                  <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 36px; padding: 0 12px; display: flex; align-items: center; border: 2px solid #ffffff; font-family: var(--font-heading); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;" onClick="{{ mapCancelMove }}">Done</button>
+                </div>
+              </sc-if>
+              <div style="position: relative; aspect-ratio: 1561 / 1008; overflow: hidden; cursor: {{ mapCursor }}; user-select: none;" onClick="{{ onMapClick }}">
+                <img src="assets/wickermoor-map.png" alt="Wickermoor map" draggable="false" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block;">
+                <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: color-mix(in srgb, var(--color-text) 55%, transparent); mask-image: {{ mapFog }}; -webkit-mask-image: {{ mapFog }}; mask-composite: intersect; -webkit-mask-composite: source-in;"></div>
+                <sc-if value="{{ mapHasPath }}" hint-placeholder-val="{{ false }}">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;">
+                    <polyline points="{{ mapPathPts }}" fill="none" style="stroke: var(--color-accent); stroke-width: 3px; stroke-dasharray: 8 6; vector-effect: non-scaling-stroke;"></polyline>
+                  </svg>
+                </sc-if>
+                <sc-for list="{{ mapPins }}" as="mp" hint-placeholder-count="0">
+                  <button title="{{ mp.name }}" aria-label="{{ mp.name }}" style="all: unset; position: absolute; left: {{ mp.x }}%; top: {{ mp.y }}%; width: 28px; height: 28px; margin: -14px 0 0 -14px; display: grid; place-items: center; cursor: pointer; z-index: {{ mp.z }};" onClick="{{ mp.onClick }}">
+                    <span style="width: {{ mp.size }}px; height: {{ mp.size }}px; box-sizing: border-box; background: {{ mp.fill }}; border: 2px {{ mp.style }} {{ mp.ring }}; outline: {{ mp.outline }}; outline-offset: 2px;"></span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 18px;">
+              <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">Party &amp; route</span>
+              <label style="display: flex; flex-direction: column; gap: 6px; max-width: 360px;">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">The party is at</span>
+                <select onChange="{{ onPartyAt }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none; color-scheme: dark;" style-focus="border-color: var(--color-accent);">
+                  <sc-for list="{{ mapPlaceOpts }}" as="o" hint-placeholder-count="16">
+                    <option value="{{ o.v }}" selected="{{ o.partySel }}">{{ o.label }}</option>
+                  </sc-for>
+                </select>
+              </label>
+              <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--color-bg) 14%, transparent);">
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Route so far</span>
+                <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent);">Drawn in this order. Stops at hidden places are skipped on the public map.</span>
+                <sc-for list="{{ mapStops }}" as="st" hint-placeholder-count="4">
+                  <div style="display: grid; grid-template-columns: 28px minmax(0, 1fr) 44px 44px 44px; gap: 6px; align-items: center;">
+                    <span style="font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--color-accent-400); font-variant-numeric: tabular-nums;">{{ st.n }}</span>
+                    <select onChange="{{ st.onPlace }}" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none; color-scheme: dark;" style-focus="border-color: var(--color-accent);">
+                      <sc-for list="{{ st.opts }}" as="o" hint-placeholder-count="16">
+                        <option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.label }}</option>
+                      </sc-for>
+                    </select>
+                    <button aria-label="Move stop up" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); font-size: 16px; opacity: {{ st.upOp }};" style-hover="border-color: var(--color-accent);" onClick="{{ st.onUp }}">&uarr;</button>
+                    <button aria-label="Move stop down" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); font-size: 16px; opacity: {{ st.downOp }};" style-hover="border-color: var(--color-accent);" onClick="{{ st.onDown }}">&darr;</button>
+                    <button aria-label="Remove stop" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); font-size: 16px; font-size: 18px;" style-hover="border-color: var(--color-accent); color: var(--color-accent-400);" onClick="{{ st.onRemove }}">&times;</button>
+                  </div>
+                </sc-for>
+                <div style="display: flex;">
+                  <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;" style-hover="border-color: var(--color-accent-400);" onClick="{{ addStop }}">+ Add stop</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: color-mix(in srgb, var(--color-bg) 7%, var(--color-text)); padding: clamp(16px, 3vw, 24px); display: flex; flex-direction: column; gap: 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 12px;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 18px; text-transform: uppercase;">Places · {{ mapPlaceCount }}</span>
+                <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;" style-hover="border-color: var(--color-accent-400);" onClick="{{ addPlace }}">+ Add place</button>
+              </div>
+              <sc-for list="{{ mapPlaces }}" as="pl" hint-placeholder-count="6">
+                <div style="display: flex; flex-direction: column; border-top: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 0;">
+                    <span style="width: 12px; height: 12px; flex: none; box-sizing: border-box; background: {{ pl.fill }}; border: 2px {{ pl.style }} {{ pl.ring }};"></span>
+                    <input type="text" value="{{ pl.name }}" onChange="{{ pl.onName }}" aria-label="Place name" style="box-sizing: border-box; width: 100%; height: 44px; padding: 0 10px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; outline: none; color-scheme: dark; flex: 1 1 200px; width: auto; min-width: 0;" style-focus="border-color: var(--color-accent);">
+                    <div style="display: flex; gap: 2px; flex: none;">
+                      <sc-for list="{{ pl.statusOpts }}" as="so" hint-placeholder-count="3">
+                        <button aria-pressed="{{ so.on }}" style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 10px; display: flex; align-items: center; font-family: var(--font-heading); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; background: {{ so.bg }}; color: {{ so.fg }};" onClick="{{ so.onClick }}">{{ so.label }}</button>
+                      </sc-for>
+                    </div>
+                    <button aria-label="Move pin" title="Move pin" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); font-size: 16px; border-color: {{ pl.moveBorder }}; color: {{ pl.moveFg }};" style-hover="border-color: var(--color-accent);" onClick="{{ pl.onMove }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg></button>
+                    <button aria-label="{{ pl.expandLabel }}" aria-expanded="{{ pl.open }}" style="all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 44px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); font-size: 16px;" style-hover="border-color: var(--color-accent);" onClick="{{ pl.onToggle }}"><span style="display: block; transform: rotate({{ pl.rot }}deg); transition: transform 200ms ease;">&darr;</span></button>
+                  </div>
+                  <sc-if value="{{ pl.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 14px; padding: 4px 0 18px 22px;">
+                      <label style="display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Description</span>
+                        <textarea rows="3" value="{{ pl.desc }}" onChange="{{ pl.onDesc }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+                      </label>
+                      <label style="display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Notable NPCs</span>
+                        <textarea rows="3" value="{{ pl.npcs }}" placeholder="One per line: Name — role" onChange="{{ pl.onNpcs }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+                      </label>
+                      <label style="display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--color-bg) 65%, transparent);">Rumors &amp; hooks</span>
+                        <textarea rows="3" value="{{ pl.rumors }}" placeholder="One per line" onChange="{{ pl.onRumors }}" style="box-sizing: border-box; width: 100%; padding: 10px 12px; background: var(--color-text); color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent); border-radius: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; outline: none; resize: vertical;" style-focus="border-color: var(--color-accent);"></textarea>
+                      </label>
+                      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span style="font-size: 13px; color: color-mix(in srgb, var(--color-bg) 60%, transparent); font-variant-numeric: tabular-nums;">{{ pl.coords }}</span>
+                        <button style="all: unset; box-sizing: border-box; cursor: pointer; height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border: 2px solid color-mix(in srgb, var(--color-bg) 30%, transparent); font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;" style-hover="border-color: var(--color-accent); color: var(--color-accent-400);" onClick="{{ pl.onRemove }}">Remove place</button>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
             </div>
           </div>
         </sc-if>
@@ -655,7 +767,7 @@
 <script type="text/x-dc" data-dc-script data-props="{&quot;showSkeleton&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Preview&quot;}}">
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const SECTIONS = [['campaign', 'Campaign'], ['schedule', 'Schedule'], ['party', 'Party'], ['recaps', 'Recaps'], ['quests', 'Quest log'], ['registration', 'Registration'], ['applications', 'Applications']];
+const SECTIONS = [['campaign', 'Campaign'], ['schedule', 'Schedule'], ['party', 'Party'], ['recaps', 'Recaps'], ['quests', 'Quest log'], ['map', 'Map'], ['registration', 'Registration'], ['applications', 'Applications']];
 const REG = () => window.CrookedMoonRegistration;
 const STATUSES = [['new', 'New'], ['shortlisted', 'Shortlisted'], ['accepted', 'Accepted'], ['declined', 'Declined']];
 const CM = () => window.CrookedMoonContent;
@@ -672,7 +784,7 @@ const chKey = ch => [ch.type, ch.date, ch.toDate || '', ch.toHour === undefined 
 const ACT = { cancel: 'Cancelled', move: 'Moved', extra: 'Extra session' };
 
 class Component extends DCLogic {
-  state = { histPage: 0, draft: null, c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
+  state = { mapOpen: null, mapMove: null, histPage: 0, draft: null, c: null, savedJson: '', section: 'campaign', openRecap: null, unlocked: false, code: '', codeErr: '', apps: [], openApp: null, w: typeof window !== 'undefined' ? window.innerWidth : 1200, flash: '' };
 
   componentDidMount() {
     try { if (sessionStorage.getItem('cm-admin-ok') === '1') this.setState({ unlocked: true }); } catch (e) {}
@@ -728,6 +840,67 @@ class Component extends DCLogic {
       sc.changes = sc.changes.filter(x => x.id !== changeId);
       if (!(sc.history || []).some(h => h.undoOf === changeId)) sc.history = [{ id: uid(), undoOf: changeId, at: new Date().toISOString(), kind: 'remove', action: 'Undone', detail: ACT[ch.type] + ': ' + chDesc(ch, sc), note: '' }].concat(sc.history || []).slice(0, 100);
     });
+  }
+  mapUpd(fn) { this.upd(x => { x.map = x.map || CM().clone(CM().DEFAULTS.map); fn(x.map); }); }
+  mapVals(c) {
+    const s = this.state, m = c && c.map ? c.map : null;
+    if (!m) return { mapPins: [], mapPlaces: [], mapStops: [], mapPlaceOpts: [] };
+    const places = m.places, byId = {}; places.forEach(p => { byId[p.id] = p; });
+    const ST = [['hidden', 'Hidden'], ['known', 'Heard of'], ['visited', 'Visited']];
+    const look = p => p.status === 'visited' ? { fill: 'var(--color-accent)', ring: '#ffffff', style: 'solid' } : p.status === 'known' ? { fill: 'var(--color-bg)', ring: 'var(--color-text)', style: 'solid' } : { fill: 'color-mix(in srgb, var(--color-text) 40%, transparent)', ring: '#ffffff', style: 'dashed' };
+    const holes = places.filter(p => p.status !== 'hidden' || p.id === m.partyAt).map(p => { const big = p.status !== 'known'; return 'radial-gradient(ellipse ' + (big ? 10 : 6.5) + '% ' + (big ? 15.5 : 10) + '% at ' + p.x + '% ' + p.y + '%, transparent 45%, #000 100%)'; });
+    const route = (m.path || []).map(id => byId[id]).filter(Boolean);
+    const opts = sel => places.map(p => ({ key: p.id, v: p.id, label: p.name + (p.status === 'hidden' ? ' (hidden)' : ''), sel: p.id === sel, partySel: p.id === m.partyAt }));
+    const moving = byId[s.mapMove];
+    return {
+      mapImage: m.image || 'assets/wickermoor-map.png',
+      mapFog: holes.length ? holes.join(', ') : 'none',
+      mapHasPath: route.length > 1, mapPathPts: route.map(p => p.x + ',' + p.y).join(' '),
+      mapMoving: !!moving, mapMovingName: moving ? moving.name : '', mapCursor: moving ? 'crosshair' : 'default',
+      mapCancelMove: () => this.setState({ mapMove: null }),
+      onMapClick: e => {
+        if (!moving) return;
+        const b = e.currentTarget.getBoundingClientRect();
+        const x = Math.round((e.clientX - b.left) / b.width * 1000) / 10, y = Math.round((e.clientY - b.top) / b.height * 1000) / 10;
+        const id = moving.id;
+        this.mapUpd(mm => { const p = mm.places.find(q => q.id === id); if (p) { p.x = Math.max(0, Math.min(100, x)); p.y = Math.max(0, Math.min(100, y)); } });
+        this.setState({ mapMove: null });
+      },
+      mapPins: places.map(p => {
+        const lk = look(p), party = p.id === m.partyAt, hl = p.id === s.mapMove || p.id === s.mapOpen;
+        return { key: p.id, name: p.name + (party ? ' (party)' : ''), x: p.x, y: p.y, size: party ? 20 : 14, fill: party ? 'var(--color-accent)' : lk.fill, ring: lk.ring, style: lk.style, outline: hl ? '2px solid #ffffff' : (party ? '2px solid var(--color-accent)' : '0 solid transparent'), z: hl ? 5 : party ? 4 : 2,
+          onClick: e => { e.stopPropagation(); if (s.mapMove) return; this.setState({ mapOpen: p.id }); } };
+      }),
+      mapPlaceOpts: opts(null),
+      onPartyAt: e => { const v = e.target.value; this.mapUpd(mm => { mm.partyAt = v; }); },
+      mapStops: (m.path || []).map((id, i, arr) => ({
+        key: 's' + i, n: String(i + 1).padStart(2, '0'), opts: opts(id),
+        upOp: i === 0 ? 0.35 : 1, downOp: i === arr.length - 1 ? 0.35 : 1,
+        onPlace: e => { const v = e.target.value; this.mapUpd(mm => { mm.path[i] = v; }); },
+        onUp: () => { if (i > 0) this.mapUpd(mm => { const t = mm.path[i - 1]; mm.path[i - 1] = mm.path[i]; mm.path[i] = t; }); },
+        onDown: () => { if (i < arr.length - 1) this.mapUpd(mm => { const t = mm.path[i + 1]; mm.path[i + 1] = mm.path[i]; mm.path[i] = t; }); },
+        onRemove: () => this.mapUpd(mm => { mm.path.splice(i, 1); })
+      })),
+      addStop: () => this.mapUpd(mm => { (mm.path = mm.path || []).push(mm.partyAt || (mm.places[0] && mm.places[0].id)); }),
+      mapPlaceCount: places.length,
+      addPlace: () => { const id = uid(); this.mapUpd(mm => { mm.places.push({ id, name: 'New place', x: 50, y: 50, status: 'hidden', desc: '', npcs: '', rumors: '' }); }); this.setState({ mapOpen: id, mapMove: id }); },
+      mapPlaces: places.map((p, i) => {
+        const lk = look(p), open = s.mapOpen === p.id, mv = s.mapMove === p.id;
+        const set = k => e => { const v = e.target.value; this.mapUpd(mm => { mm.places[i][k] = v; }); };
+        return {
+          key: p.id, name: p.name, desc: p.desc || '', npcs: p.npcs || '', rumors: p.rumors || '',
+          fill: lk.fill, ring: lk.ring, style: lk.style,
+          open, rot: open ? 180 : 0, expandLabel: open ? 'Collapse ' + p.name : 'Edit ' + p.name,
+          moveBorder: mv ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 22%, transparent)', moveFg: mv ? 'var(--color-accent-400)' : 'var(--color-bg)',
+          coords: 'Pin at x ' + p.x + ' · y ' + p.y,
+          statusOpts: ST.map(([k, label]) => ({ key: k, label, on: p.status === k ? 'true' : 'false', bg: p.status === k ? 'var(--color-accent)' : 'color-mix(in srgb, var(--color-bg) 10%, transparent)', fg: p.status === k ? '#ffffff' : 'var(--color-bg)', onClick: () => this.mapUpd(mm => { mm.places[i].status = k; }) })),
+          onName: set('name'), onDesc: set('desc'), onNpcs: set('npcs'), onRumors: set('rumors'),
+          onMove: () => this.setState({ mapMove: mv ? null : p.id }),
+          onToggle: () => this.setState({ mapOpen: open ? null : p.id }),
+          onRemove: () => { if (!window.confirm('Remove ' + p.name + ' from the map?')) return; this.mapUpd(mm => { mm.places = mm.places.filter(q => q.id !== p.id); mm.path = (mm.path || []).filter(id => id !== p.id); if (mm.partyAt === p.id) mm.partyAt = ''; }); }
+        };
+      })
+    };
   }
   save() {
     if (!this.state.c || !this.isDirty()) return;
@@ -843,7 +1016,7 @@ class Component extends DCLogic {
       };
     });
     const newCount = s.apps.filter(a => !a.status || a.status === 'new').length;
-    const counts = { campaign: '', schedule: '', party: c ? c.party.length : '', recaps: c ? c.recaps.length : '', quests: c ? c.threads.length : '', registration: regOn ? 'Open' : 'Closed', applications: s.apps.length };
+    const counts = { campaign: '', schedule: '', party: c ? c.party.length : '', recaps: c ? c.recaps.length : '', quests: c ? c.threads.length : '', map: c && c.map ? c.map.places.filter(p => p.status !== 'hidden').length + '/' + c.map.places.length : '', registration: regOn ? 'Open' : 'Closed', applications: s.apps.length };
     const sections = SECTIONS.map(([k, label]) => ({
       label, count: counts[k],
       bg: s.section === k ? 'var(--color-accent)' : 'transparent',
@@ -908,7 +1081,8 @@ class Component extends DCLogic {
         { n: '03', title: 'Vibe check', desc: 'How they bond with other players and how they want to handle conflict.' },
         { n: '04', title: 'Your character', desc: 'Name, species, class, subclass and backstory, with a live character card.' }
       ],
-      isCampaign: s.section === 'campaign', isSchedule: s.section === 'schedule', isParty: s.section === 'party', isRecaps: s.section === 'recaps', isQuests: s.section === 'quests',
+      isCampaign: s.section === 'campaign', isSchedule: s.section === 'schedule', isParty: s.section === 'party', isRecaps: s.section === 'recaps', isQuests: s.section === 'quests', isMap: s.section === 'map',
+      ...this.mapVals(c),
       on: {
         arcTitle: txt('arcTitle'), arcChapter: txt('arcChapter'), arcBlurb: txt('arcBlurb'), keyArtUrl: txt('keyArtUrl'), summary: txt('summary'),
         nights: num('nights', 0, 9999), partyLevel: num('partyLevel', 1, 20), progress: num('progress', 0, 100),
