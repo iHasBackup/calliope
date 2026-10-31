@@ -22,7 +22,7 @@
       (function () {
         var p = location.pathname;
         var light = p.indexOf('/thecrookedmoon/activities/') === 0 || p.indexOf('/crookedmoon/') === 0;
-        var dark = p === '/' || p.indexOf('/thecrookedmoon') === 0 || p.indexOf('/calendar') === 0;
+        var dark = p === '/' || p.indexOf('/thecrookedmoon') === 0 || p.indexOf('/calendar') === 0 || p.indexOf('/map') === 0;
         if (dark && !light) document.documentElement.classList.add('dark-ground');
       })();
     </script>

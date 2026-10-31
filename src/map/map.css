@@ -1,0 +1,477 @@
+/* Public map of Wickermoor (design/reference/Map.dc.html). Inverted Modernist page. */
+.mp {
+  --panel: color-mix(in srgb, var(--color-bg) 7%, var(--color-text));
+  --pad: clamp(10px, 4vw, 48px);
+  min-height: 100vh;
+  max-width: 1440px;
+  margin: 0 auto;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+.mp a {
+  color: var(--color-accent-400);
+  text-decoration: none;
+  border: 0;
+}
+.mp a:hover {
+  color: var(--color-accent);
+}
+.mp button {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.mp button:focus-visible,
+.mp a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.mp-heading {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.mp-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-bg) 65%, transparent);
+}
+
+.mp-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px var(--pad);
+  min-height: 56px;
+  background: color-mix(in srgb, var(--color-text) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 12%, transparent);
+}
+.mp-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: clamp(12px, 3.4vw, 16px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.mp-mark::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  flex: none;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+}
+.mp .mp-back {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+  font: 600 13px var(--font-heading);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-bg);
+}
+.mp-title {
+  padding: clamp(24px, 4vw, 48px) var(--pad) clamp(16px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mp-title span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent-400);
+}
+.mp-title h1 {
+  margin: 0;
+  font-size: clamp(40px, 8vw, 88px);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+.mp-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  padding: 0 var(--pad) 64px;
+}
+@media (min-width: 1024px) {
+  .mp-body {
+    grid-template-columns: minmax(0, 1fr) 360px;
+  }
+}
+
+/* The map: image, colour layers, fog, route, pins. */
+.mp-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-top: 2px solid var(--color-bg);
+  -webkit-overflow-scrolling: touch;
+}
+.mp-map {
+  position: relative;
+  aspect-ratio: 1561 / 1008;
+  background: var(--color-text);
+  overflow: hidden;
+  user-select: none;
+}
+@media (max-width: 759px) {
+  .mp-map {
+    min-width: 760px;
+  }
+}
+.mp-map > img,
+.mp-fog,
+.mp-route {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.mp-base {
+  filter: grayscale(1) contrast(1.05);
+}
+.mp-spot {
+  transition: clip-path 520ms var(--ease-enter);
+}
+.mp-spot.is-snap {
+  transition: none;
+}
+.mp-fog {
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-text) 80%, transparent);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+.mp-route {
+  pointer-events: none;
+  overflow: visible;
+}
+.mp-route polyline {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: miter;
+}
+.mp-route .under {
+  stroke: var(--color-text);
+  stroke-width: 7px;
+  stroke-opacity: 0.55;
+}
+.mp-route .ants {
+  stroke: var(--color-accent);
+  stroke-width: 3px;
+  stroke-dasharray: 10 8;
+  animation: mp-march 1.6s linear infinite;
+}
+@keyframes mp-march {
+  to {
+    stroke-dashoffset: -36;
+  }
+}
+.mp .mp-pin {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+.mp .mp-pin.is-on {
+  z-index: 5;
+}
+.mp-dot {
+  box-sizing: border-box;
+  border: 2px solid;
+  box-shadow: var(--shadow-md);
+  outline-offset: 3px;
+  transition: transform 220ms var(--ease-enter);
+}
+.mp-dot.is-visited {
+  width: 18px;
+  height: 18px;
+  background: var(--color-accent);
+  border-color: #fff;
+}
+.mp-dot.is-known {
+  width: 14px;
+  height: 14px;
+  background: var(--color-bg);
+  border-color: var(--color-text);
+}
+.mp-pin.is-on .mp-dot {
+  transform: scale(1.35);
+}
+.mp-pin[aria-pressed='true'] .mp-dot,
+.mp-party.is-sel .mp-party-dot {
+  outline: 2px solid #fff;
+}
+.mp-tip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 4px);
+  opacity: 0;
+  transition: opacity 180ms ease, transform 220ms var(--ease-enter);
+  pointer-events: none;
+  white-space: nowrap;
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 5px 8px;
+  font: 700 11px var(--font-heading);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.mp-pin.is-on .mp-tip {
+  opacity: 1;
+  transform: translate(-50%, -2px);
+}
+.mp .mp-party {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  display: grid;
+  place-items: center;
+  z-index: 6;
+}
+.mp-party-ring {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  border: 2px solid var(--color-accent);
+  animation: mp-pulse 2s ease-out infinite;
+}
+@keyframes mp-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+.mp-party-dot {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  background: var(--color-accent);
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-lg);
+  outline-offset: 3px;
+  transition: transform 220ms var(--ease-enter);
+}
+.mp-party.is-on .mp-party-dot {
+  transform: scale(1.12);
+}
+.mp-party-tag {
+  position: absolute;
+  bottom: calc(100% - 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  background: var(--color-accent);
+  color: #fff;
+  padding: 4px 8px;
+  font: 700 11px var(--font-heading);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: color-mix(in srgb, var(--color-bg) 70%, transparent);
+}
+.mp-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mp-sq {
+  box-sizing: border-box;
+  flex: none;
+}
+
+/* Side panel; a bottom sheet on narrow screens when a place is selected. */
+.mp-panel {
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .mp-panel {
+    position: sticky;
+    top: 72px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    background: var(--panel);
+    padding: 20px;
+  }
+}
+@media (max-width: 1023px) {
+  .mp-panel.is-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    max-height: 64vh;
+    overflow-y: auto;
+    background: var(--color-text);
+    border-top: 2px solid var(--color-accent);
+    box-shadow: var(--shadow-lg);
+    padding: 20px clamp(16px, 4vw, 24px) 28px;
+    animation: mp-sheet 260ms var(--ease-enter) both;
+  }
+}
+@keyframes mp-sheet {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.mp .mp-at {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-accent);
+  color: #fff;
+}
+.mp .mp-at:hover {
+  background: var(--color-accent-600);
+}
+.mp-group {
+  display: flex;
+  flex-direction: column;
+}
+.mp-group > .mp-label {
+  padding-bottom: 8px;
+  border-bottom: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);
+}
+.mp .mp-row {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-bg) 10%, transparent);
+}
+.mp .mp-row:hover {
+  color: var(--color-accent-300);
+}
+.mp-row span:nth-child(2) {
+  font-size: 15px;
+  font-weight: 500;
+}
+.mp-row span:last-child {
+  color: color-mix(in srgb, var(--color-bg) 55%, transparent);
+}
+.mp-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid;
+}
+.mp .mp-close {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex: none;
+}
+.mp .mp-close:hover {
+  background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+}
+.mp-block {
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
+  border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent);
+}
+
+/* Loading skeleton (project rule). */
+.mp-skel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 0 var(--pad) 64px;
+  animation: mp-skel 1.4s ease-in-out infinite;
+}
+.mp-skel div div {
+  background: var(--panel);
+}
+@keyframes mp-skel {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-skel,
+  .mp [data-anim],
+  .mp-route .ants,
+  .mp-party-ring {
+    animation: none !important;
+    transition: none !important;
+  }
+  .mp-spot,
+  .mp-dot,
+  .mp-tip,
+  .mp-party-dot,
+  .mp-panel {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+.mp-scroll-hint {
+  display: none !important;
+}
+@media (max-width: 759px) {
+  .mp-scroll-hint {
+    display: block !important;
+  }
+}

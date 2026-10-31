@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRedis } from './_redis.js';
+import { MAP_SEED } from './_mapSeed.js';
 import { requireSession } from './_session.js';
 import { DEFAULT_CONTENT, sanitizeContent, type Content, type PartyMember } from '../src/campaign/content.js';
 import { sanitizeApplication, type Application, type ApplicationStatus } from '../src/campaign/application.js';
@@ -96,7 +97,7 @@ async function loadApps(redis: ReturnType<typeof getRedis>): Promise<Application
  * own `registration` field) is otherwise missing it entirely. */
 async function loadContent(redis: ReturnType<typeof getRedis>): Promise<Content> {
   const stored = await redis.get<Content>(CONTENT_KEY);
-  return stored ? { ...sanitizeContent(stored), updatedAt: stored.updatedAt } : { ...DEFAULT_CONTENT, updatedAt: 0 };
+  return stored ? { ...sanitizeContent(stored, { mapSeed: MAP_SEED }), updatedAt: stored.updatedAt } : { ...DEFAULT_CONTENT, map: MAP_SEED, updatedAt: 0 };
 }
 
 /** Adds/removes the party member tied to this application, mirroring the

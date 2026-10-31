@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRedis } from './_redis.js';
+import { MAP_SEED } from './_mapSeed.js';
 import { requireSession } from './_session.js';
 import { DEFAULT_CONTENT, sanitizeChanges, sanitizeContent, type Content } from '../src/campaign/content.js';
 import { addScheduleChange, changeError, scheduleChangeError, undoScheduleChange, type ChangeInput } from '../src/campaign/schedule.js';
@@ -22,7 +23,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body = req.body ?? {};
     const redis = getRedis();
     const stored = await redis.get<Content>(CONTENT_KEY);
-    const current = sanitizeContent(stored ?? DEFAULT_CONTENT);
+    const current = sanitizeContent(stored ?? DEFAULT_CONTENT, { mapSeed: MAP_SEED });
 
     let schedule = current.schedule;
     if (body.action === 'add') {

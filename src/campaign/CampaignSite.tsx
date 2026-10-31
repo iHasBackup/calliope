@@ -29,7 +29,7 @@ export default function CampaignSite() {
           ) : (
             <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} width={site.width} />
           ))}
-        {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} />}
+        {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} content={site.content} contentLoading={site.contentLoading} />}
       </div>
     </div>
   );

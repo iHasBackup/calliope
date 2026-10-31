@@ -1,3 +1,5 @@
+import { DEFAULT_MAP, sanitizeMap, type CampaignMap } from './map.js';
+
 // Shared content schema for the campaign site + admin CMS. Used by the
 // client (public site, admin UI) and the api/content.ts serverless
 // function alike — kept dependency-free (no React) so it works in both.
@@ -93,6 +95,7 @@ export interface Content {
   registration: Registration;
   party: PartyMember[];
   recaps: Recap[];
+  map: CampaignMap;
   updatedAt: number; // ms epoch — used for optimistic concurrency on save
 }
 
@@ -166,6 +169,7 @@ export const DEFAULT_CONTENT: Content = {
     { id: 'r6', title: 'Gallows Hill', date: '2026-09-09', nights: '7', body: 'Following the missing reapers, the party climbed the forbidden hill and found the barrow door already open.', tags: 'Gallows Hill, Barrow' },
     { id: 'r7', title: 'Below the Hill', date: '2026-09-16', nights: '8', body: 'Inside the barrow the reapers were still harvesting, in the dark, a field that should not exist underground. Session ended mid-combat.', tags: 'Barrow, Cliffhanger' },
   ],
+  map: DEFAULT_MAP,
   updatedAt: 0,
 };
 
@@ -250,7 +254,7 @@ function sanitizeHistory(input: unknown): ScheduleHistory[] {
  * Content document (minus updatedAt, which the caller controls). Never
  * throws — unknown/malformed input just falls back to defaults field by
  * field, since this is the boundary where we can't trust the caller. */
-export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
+export function sanitizeContent(input: unknown, opts: { mapSeed?: CampaignMap } = {}): Omit<Content, 'updatedAt'> {
   const c = (input && typeof input === 'object' ? input : {}) as Record<string, unknown>;
   const sched = (c.schedule && typeof c.schedule === 'object' ? c.schedule : {}) as Record<string, unknown>;
 
@@ -345,5 +349,6 @@ export function sanitizeContent(input: unknown): Omit<Content, 'updatedAt'> {
         tags: str(r.tags, LIMITS.tagsText),
       };
     }),
+    map: sanitizeMap(c.map, opts.mapSeed),
   };
 }

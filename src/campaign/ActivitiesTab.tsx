@@ -1,16 +1,20 @@
 import { Link } from 'react-router-dom';
 import { PUZZLE_NUMBER, WORDS } from '../puzzle';
 import type { useCampaignSite } from './useCampaignSite';
+import { MAP_IMAGE, discovered } from './map';
 
 // A 7x3 decorative grid for the crossword activity card's thumbnail.
 const ACTIVITY_THUMB = '.....#.#.#.#.#.....#.#.#.#.#.....';
 
-type Props = Pick<ReturnType<typeof useCampaignSite>, 'leader' | 'entries'>;
+type Props = Pick<ReturnType<typeof useCampaignSite>, 'leader' | 'entries' | 'content' | 'contentLoading'>;
 
 const mutedInk = (pct: number) => `color-mix(in srgb, var(--color-bg) ${pct}%, transparent)`;
 
-export function ActivitiesTab({ leader, entries }: Props) {
+export function ActivitiesTab({ leader, entries, content, contentLoading }: Props) {
   const thumbCells = ACTIVITY_THUMB.slice(0, 21).split('');
+  const map = content.map;
+  const partyAt = map.places.find((p) => p.id === map.partyAt)?.name ?? 'Unknown';
+  const found = discovered(map).length;
 
   return (
     <div style={{ padding: 'clamp(36px, 6vw, 72px) clamp(16px, 4vw, 48px)', display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -78,6 +82,51 @@ export function ActivitiesTab({ leader, entries }: Props) {
               style={{ height: 48, padding: '0 22px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start', fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}
             >
               Play now
+            </Link>
+          </div>
+        </div>
+        <div style={{ background: 'var(--panel)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div className="grayscale" style={{ position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: 'var(--color-text)' }}>
+            <img
+              src="/map/wickermoor-thumb.jpg"
+              alt=""
+              loading="lazy"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: '60% 50%', display: 'block' }}
+              onError={(e) => ((e.currentTarget as HTMLImageElement).src = MAP_IMAGE)}
+            />
+          </div>
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+              <span style={{ background: 'var(--color-accent)', color: '#ffffff', padding: '3px 7px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em' }}>
+                LIVE
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-accent-400)' }}>
+                Explore &middot; Map
+              </span>
+            </div>
+            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 24, lineHeight: 1.05, textTransform: 'uppercase' }}>Map of Wickermoor</span>
+            <span style={{ fontSize: 14, lineHeight: 1.5, color: mutedInk(80) }}>Where the party has been, what they have heard of, and where they stand tonight.</span>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'auto minmax(0, 1fr)',
+                gap: '4px 12px',
+                fontSize: 13,
+                padding: '10px 0',
+                borderTop: `1px solid ${mutedInk(14)}`,
+              }}
+            >
+              <span style={{ color: mutedInk(60) }}>Party at</span>
+              <span style={{ fontWeight: 700, overflowWrap: 'anywhere' }}>{contentLoading ? '…' : partyAt}</span>
+              <span style={{ color: mutedInk(60) }}>Discovered</span>
+              <span style={{ fontWeight: 700 }}>{contentLoading ? '…' : `${found} ${found === 1 ? 'place' : 'places'}`}</span>
+            </div>
+            <Link
+              to="/map"
+              className="btn btn-primary"
+              style={{ height: 48, padding: '0 22px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start', fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}
+            >
+              Open map
             </Link>
           </div>
         </div>

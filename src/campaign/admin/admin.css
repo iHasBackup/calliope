@@ -134,3 +134,114 @@
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* Map section. */
+.admin-outline-link {
+  height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  border: 2px solid color-mix(in srgb, var(--color-bg) 35%, transparent);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-bg) !important;
+}
+.admin-outline-link:hover {
+  border-color: var(--color-accent);
+}
+.admin-map-pin {
+  all: unset;
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.admin-map-icon,
+.admin-map-seg,
+.admin-map-done {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--color-bg);
+}
+.admin-map-icon {
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--color-bg) 22%, transparent);
+  font-size: 16px;
+}
+.admin-map-icon:hover:not(:disabled),
+.admin-map-icon[aria-pressed='true'] {
+  border-color: var(--color-accent-400);
+}
+.admin-map-icon[aria-pressed='true'] {
+  color: var(--color-accent-400);
+}
+.admin-map-icon:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.admin-map-chevron svg {
+  transition: transform 200ms;
+}
+.admin-map-chevron[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.admin-map-seg {
+  height: 44px;
+  padding: 0 10px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--color-bg) 10%, transparent);
+}
+.admin-map-seg[aria-pressed='true'] {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+.admin-map-done {
+  height: 36px;
+  padding: 0 12px;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.admin-map-icon:focus-visible,
+.admin-map-seg:focus-visible,
+.admin-map-done:focus-visible,
+.admin-map-pin:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-map-chevron svg {
+    transition: none;
+  }
+}
+/* The players' fog as a shade over the DM's map. In a stylesheet, not inline:
+   inline, React lets -webkit-mask-composite overwrite mask-composite. */
+.admin-map-fog {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--color-text) 55%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}

@@ -1,7 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRedis } from './_redis.js';
-import { requireSession } from './_session.js';
+import { MAP_SEED } from './_mapSeed.js';
+import { hasValidSession, requireSession } from './_session.js';
 import { DEFAULT_CONTENT, sanitizeContent, type Content } from '../src/campaign/content.js';
+import { publicMap } from '../src/campaign/map.js';
 
 const CONTENT_KEY = 'content:crooked-moon';
 
@@ -18,7 +20,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Sanitize on read too, not just on write: a document saved before a
       // schema change (new fields added to Content) is missing them, and
       // the client assumes every field is always present.
-      res.status(200).json(stored ? { ...sanitizeContent(stored), updatedAt: stored.updatedAt } : { ...DEFAULT_CONTENT, updatedAt: 0 });
+      const content: Content = stored ? { ...sanitizeContent(stored, { mapSeed: MAP_SEED }), updatedAt: stored.updatedAt } : { ...DEFAULT_CONTENT, map: MAP_SEED, updatedAt: 0 };
+      // Hidden map places stay on the server. Only the signed-in admin,
+      // asking for the DM view, gets the whole map.
+      const dm = req.query.view === 'dm' && hasValidSession(req);
+      res.status(200).json(dm ? content : { ...content, map: publicMap(content.map) });
       return;
     }
 

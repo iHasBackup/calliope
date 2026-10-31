@@ -3,7 +3,7 @@ import { DEFAULT_CONTENT, type Content, type PartyMember, type Recap } from '../
 import type { Application, ApplicationStatus } from '../application';
 import type { ChangeInput } from '../schedule';
 
-export type Section = 'campaign' | 'schedule' | 'party' | 'recaps' | 'quests' | 'registration' | 'applications';
+export type Section = 'campaign' | 'schedule' | 'party' | 'recaps' | 'quests' | 'map' | 'registration' | 'applications';
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -36,7 +36,8 @@ export function useAdmin() {
   const flashTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const loadContent = useCallback(async () => {
-    const { body } = await jsonFetch<Content>('/api/content');
+    // The DM view includes hidden map places; the public feed drops them.
+    const { body } = await jsonFetch<Content>('/api/content?view=dm');
     setDraft(body);
     setSaved(body);
   }, []);

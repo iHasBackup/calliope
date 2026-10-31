@@ -8,11 +8,13 @@ import { ScheduleSection } from './sections/ScheduleSection';
 import { PartySection } from './sections/PartySection';
 import { RecapsSection } from './sections/RecapsSection';
 import { QuestsSection } from './sections/QuestsSection';
+import { MapSection } from './sections/MapSection';
 import { RegistrationSection } from './sections/RegistrationSection';
 import { ApplicationsSection } from './sections/ApplicationsSection';
 import { useAdmin, type Section } from './useAdmin';
 import { useDarkBody } from '../useDarkBody';
 import { registrationOpen } from '../schedule';
+import { discovered } from '../map';
 
 const SECTIONS: { key: Section; label: string }[] = [
   { key: 'campaign', label: 'Campaign' },
@@ -20,6 +22,7 @@ const SECTIONS: { key: Section; label: string }[] = [
   { key: 'party', label: 'Party' },
   { key: 'recaps', label: 'Recaps' },
   { key: 'quests', label: 'Quest log' },
+  { key: 'map', label: 'Map' },
   { key: 'registration', label: 'Registration' },
   { key: 'applications', label: 'Applications' },
 ];
@@ -38,6 +41,7 @@ export default function AdminPage() {
     party: admin.hasDraft ? String(admin.draft.party.length) : '',
     recaps: admin.hasDraft ? String(admin.draft.recaps.length) : '',
     quests: admin.hasDraft ? String(admin.draft.threads.length) : '',
+    map: admin.hasDraft ? `${discovered(admin.draft.map).length}/${admin.draft.map.places.length}` : '',
     registration: admin.hasDraft ? (regOpen ? 'Open' : 'Closed') : '',
     applications: String(admin.apps.length),
   };
@@ -219,6 +223,7 @@ export default function AdminPage() {
             {admin.section === 'quests' && (
               <QuestsSection draft={admin.draft} update={admin.update} addThread={admin.addThread} removeThread={admin.removeThread} />
             )}
+            {admin.section === 'map' && <MapSection draft={admin.draft} update={admin.update} />}
             {admin.section === 'registration' && <RegistrationSection draft={admin.draft} update={admin.update} />}
             {admin.section === 'applications' && (
               <ApplicationsSection
