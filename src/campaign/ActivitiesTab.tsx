@@ -122,7 +122,7 @@ export function ActivitiesTab({ leader, entries, content, contentLoading }: Prop
               <span style={{ fontWeight: 700 }}>{contentLoading ? '…' : `${found} ${found === 1 ? 'place' : 'places'}`}</span>
             </div>
             <Link
-              to="/map"
+              to="/thecrookedmoon/activities/map"
               className="btn btn-primary"
               style={{ height: 48, padding: '0 22px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', alignSelf: 'flex-start', fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}
             >

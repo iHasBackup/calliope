@@ -117,7 +117,7 @@ export function MapSection({ draft, update }: { draft: Content; update: (fn: (c:
         title="Map"
         description="Pins, fog of war and the party's route on the public map. Hidden places stay under the fog until you reveal them."
         action={
-          <Link to="/map" target="_blank" rel="noreferrer" className="admin-outline-link">
+          <Link to="/thecrookedmoon/activities/map" target="_blank" rel="noreferrer" className="admin-outline-link">
             View map <span aria-hidden="true">&rarr;</span>
           </Link>
         }
