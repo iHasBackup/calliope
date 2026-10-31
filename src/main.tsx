@@ -12,7 +12,6 @@ import CampaignSite from './campaign/CampaignSite';
 import AdminPage from './campaign/admin/AdminPage';
 import RegistrationPage from './campaign/registration/RegistrationPage';
 import CalendarPage from './calendar/CalendarPage';
-import MapPage from './map/MapPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,8 +22,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/thecrookedmoon/admin" element={<AdminPage />} />
         <Route path="/thecrookedmoon/apply" element={<RegistrationPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/thecrookedmoon/activities/map" element={<MapPage />} />
-        <Route path="/map" element={<Navigate to="/thecrookedmoon/activities/map" replace />} />
+        <Route path="/thecrookedmoon/activities/map" element={<Navigate to="/thecrookedmoon#map" replace />} />
+        <Route path="/map" element={<Navigate to="/thecrookedmoon#map" replace />} />
         {CAMPAIGNS.map((c) => (
           <Route key={c.slug} path={c.path} element={c.element} />
         ))}

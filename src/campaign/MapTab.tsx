@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useContent } from '../campaign/useContent';
-import { useDarkBody } from '../campaign/useDarkBody';
-import { MAP_IMAGE, type MapPlace } from '../campaign/map';
-import '../campaign/campaign.css';
-import './map.css';
+import { MAP_IMAGE, type CampaignMap, type MapPlace } from './map';
+import './map-tab.css';
+
+// Campaign Home → Map (design/CHANGES-wickermoor-map-2.md): the Wickermoor map
+// with a drifting fog of war, the party, the route so far, a colour spotlight
+// and a place panel.
 
 const STATUS: Record<string, string> = { visited: 'Visited', known: 'Heard of', hidden: 'Unexplored' };
 const lines = (v: string) =>
@@ -24,27 +24,65 @@ function UsersIcon() {
   );
 }
 
-function Skeleton() {
+/** The map art. For the bundled map: a responsive WebP with a JPEG fallback. */
+function MapImage({
+  src,
+  alt = '',
+  className,
+  style,
+  imgRef,
+}: {
+  src: string;
+  alt?: string;
+  className?: string;
+  style?: React.CSSProperties;
+  imgRef?: React.Ref<HTMLImageElement>;
+}) {
+  const bundled = src === MAP_IMAGE;
+  const sizes = '(min-width: 1024px) 70vw, 760px';
   return (
-    <div className="mp-skel" aria-busy="true" aria-label="Loading map">
-      <div style={{ flex: '999 1 520px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ aspectRatio: '1561 / 1008' }} />
-        <div style={{ height: 20, maxWidth: 420 }} />
+    <picture className={className} style={style}>
+      {bundled && <source type="image/webp" srcSet="/map/wickermoor-900.webp 900w, /map/wickermoor.webp 1561w" sizes={sizes} />}
+      <img
+        ref={imgRef}
+        src={src}
+        srcSet={bundled ? '/map/wickermoor-900.jpg 900w, /map/wickermoor.jpg 1561w' : undefined}
+        sizes={bundled ? sizes : undefined}
+        alt={alt}
+        aria-hidden={alt ? undefined : true}
+        draggable={false}
+        width={1561}
+        height={1008}
+      />
+    </picture>
+  );
+}
+
+/** Map-shaped skeleton: a page load straight to #map, and switching to the tab. */
+export function MapSkeleton() {
+  return (
+    <div className="mp mp-skel-wrap" aria-busy="true" aria-label="Loading map">
+      <div className="mp-skel-title">
+        <div style={{ width: 140, height: 12, background: 'var(--panel)' }} />
+        <div style={{ width: 'min(420px, 80%)', height: 'clamp(32px, 5.5vw, 60px)', background: 'var(--panel)' }} />
       </div>
-      <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ height: 88 }} />
-        <div style={{ height: 44 }} />
-        <div style={{ height: 44 }} />
-        <div style={{ height: 44 }} />
+      <div className="mp-skel">
+        <div style={{ flex: '999 1 520px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ aspectRatio: '1561 / 1008' }} />
+          <div style={{ height: 20, maxWidth: 420 }} />
+        </div>
+        <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ height: 88 }} />
+          <div style={{ height: 44 }} />
+          <div style={{ height: 44 }} />
+          <div style={{ height: 44 }} />
+        </div>
       </div>
     </div>
   );
 }
 
-export default function MapPage({ showSkeleton = false }: { showSkeleton?: boolean }) {
-  useDarkBody();
-  const { content, loading } = useContent();
-  const map = content.map;
+export function MapTab({ map }: { map: CampaignMap }) {
   const [sel, setSel] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
   // The spotlight: which place it sits on, whether it has grown, and whether
@@ -53,8 +91,24 @@ export default function MapPage({ showSkeleton = false }: { showSkeleton?: boole
   const raf = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // The in-map loader stays until the art has loaded: load/error listeners,
+  // plus img.complete for an image the browser already had.
+  const baseImg = useRef<HTMLImageElement>(null);
+  const [imgDone, setImgDone] = useState(false);
   useEffect(() => {
-    document.title = 'Map of Wickermoor · The Crooked Moon';
+    const img = baseImg.current;
+    if (!img) return;
+    if (img.complete && img.naturalWidth) {
+      setImgDone(true);
+      return;
+    }
+    const done = () => setImgDone(true);
+    img.addEventListener('load', done);
+    img.addEventListener('error', done);
+    return () => {
+      img.removeEventListener('load', done);
+      img.removeEventListener('error', done);
+    };
   }, []);
 
   const grow = useCallback((id: string) => {
@@ -96,11 +150,10 @@ export default function MapPage({ showSkeleton = false }: { showSkeleton?: boole
 
   // On a phone the map scrolls sideways: start centred on the party.
   useEffect(() => {
-    if (loading) return;
     const box = scrollRef.current;
     const pp = map.places.find((p) => p.id === map.partyAt);
     if (box && pp && box.scrollWidth > box.clientWidth) box.scrollLeft = (pp.x / 100) * box.scrollWidth - box.clientWidth / 2;
-  }, [loading, map]);
+  }, [map]);
 
   const byId = new Map(map.places.map((p) => [p.id, p]));
   const shown = map.places.filter((p) => p.status !== 'hidden');
@@ -131,10 +184,7 @@ export default function MapPage({ showSkeleton = false }: { showSkeleton?: boole
       onFocus={() => hoverOn(p.id)}
       onBlur={() => hoverOff(p.id)}
     >
-      <span
-        className="mp-sq"
-        style={{ width: 12, height: 12, background: p.status === 'visited' ? 'var(--color-accent)' : 'var(--color-bg)' }}
-      />
+      <span className="mp-sq" style={{ width: 12, height: 12, background: p.status === 'visited' ? 'var(--color-accent)' : 'var(--color-bg)' }} />
       <span>{p.name}</span>
       <span aria-hidden="true">&rarr;</span>
     </button>
@@ -142,7 +192,10 @@ export default function MapPage({ showSkeleton = false }: { showSkeleton?: boole
 
   let detail = null;
   if (sp) {
-    const npcs = lines(sp.npcs).map((l) => {
+    // Visited: description, NPCs and rumours. Heard of: rumours only.
+    const heardOf = sp.status === 'known';
+    const desc = heardOf ? '' : sp.desc.trim();
+    const npcs = (heardOf ? [] : lines(sp.npcs)).map((l) => {
       const parts = l.split(/\s+[—–-]\s+/);
       return { name: parts[0], role: parts.slice(1).join(' — ') };
     });
@@ -178,8 +231,8 @@ export default function MapPage({ showSkeleton = false }: { showSkeleton?: boole
           <h2 className="mp-heading" style={{ margin: 0, fontSize: 'clamp(28px, 3vw, 36px)', lineHeight: 0.95, letterSpacing: '-0.02em', textWrap: 'balance' }}>
             {sp.name}
           </h2>
-          {sp.desc.trim() && (
-            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: 'color-mix(in srgb, var(--color-bg) 85%, transparent)', textWrap: 'pretty', whiteSpace: 'pre-line' }}>{sp.desc}</p>
+          {desc && (
+            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: 'color-mix(in srgb, var(--color-bg) 85%, transparent)', textWrap: 'pretty', whiteSpace: 'pre-line' }}>{desc}</p>
           )}
         </div>
         {npcs.length > 0 && (
@@ -208,167 +261,160 @@ export default function MapPage({ showSkeleton = false }: { showSkeleton?: boole
             ))}
           </div>
         )}
-        {!npcs.length && !rumors.length && !sp.desc.trim() && <span style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-bg) 60%, transparent)' }}>Nothing recorded here yet.</span>}
+        {!desc && !npcs.length && !rumors.length && (
+          <span style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-bg) 60%, transparent)' }}>Nothing recorded here yet.</span>
+        )}
       </div>
     );
   }
 
-  const isLoading = loading || showSkeleton;
-
   return (
     <div className="mp">
-      <header className="mp-top">
-        <span className="mp-mark">The Crooked Moon</span>
-        <Link className="mp-back" to="/thecrookedmoon#activities">
-          <span aria-hidden="true">&larr;</span>
-          <span>Activities</span>
-        </Link>
-      </header>
       <div className="mp-title">
-        <span>Map</span>
-        <h1 className="mp-heading">Wickermoor</h1>
+        <span>Detail map of</span>
+        <h1 className="mp-heading">Wickermoor Hollow</h1>
       </div>
 
-      {isLoading ? (
-        <Skeleton />
-      ) : (
-        <div className="mp-body">
-          <div style={{ minWidth: 0 }}>
-            <div className="mp-scroll" ref={scrollRef}>
-              <div className="mp-map" onClick={clear}>
-                <img className="mp-base" src={image} alt="Illustrated map of the Wickermoor vale" draggable={false} width={1561} height={1008} />
-                {pp && <img src={image} alt="" aria-hidden="true" draggable={false} style={{ clipPath: `circle(9% at ${pp.x}% ${pp.y}%)` }} />}
-                <img
-                  className={`mp-spot${spot.snap ? ' is-snap' : ''}`}
-                  data-anim=""
-                  src={image}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  style={{ clipPath: `circle(${spotOn ? '11%' : '0%'} at ${spotPlace.x}% ${spotPlace.y}%)` }}
-                />
-                <div className="mp-fog" aria-hidden="true" style={{ maskImage: fogMask, WebkitMaskImage: fogMask }} />
-                {route.length > 1 && (
-                  <svg className="mp-route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                    <polyline className="under" points={route.map((p) => `${p.x},${p.y}`).join(' ')} />
-                    <polyline className="ants" data-anim="" points={route.map((p) => `${p.x},${p.y}`).join(' ')} />
-                  </svg>
-                )}
-                {shown
-                  .filter((p) => p.id !== map.partyAt)
-                  .map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      className={`mp-pin${active === p.id ? ' is-on' : ''}`}
-                      style={{ left: `${p.x}%`, top: `${p.y}%` }}
-                      aria-label={`${p.name}, ${STATUS[p.status].toLowerCase()}`}
-                      aria-pressed={sel === p.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        select(p.id);
-                      }}
-                      onMouseEnter={() => hoverOn(p.id)}
-                      onMouseLeave={() => hoverOff(p.id)}
-                      onFocus={() => hoverOn(p.id)}
-                      onBlur={() => hoverOff(p.id)}
-                    >
-                      <span className={`mp-dot is-${p.status}`} data-anim="" />
-                      <span className="mp-tip" data-anim="" aria-hidden="true">
-                        {p.name}
-                      </span>
-                    </button>
-                  ))}
-                {pp && (
+      <div className="mp-body">
+        <div style={{ minWidth: 0 }}>
+          <div className="mp-scroll" ref={scrollRef}>
+            <div className="mp-map" onClick={clear}>
+              <MapImage className="mp-base" src={image} alt="Illustrated map of the Wickermoor vale" imgRef={baseImg} />
+              {pp && <MapImage src={image} style={{ clipPath: `circle(9% at ${pp.x}% ${pp.y}%)` }} />}
+              <MapImage
+                className={`mp-spot${spot.snap ? ' is-snap' : ''}`}
+                src={image}
+                style={{ clipPath: `circle(${spotOn ? '11%' : '0%'} at ${spotPlace.x}% ${spotPlace.y}%)` }}
+              />
+              <div className="mp-fog" aria-hidden="true" style={{ maskImage: fogMask, WebkitMaskImage: fogMask }}>
+                <div className="mp-mist a" data-anim="" />
+                <div className="mp-mist b" data-anim="" />
+              </div>
+              {route.length > 1 && (
+                <svg className="mp-route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <polyline className="under" points={route.map((p) => `${p.x},${p.y}`).join(' ')} />
+                  <polyline className="ants" data-anim="" points={route.map((p) => `${p.x},${p.y}`).join(' ')} />
+                </svg>
+              )}
+              <div className="mp-vignette" aria-hidden="true" />
+              {shown
+                .filter((p) => p.id !== map.partyAt)
+                .map((p) => (
                   <button
+                    key={p.id}
                     type="button"
-                    className={`mp-party${active === pp.id ? ' is-on' : ''}${sel === pp.id ? ' is-sel' : ''}`}
-                    style={{ left: `${pp.x}%`, top: `${pp.y}%` }}
-                    aria-label={`The party is at ${pp.name}`}
+                    className={`mp-pin${active === p.id ? ' is-on' : ''}`}
+                    style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                    aria-label={`${p.name}, ${STATUS[p.status].toLowerCase()}`}
+                    aria-pressed={sel === p.id}
                     onClick={(e) => {
                       e.stopPropagation();
-                      select(pp.id);
+                      select(p.id);
                     }}
-                    onMouseEnter={() => hoverOn(pp.id)}
-                    onMouseLeave={() => hoverOff(pp.id)}
-                    onFocus={() => hoverOn(pp.id)}
-                    onBlur={() => hoverOff(pp.id)}
+                    onMouseEnter={() => hoverOn(p.id)}
+                    onMouseLeave={() => hoverOff(p.id)}
+                    onFocus={() => hoverOn(p.id)}
+                    onBlur={() => hoverOff(p.id)}
                   >
-                    <span className="mp-party-ring" data-anim="" aria-hidden="true" />
-                    <span className="mp-party-dot" data-anim="">
-                      <UsersIcon />
-                    </span>
-                    <span className="mp-party-tag" aria-hidden="true">
-                      Party
+                    <span className={`mp-dot is-${p.status}`} data-anim="" />
+                    <span className="mp-tip" data-anim="" aria-hidden="true">
+                      {p.name}
                     </span>
                   </button>
-                )}
+                ))}
+              {pp && (
+                <button
+                  type="button"
+                  className={`mp-party${active === pp.id ? ' is-on' : ''}${sel === pp.id ? ' is-sel' : ''}`}
+                  style={{ left: `${pp.x}%`, top: `${pp.y}%` }}
+                  aria-label={`The party is at ${pp.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    select(pp.id);
+                  }}
+                  onMouseEnter={() => hoverOn(pp.id)}
+                  onMouseLeave={() => hoverOff(pp.id)}
+                  onFocus={() => hoverOn(pp.id)}
+                  onBlur={() => hoverOff(pp.id)}
+                >
+                  <span className="mp-party-ring" data-anim="" aria-hidden="true" />
+                  <span className="mp-party-dot" data-anim="">
+                    <UsersIcon />
+                  </span>
+                  <span className="mp-party-tag" aria-hidden="true">
+                    Party
+                  </span>
+                </button>
+              )}
+              <div className={`mp-loader${imgDone ? ' is-done' : ''}`} role="status" aria-label="Loading map" aria-hidden={imgDone} data-anim="">
+                <span>Unfolding the map</span>
+                <div className="mp-track" />
               </div>
-            </div>
-            <div className="mp-legend">
-              <span>
-                <span className="mp-sq" style={{ width: 14, height: 14, background: 'var(--color-accent)', border: '2px solid #fff' }} />
-                Visited
-              </span>
-              <span>
-                <span
-                  className="mp-sq"
-                  style={{ width: 12, height: 12, background: 'var(--color-bg)', border: '2px solid var(--color-text)', outline: '1px solid color-mix(in srgb, var(--color-bg) 50%, transparent)' }}
-                />
-                Heard of
-              </span>
-              <span>
-                <svg width="28" height="6" viewBox="0 0 28 6" aria-hidden="true">
-                  <line x1="0" y1="3" x2="28" y2="3" style={{ stroke: 'var(--color-accent)', strokeWidth: 3, strokeDasharray: '7 5' }} />
-                </svg>
-                Route so far
-              </span>
-              <span>
-                <span
-                  className="mp-sq"
-                  style={{ width: 14, height: 14, background: 'color-mix(in srgb, var(--color-bg) 12%, var(--color-text))', border: '1px solid color-mix(in srgb, var(--color-bg) 35%, transparent)' }}
-                />
-                Unexplored
-              </span>
-              <span className="mp-scroll-hint" style={{ flexBasis: '100%' }}>
-                Scroll sideways to see the whole vale.
-              </span>
             </div>
           </div>
-
-          <aside className={`mp-panel${sp ? ' is-sheet' : ''}`} data-anim="" aria-label="Places">
-            {detail ?? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                {pp && (
-                  <button type="button" className="mp-at" onClick={() => select(pp.id)} onMouseEnter={() => hoverOn(pp.id)} onMouseLeave={() => hoverOff(pp.id)}>
-                    <span style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
-                      <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase' }}>The party is at</span>
-                      <span className="mp-heading" style={{ fontSize: 22, lineHeight: 1.05 }}>
-                        {pp.name}
-                      </span>
-                    </span>
-                    <span aria-hidden="true" style={{ fontSize: 20 }}>
-                      &rarr;
-                    </span>
-                  </button>
-                )}
-                {visited.length > 0 && (
-                  <div className="mp-group">
-                    <span className="mp-label">Visited · {visited.length}</span>
-                    {visited.map(listRow)}
-                  </div>
-                )}
-                {known.length > 0 && (
-                  <div className="mp-group">
-                    <span className="mp-label">Heard of · {known.length}</span>
-                    {known.map(listRow)}
-                  </div>
-                )}
-              </div>
-            )}
-          </aside>
+          <div className="mp-legend">
+            <span>
+              <span className="mp-sq" style={{ width: 14, height: 14, background: 'var(--color-accent)', border: '2px solid #fff' }} />
+              Visited
+            </span>
+            <span>
+              <span
+                className="mp-sq"
+                style={{ width: 12, height: 12, background: 'var(--color-bg)', border: '2px solid var(--color-text)', outline: '1px solid color-mix(in srgb, var(--color-bg) 50%, transparent)' }}
+              />
+              Heard of
+            </span>
+            <span>
+              <svg width="28" height="6" viewBox="0 0 28 6" aria-hidden="true">
+                <line x1="0" y1="3" x2="28" y2="3" style={{ stroke: 'var(--color-accent)', strokeWidth: 3, strokeDasharray: '7 5' }} />
+              </svg>
+              Route so far
+            </span>
+            <span>
+              <span
+                className="mp-sq"
+                style={{ width: 14, height: 14, background: 'color-mix(in srgb, var(--color-bg) 12%, var(--color-text))', border: '1px solid color-mix(in srgb, var(--color-bg) 35%, transparent)' }}
+              />
+              Unexplored
+            </span>
+            <span className="mp-scroll-hint" style={{ flexBasis: '100%' }}>
+              Scroll sideways to see the whole vale.
+            </span>
+          </div>
         </div>
-      )}
+
+        <aside className={`mp-panel${sp ? ' is-sheet' : ''}`} data-anim="" aria-label="Places">
+          {detail ?? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {pp && (
+                <button type="button" className="mp-at" onClick={() => select(pp.id)} onMouseEnter={() => hoverOn(pp.id)} onMouseLeave={() => hoverOff(pp.id)}>
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
+                    <span style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase' }}>The party is at</span>
+                    <span className="mp-heading" style={{ fontSize: 22, lineHeight: 1.05 }}>
+                      {pp.name}
+                    </span>
+                  </span>
+                  <span aria-hidden="true" style={{ fontSize: 20 }}>
+                    &rarr;
+                  </span>
+                </button>
+              )}
+              {visited.length > 0 && (
+                <div className="mp-group">
+                  <span className="mp-label">Visited · {visited.length}</span>
+                  {visited.map(listRow)}
+                </div>
+              )}
+              {known.length > 0 && (
+                <div className="mp-group">
+                  <span className="mp-label">Heard of · {known.length}</span>
+                  {known.map(listRow)}
+                </div>
+              )}
+            </div>
+          )}
+        </aside>
+      </div>
     </div>
   );
 }

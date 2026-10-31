@@ -5,11 +5,11 @@ import type { Score } from '../types';
 import { useContent } from './useContent';
 import { nextSession } from './time';
 
-export type CampaignView = 'home' | 'recaps' | 'activities';
+export type CampaignView = 'home' | 'recaps' | 'map' | 'activities';
 
 function viewFromHash(hash: string): CampaignView {
   const h = hash.replace('#', '');
-  return h === 'recaps' || h === 'activities' ? h : 'home';
+  return h === 'recaps' || h === 'map' || h === 'activities' ? h : 'home';
 }
 
 function partyColumns(width: number, cardCount: number): number {

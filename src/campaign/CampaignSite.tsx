@@ -5,6 +5,7 @@ import { HomeSkeleton } from './HomeSkeleton';
 import { RecapsTab } from './RecapsTab';
 import { RecapsSkeleton } from './RecapsSkeleton';
 import { ActivitiesTab } from './ActivitiesTab';
+import { MapTab, MapSkeleton } from './MapTab';
 import { useCampaignSite } from './useCampaignSite';
 import { useDarkBody } from './useDarkBody';
 
@@ -29,7 +30,8 @@ export default function CampaignSite() {
           ) : (
             <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} width={site.width} />
           ))}
-        {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} content={site.content} contentLoading={site.contentLoading} />}
+        {site.view === 'map' && (site.contentLoading ? <MapSkeleton /> : <MapTab map={site.content.map} />)}
+        {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} />}
       </div>
     </div>
   );

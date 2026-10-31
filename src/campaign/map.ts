@@ -212,10 +212,11 @@ export function sanitizeMap(input: unknown, seed: CampaignMap = DEFAULT_MAP): Ca
 /** What visitors may see. Hidden places never leave the server: they are
  * dropped with their route stops. The one exception is the party's own spot,
  * which keeps its name and position (the party marker sits there) but none
- * of its details. */
+ * of its details. Heard-of places send only their rumours. */
 export function publicMap(map: CampaignMap): CampaignMap {
   const places = map.places.flatMap((p) => {
-    if (p.status !== 'hidden') return [p];
+    if (p.status === 'visited') return [p];
+    if (p.status === 'known') return [{ ...p, desc: '', npcs: '' }];
     if (p.id === map.partyAt) return [{ ...p, desc: '', npcs: '', rumors: '' }];
     return [];
   });

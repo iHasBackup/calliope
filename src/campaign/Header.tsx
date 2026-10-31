@@ -6,6 +6,7 @@ import type { CampaignView } from './useCampaignSite';
 const TABS: { key: CampaignView; label: string }[] = [
   { key: 'home', label: 'Campaign' },
   { key: 'recaps', label: 'Recaps' },
+  { key: 'map', label: 'Map' },
   { key: 'activities', label: 'Activities' },
 ];
 
