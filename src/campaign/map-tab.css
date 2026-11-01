@@ -84,8 +84,9 @@
     min-width: 760px;
   }
 }
-.mp-map > picture,
-.mp-map > picture > img,
+.mp-zoom,
+.mp-zoom > picture,
+.mp-zoom > picture > img,
 .mp-fog,
 .mp-route {
   position: absolute;
@@ -148,6 +149,25 @@
   to {
     transform: translate3d(12%, -7%, 0);
   }
+}
+/* Zoom: both wrappers share one transform; origin stays 0 0 (animating it shakes). */
+.mp-zoom {
+  transform-origin: 0 0;
+  transition: transform 900ms cubic-bezier(0.33, 1, 0.68, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.mp-zoom-layers {
+  z-index: 0;
+}
+.mp-zoom-pins {
+  z-index: 2;
+  pointer-events: none;
+}
+.mp .mp-pin,
+.mp .mp-party {
+  pointer-events: auto;
+  transition: transform 900ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 /* Soft edges: the map fades into the page; no border. */
 .mp-vignette {
