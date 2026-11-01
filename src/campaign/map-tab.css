@@ -47,12 +47,6 @@
   text-transform: uppercase;
   color: var(--color-accent-400);
 }
-.mp-title h1 {
-  margin: 0;
-  font-size: clamp(32px, 5.5vw, 60px);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-}
 .mp-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

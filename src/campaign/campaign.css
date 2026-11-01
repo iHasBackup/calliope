@@ -101,6 +101,15 @@
 .cm-view {
   animation: cm-view-in 360ms var(--ease-enter) both;
 }
+/* One heading style for the Recaps, Map and Activities views (design/CHANGES-section-titles.md). */
+.cm-section-title {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 72px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
 .cm-menu-panel {
   animation: cm-menu-in 220ms var(--ease-enter) both;
 }

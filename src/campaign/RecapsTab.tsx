@@ -31,7 +31,7 @@ export function RecapsTab({ openRecap, setOpenRecap, content, width }: Props) {
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-accent-400)' }}>
           {content.recaps.length} sessions &middot; {String(content.nights).padStart(2, '0')} nights
         </span>
-        <h1 style={{ margin: 0, fontSize: 'clamp(40px, 7vw, 88px)', lineHeight: 0.9, letterSpacing: '-0.035em', textTransform: 'uppercase' }}>
+        <h1 className="cm-section-title">
           Session recaps
         </h1>
       </div>

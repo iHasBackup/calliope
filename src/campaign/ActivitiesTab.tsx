@@ -18,7 +18,7 @@ export function ActivitiesTab({ leader, entries }: Props) {
         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-accent-400)' }}>
           Between sessions
         </span>
-        <h1 style={{ margin: 0, fontSize: 'clamp(40px, 7vw, 88px)', lineHeight: 0.9, letterSpacing: '-0.035em', textTransform: 'uppercase' }}>
+        <h1 className="cm-section-title">
           Activities
         </h1>
       </div>
