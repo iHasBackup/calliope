@@ -246,11 +246,17 @@
                     <span style="font-size: 10px; font-weight: 700; color: color-mix(in srgb, var(--color-bg) 50%, transparent); text-align: center;">{{ h.short }}</span>
                   </sc-for>
                   <sc-for list="{{ m.cells }}" as="d" hint-placeholder-count="30">
-                    <span style="aspect-ratio: 1; box-sizing: border-box; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: {{ d.bg }}; color: {{ d.fg }}; border: {{ d.border }};">{{ d.num }}</span>
+                    <span style="position: relative; z-index: {{ d.z }}; aspect-ratio: 1; box-sizing: border-box; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: {{ d.bg }}; color: {{ d.fg }}; border: {{ d.border }}; outline: {{ d.outline }}; outline-offset: 1px;">{{ d.num }}</span>
                   </sc-for>
                 </div>
               </div>
             </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding-top: 14px; font-size: 13px; color: color-mix(in srgb, var(--color-bg) 70%, transparent);">
+            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; box-sizing: border-box; background: color-mix(in srgb, var(--color-bg) 14%, var(--color-text));"></span>Played</span>
+            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; box-sizing: border-box; background: var(--color-bg);"></span>Upcoming</span>
+            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; box-sizing: border-box; background: var(--color-bg); outline: 2px solid var(--color-accent); outline-offset: 1px;"></span>Next session</span>
+            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; box-sizing: border-box; border: 2px solid var(--color-bg);"></span>Today</span>
           </div>
         </sc-if>
       </main>
@@ -517,16 +523,26 @@ class Component extends DCLogic {
     } else {
       const y = +cur.slice(0, 4);
       title = String(y);
+      const nextX = all.filter(x => !x.cancelled && x.endMs >= now).sort((a, b) => a.startMs - b.startMs)[0];
+      const nextDay = nextX ? nextX.date : null;
       year = MONTHS.map((name, mi) => {
         const first = y + '-' + pad(mi + 1) + '-01', n = new Date(Date.UTC(y, mi + 1, 0)).getUTCDate();
         const lead = (cal.dow(first) + 6) % 7;
         let count = 0;
-        const cells = Array.from({ length: lead }, (_, i) => ({ key: 'b' + i, num: '', bg: 'transparent', fg: 'inherit', border: '0' }));
+        const cells = Array.from({ length: lead }, (_, i) => ({ key: 'b' + i, num: '', bg: 'transparent', fg: 'inherit', border: '0', outline: '0 solid transparent', z: 0 }));
         for (let i = 1; i <= n; i++) {
           const d = y + '-' + pad(mi + 1) + '-' + pad(i), list = (byDay[d] || []).filter(x => !x.cancelled);
           count += list.length;
-          const t = list.length ? cal.TONES[byId[list[0].campId].tone] : null;
-          cells.push({ key: d, num: i, bg: t ? t.bg : 'transparent', fg: t ? t.fg : 'color-mix(in srgb, var(--color-bg) 70%, transparent)', border: d === today ? '2px solid var(--color-bg)' : '0' });
+          const ahead = list.filter(x => x.endMs >= now), pick = ahead[0] || list[0];
+          const played = list.length > 0 && !ahead.length, isNext = d === nextDay;
+          const t = pick ? cal.TONES[byId[pick.campId].tone] || cal.TONES.stone : null;
+          cells.push({
+            key: d, num: i,
+            bg: !t ? 'transparent' : played ? 'color-mix(in srgb, var(--color-bg) 14%, var(--color-text))' : t.bg,
+            fg: !t ? 'color-mix(in srgb, var(--color-bg) 70%, transparent)' : played ? 'color-mix(in srgb, var(--color-bg) 72%, transparent)' : t.fg,
+            border: d === today ? '2px solid var(--color-bg)' : '0',
+            outline: isNext ? '2px solid var(--color-accent)' : '0 solid transparent', z: isNext ? 1 : 0
+          });
         }
         return { key: first, name, cells, count: count ? count + (count === 1 ? ' session' : ' sessions') : '', onClick: () => this.setState({ view: 'month', cursor: first }) };
       });
