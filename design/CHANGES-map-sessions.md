@@ -57,7 +57,10 @@ Known looseness: a broad tag like `Wickermoor` matches every place containing th
 - **Heard of** places show the section too if a session is tagged with them. This exposes only session titles, which players can already read on the Recaps page.
 
 ## Panel UI
-The section sits in the place detail panel **after the name and description, before Notable NPCs**.
+**Place detail order** (this also re-orders the existing blocks), below the name and description:
+1. **Rumors & hooks** (moved up from last)
+2. **Notable NPCs**
+3. **Sessions here** (new)
 
 - **Container**: `padding-top: 14px; border-top: 2px solid color-mix(in srgb, var(--color-bg) 14%, transparent)`. It follows the same pattern as the NPCs and Rumors blocks.
 - **Label**: "SESSIONS HERE · N", 11px, 700, `letter-spacing: 0.14em`, uppercase, `--color-accent-400`, 6px bottom padding.
@@ -76,4 +79,4 @@ No changes. On desktop (1024px and wider), the sticky panel grows with the extra
 - `reference/Map Section.dc.html`:
   - The helpers at the top of the script: `norm`, `hasWords`, `placeKeys`, `tagMatches`.
   - In `renderVals`, the `if (sp)` block: `sessions`, `hasSessions`, `sessionsLabel` and the updated `empty`.
-  - In the template, the `d.hasSessions` block above `d.hasNpcs`.
+  - In the template, the detail blocks in order: `d.hasRumors`, `d.hasNpcs`, `d.hasSessions`.
