@@ -227,7 +227,7 @@ export function MapTab({ map, recaps }: { map: CampaignMap; recaps: Recap[] }) {
 
   let detail = null;
   if (sp) {
-    // Visited: description, NPCs and rumours. Heard of: rumours only.
+    // Visited: description, rumours, NPCs and sessions. Heard of: rumours and sessions.
     const heardOf = sp.status === 'known';
     const desc = heardOf ? '' : sp.desc.trim();
     const npcs = (heardOf ? [] : lines(sp.npcs)).map((l) => {
@@ -272,15 +272,15 @@ export function MapTab({ map, recaps }: { map: CampaignMap; recaps: Recap[] }) {
             <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: 'color-mix(in srgb, var(--color-bg) 85%, transparent)', textWrap: 'pretty', whiteSpace: 'pre-line' }}>{desc}</p>
           )}
         </div>
-        {sessions.length > 0 && (
-          <div className="mp-block">
-            <span className="mp-label" style={{ paddingBottom: 6, color: 'var(--color-accent-400)' }}>
-              Sessions here &middot; {sessions.length}
+        {rumors.length > 0 && (
+          <div className="mp-block" style={{ gap: 10 }}>
+            <span className="mp-label" style={{ color: 'var(--color-accent-400)' }}>
+              Rumors &amp; hooks
             </span>
-            {sessions.map((s) => (
-              <div key={s.id} className="mp-session">
-                <span>S{s.no}</span>
-                <span>{s.title}</span>
+            {rumors.map((r, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '18px minmax(0, 1fr)', gap: 8, alignItems: 'start' }}>
+                <span style={{ width: 8, height: 8, marginTop: 7, border: '2px solid var(--color-accent)', transform: 'rotate(45deg)' }} />
+                <span style={{ fontSize: 15, lineHeight: 1.5, textWrap: 'pretty' }}>{r}</span>
               </div>
             ))}
           </div>
@@ -298,15 +298,15 @@ export function MapTab({ map, recaps }: { map: CampaignMap; recaps: Recap[] }) {
             ))}
           </div>
         )}
-        {rumors.length > 0 && (
-          <div className="mp-block" style={{ gap: 10 }}>
-            <span className="mp-label" style={{ color: 'var(--color-accent-400)' }}>
-              Rumors &amp; hooks
+        {sessions.length > 0 && (
+          <div className="mp-block">
+            <span className="mp-label" style={{ paddingBottom: 6, color: 'var(--color-accent-400)' }}>
+              Sessions here &middot; {sessions.length}
             </span>
-            {rumors.map((r, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '18px minmax(0, 1fr)', gap: 8, alignItems: 'start' }}>
-                <span style={{ width: 8, height: 8, marginTop: 7, border: '2px solid var(--color-accent)', transform: 'rotate(45deg)' }} />
-                <span style={{ fontSize: 15, lineHeight: 1.5, textWrap: 'pretty' }}>{r}</span>
+            {sessions.map((s) => (
+              <div key={s.id} className="mp-session">
+                <span>S{s.no}</span>
+                <span>{s.title}</span>
               </div>
             ))}
           </div>
