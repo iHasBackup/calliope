@@ -507,59 +507,85 @@ export default function CalendarPage({ showSkeleton = false }: { showSkeleton?: 
   } else {
     const y = +cur.slice(0, 4);
     title = String(y);
+    // Played days go grey, upcoming keep the campaign colour, the next session is outlined.
+    const nextDay = nx?.date;
     body = (
-      <div className="cal-frame cal-yr">
-        {MONTHS.map((name, mi) => {
-          const first = `${y}-${pad(mi + 1)}-01`;
-          const n = new Date(Date.UTC(y, mi + 1, 0)).getUTCDate();
-          const lead = (weekdayOf(first) + 6) % 7;
-          let count = 0;
-          const cells = Array.from({ length: n }, (_, i) => {
-            const d = `${y}-${pad(mi + 1)}-${pad(i + 1)}`;
-            const list = (byDay.get(d) ?? []).filter((x) => !x.cancelled);
-            count += list.length;
-            const t = list.length ? TONES[byId.get(list[0].campId)?.tone ?? 'stone'] : null;
+      <>
+        <div className="cal-frame cal-yr">
+          {MONTHS.map((name, mi) => {
+            const first = `${y}-${pad(mi + 1)}-01`;
+            const n = new Date(Date.UTC(y, mi + 1, 0)).getUTCDate();
+            const lead = (weekdayOf(first) + 6) % 7;
+            let count = 0;
+            const cells = Array.from({ length: n }, (_, i) => {
+              const d = `${y}-${pad(mi + 1)}-${pad(i + 1)}`;
+              const list = (byDay.get(d) ?? []).filter((x) => !x.cancelled);
+              count += list.length;
+              const ahead = list.filter((x) => x.endMs > now);
+              const pick = ahead[0] ?? list[0];
+              const played = list.length > 0 && !ahead.length;
+              const t = pick ? TONES[byId.get(pick.campId)?.tone ?? 'stone'] : null;
+              return (
+                <span
+                  key={d}
+                  className={d === nextDay ? 'is-next' : undefined}
+                  style={{
+                    background: !t ? 'transparent' : played ? 'color-mix(in srgb, var(--color-bg) 14%, var(--color-text))' : t.bg,
+                    color: !t ? 'color-mix(in srgb, var(--color-bg) 70%, transparent)' : played ? 'color-mix(in srgb, var(--color-bg) 72%, transparent)' : t.fg,
+                    border: d === today ? '2px solid var(--color-bg)' : 0,
+                  }}
+                >
+                  {i + 1}
+                </span>
+              );
+            });
             return (
-              <span
-                key={d}
-                style={{
-                  background: t ? t.bg : 'transparent',
-                  color: t ? t.fg : 'color-mix(in srgb, var(--color-bg) 70%, transparent)',
-                  border: d === today ? '2px solid var(--color-bg)' : 0,
-                }}
-              >
-                {i + 1}
-              </span>
-            );
-          });
-          return (
-            <div key={first} className="cal-yr-month">
-              <button
-                type="button"
-                className="cal-yr-name"
-                onClick={() => {
-                  setViewState('month');
-                  setCursor(first);
-                }}
-              >
-                <span>{name}</span>
-                <span>{count ? `${count} ${count === 1 ? 'session' : 'sessions'}` : ''}</span>
-              </button>
-              <div className="cal-yr-grid">
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((h, i) => (
-                  <span key={i} className="is-head">
-                    {h}
-                  </span>
-                ))}
-                {Array.from({ length: lead }, (_, i) => (
-                  <span key={`b${i}`} />
-                ))}
-                {cells}
+              <div key={first} className="cal-yr-month">
+                <button
+                  type="button"
+                  className="cal-yr-name"
+                  onClick={() => {
+                    setViewState('month');
+                    setCursor(first);
+                  }}
+                >
+                  <span>{name}</span>
+                  <span>{count ? `${count} ${count === 1 ? 'session' : 'sessions'}` : ''}</span>
+                </button>
+                <div className="cal-yr-grid">
+                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((h, i) => (
+                    <span key={i} className="is-head">
+                      {h}
+                    </span>
+                  ))}
+                  {Array.from({ length: lead }, (_, i) => (
+                    <span key={`b${i}`} />
+                  ))}
+                  {cells}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+        <div className="cal-yr-legend">
+          <span>
+            <span style={{ background: 'color-mix(in srgb, var(--color-bg) 14%, var(--color-text))' }} />
+            Played
+          </span>
+          <span>
+            <span style={{ background: 'var(--color-bg)' }} />
+            Upcoming
+          </span>
+          <span>
+            <span className="is-next" style={{ background: 'var(--color-bg)' }} />
+            Next session
+          </span>
+          <span>
+            <span style={{ border: '2px solid var(--color-bg)' }} />
+            Today
+          </span>
+        </div>
+      </>
     );
   }
 
