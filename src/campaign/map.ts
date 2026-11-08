@@ -226,3 +226,37 @@ export function publicMap(map: CampaignMap): CampaignMap {
 
 /** Places counted as discovered: visited or heard of. */
 export const discovered = (map: CampaignMap) => map.places.filter((p) => p.status !== 'hidden');
+
+// Sessions per place (design/CHANGES-map-sessions.md): recap tags are free
+// text, so a tag matches a place by name, by a part of its name, or by its id.
+const norm = (v: string) =>
+  v
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[‘’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/^the /, '');
+const hasWords = (hay: string, needle: string) => needle.length >= 4 && ` ${hay} `.includes(` ${needle} `);
+
+function placeKeys(p: MapPlace): string[] {
+  const keys = [p.name, p.name.replace(/\([^)]*\)/g, ''), p.id.replace(/-/g, ' ')];
+  for (const m of p.name.match(/\(([^)]*)\)/g) ?? []) keys.push(m.slice(1, -1));
+  keys.push(...p.name.split(/\s+(?:and|&)\s+/i));
+  return keys.map(norm).filter(Boolean);
+}
+
+/** Recaps tagged with this place, oldest first, numbered as on the Recaps page. */
+export function sessionsAt(place: MapPlace, recaps: { id: string; title: string; date: string; tags: string }[]) {
+  const keys = placeKeys(place);
+  const matches = (tag: string) => {
+    const t = norm(tag);
+    return !!t && keys.some((k) => k === t || hasWords(k, t) || hasWords(t, k));
+  };
+  return recaps
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((r, i) => ({ id: r.id, no: String(i + 1).padStart(2, '0'), title: r.title || 'Untitled session', tags: r.tags.split(',') }))
+    .filter((r) => r.tags.some(matches));
+}

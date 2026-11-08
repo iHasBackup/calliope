@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MAP_IMAGE, type CampaignMap, type MapPlace } from './map';
+import type { Recap } from './content';
+import { MAP_IMAGE, sessionsAt, type CampaignMap, type MapPlace } from './map';
 import './map-tab.css';
 
 // Campaign Home → Map (design/CHANGES-wickermoor-map-2.md): the Wickermoor map
@@ -82,7 +83,7 @@ export function MapSkeleton() {
   );
 }
 
-export function MapTab({ map }: { map: CampaignMap }) {
+export function MapTab({ map, recaps }: { map: CampaignMap; recaps: Recap[] }) {
   const [sel, setSel] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
   // The spotlight: which place it sits on, whether it has grown, and whether
@@ -234,6 +235,8 @@ export function MapTab({ map }: { map: CampaignMap }) {
       return { name: parts[0], role: parts.slice(1).join(' — ') };
     });
     const rumors = lines(sp.rumors);
+    // Hidden places show nothing, so no sessions either (the party's hidden spot).
+    const sessions = sp.status === 'hidden' ? [] : sessionsAt(sp, recaps);
     const v = sp.status === 'visited';
     detail = (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -269,6 +272,19 @@ export function MapTab({ map }: { map: CampaignMap }) {
             <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: 'color-mix(in srgb, var(--color-bg) 85%, transparent)', textWrap: 'pretty', whiteSpace: 'pre-line' }}>{desc}</p>
           )}
         </div>
+        {sessions.length > 0 && (
+          <div className="mp-block">
+            <span className="mp-label" style={{ paddingBottom: 6, color: 'var(--color-accent-400)' }}>
+              Sessions here &middot; {sessions.length}
+            </span>
+            {sessions.map((s) => (
+              <div key={s.id} className="mp-session">
+                <span>S{s.no}</span>
+                <span>{s.title}</span>
+              </div>
+            ))}
+          </div>
+        )}
         {npcs.length > 0 && (
           <div className="mp-block">
             <span className="mp-label" style={{ paddingBottom: 6 }}>
@@ -295,7 +311,7 @@ export function MapTab({ map }: { map: CampaignMap }) {
             ))}
           </div>
         )}
-        {!desc && !npcs.length && !rumors.length && (
+        {!desc && !npcs.length && !rumors.length && !sessions.length && (
           <span style={{ fontSize: 14, color: 'color-mix(in srgb, var(--color-bg) 60%, transparent)' }}>Nothing recorded here yet.</span>
         )}
       </div>

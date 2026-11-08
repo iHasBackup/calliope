@@ -30,7 +30,7 @@ export default function CampaignSite() {
           ) : (
             <RecapsTab openRecap={site.openRecap} setOpenRecap={site.setOpenRecap} content={site.content} width={site.width} />
           ))}
-        {site.view === 'map' && (site.contentLoading ? <MapSkeleton /> : <MapTab map={site.content.map} />)}
+        {site.view === 'map' && (site.contentLoading ? <MapSkeleton /> : <MapTab map={site.content.map} recaps={site.content.recaps} />)}
         {site.view === 'activities' && <ActivitiesTab leader={site.leader} entries={site.entries} />}
       </div>
     </div>
