@@ -3,7 +3,7 @@
 React + TypeScript (Vite) SPA with Vercel serverless functions in `api/` (Upstash Redis). Deployed on Vercel from `main`.
 
 - Routes: `/thecrookedmoon` (campaign), `/thecrookedmoon/apply` (registration), `/thecrookedmoon/admin` (CMS), `/thecrookedmoon/activities/crossword`, `/thecrookedmoon#map` (Wickermoor map tab), `/calendar` (public sessions calendar).
-- Design handoffs from Claude Design live in `design/` (specs + `reference/` prototypes). Import a new handoff with `npm run design:import` (reads newest `~/Downloads/DnD*.zip`). Don't hand-edit `design/`; it gets overwritten on import.
+- Design handoffs from Claude Design live in `design/` (specs + `reference/` prototypes). New handoffs are published to the "DnD" claude.ai artifact (https://claude.ai/artifact/KRU9bgZMJcAfnuZnCYg1Sv) as `project/design_handoff_<name>/`: read its `README.md` there and copy it to `design/CHANGES-<name>.md`, with its `reference/` files into `design/reference/`. The older zip flow, `npm run design:import` (newest `~/Downloads/DnD*.zip`), is a fallback. Don't hand-edit `design/`; it gets overwritten on import.
 - **A handoff may contain every page or only the changed ones** (a delta bundle, named `*changes*` or with a README that says "delta", has its README saved as `design/CHANGES-<date or name>.md`). The import overlays files and never deletes. After an import, list which pages' design files changed and ask the user which page(s) to implement before touching `src/`. Build only the confirmed pages.
 - **The code can differ from the design on purpose.** The user sometimes changes code without updating the design, so differences on other pages are not change requests. Never "fix" code to match them; mention them at most.
 
